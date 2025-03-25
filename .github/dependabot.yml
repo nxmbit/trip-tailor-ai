@@ -14,7 +14,6 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
-      - "java"
     
   # npm dependencies (React frontend)
   - package-ecosystem: "npm"
@@ -24,7 +23,6 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
-      - "javascript"
     
   # GitHub Actions
   - package-ecosystem: "github-actions"
