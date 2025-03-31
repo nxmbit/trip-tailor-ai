@@ -25,9 +25,15 @@ public class UserPrincipal implements UserDetails {
         return user.getPassword();
     }
 
+    /**
+     * In this application, we use email as the username for Spring Security authentication.
+     * This is why getUsername() returns the user's email.
+     *
+     * @return the user's email address which serves as the username for authentication
+     */
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
 
 //    TODO: Implement later
@@ -48,6 +54,6 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getEnabled();
     }
 }

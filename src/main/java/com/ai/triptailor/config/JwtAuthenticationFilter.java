@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public JwtAuthenticationFilter(
             UserDetailsService userDetailsService,
             JwtService jwtService,
-            HandlerExceptionResolver exceptionResolver
+            @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver
     ) {
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
@@ -51,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             final String token = authHeader.substring(7);
-            final String email = jwtService.extractUsername(token);
+            final String email = jwtService.extractEmail(token);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
@@ -66,16 +67,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-
-                    filterChain.doFilter(request, response);
                 }
             }
         } catch (Exception e) {
-
+            exceptionResolver.resolveException(request, response, null, e);
+        } finally {
+            filterChain.doFilter(request, response);
         }
-
-
-
-
     }
 }

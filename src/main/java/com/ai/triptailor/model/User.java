@@ -3,19 +3,32 @@ package com.ai.triptailor.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "app_user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "username", unique = true, nullable = false)
-    private String Username;
+    private String username;
 
     @Column(name = "email", unique = true, nullable = false)
-    private String Email;
+    private String email;
 
     @Column(name = "password", nullable = false)
-    private String Password;
+    private String password;
+
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled;
+
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.enabled = false; // Default to disabled
+    }
+
+    public User() {}
 
     public Long getId() {
         return id;
@@ -26,36 +39,44 @@ public class User {
     }
 
     public String getUsername() {
-        return Username;
+        return username;
     }
 
     public void setUsername(String username) {
-        Username = username;
+        this.username = username;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", Username='" + Username + '\'' +
-                ", Email='" + Email + '\'' +
-                ", Password='" + Password + '\'' +
+                ", Username='" + username + '\'' +
+                ", Email='" + email + '\'' +
+                ", Password='" + password + '\'' +
                 '}';
     }
 }
