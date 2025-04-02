@@ -1,4 +1,4 @@
-package com.ai.triptailor.responses;
+package com.ai.triptailor.response;
 
 public class LoginResponse {
     private String token;

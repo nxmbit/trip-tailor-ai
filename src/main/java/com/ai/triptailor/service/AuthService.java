@@ -5,7 +5,7 @@ import com.ai.triptailor.dto.RegisterRequestDto;
 import com.ai.triptailor.model.User;
 import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.repository.UserRepository;
-import com.ai.triptailor.responses.LoginResponse;
+import com.ai.triptailor.response.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

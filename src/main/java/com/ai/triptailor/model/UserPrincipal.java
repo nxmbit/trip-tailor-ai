@@ -3,16 +3,32 @@ package com.ai.triptailor.model;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
-public class UserPrincipal implements UserDetails {
+public class UserPrincipal implements UserDetails, OAuth2User {
     private User user;
+    Map<String, Object> oAuth2attributes;
 
     public UserPrincipal(User user) {
         this.user = user;
+    }
+
+    public UserPrincipal(User user, Map<String, Object> oAuth2attributes) {
+        this.user = user;
+        this.oAuth2attributes = oAuth2attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return oAuth2attributes;
+    }
+
+    public void setAttributes(Map<String, Object> oAuth2attributes) {
+        this.oAuth2attributes = oAuth2attributes;
     }
 
     @Override
@@ -36,7 +52,7 @@ public class UserPrincipal implements UserDetails {
         return user.getEmail();
     }
 
-//    TODO: Implement later
+    //  TODO: Implement later
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -55,5 +71,10 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return user.getEnabled();
+    }
+
+    @Override
+    public String getName() {
+        return String.valueOf(user.getId());
     }
 }

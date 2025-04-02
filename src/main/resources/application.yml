@@ -1,0 +1,73 @@
+spring:
+  application:
+    name: triptailor
+
+  # DB Configuration
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: ${SPRING_OAUTH2_GOOGLE_CLIENT_ID:}
+            clientSecret: ${SPRING_OAUTH2_GOOGLE_CLIENT_SECRET:}
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
+          facebook:
+            clientId: ${SPRING_OAUTH2_FACEBOOK_CLIENT_ID:}
+            clientSecret: ${SPRING_OAUTH2_GOOGLE_CLIENT_SECRET:}
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - public_profile
+          github:
+            clientId: ${SPRING_OAUTH2_GITHUB_CLIENT_ID:}
+            clientSecret: ${SPRING_OAUTH2_GITHUB_CLIENT_SECRET:}
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - user:email
+              - read:user
+        provider:
+          facebook:
+            authorizationUri: https://www.facebook.com/v3.0/dialog/oauth
+            tokenUri: https://graph.facebook.com/v3.0/oauth/access_token
+            userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
+
+  # AI Configuration
+  ai:
+    openai:
+      api-key: ${SPRING_AI_OPENAI_API_KEY}
+
+  # Config Import
+  config:
+    import: optional:file:.env[.properties]
+
+# JWT Configuration
+security:
+  jwt:
+    secret-key: ${SECURITY_JWT_SECRET_KEY}
+    # 1 hour in milliseconds
+    token-expiration: 3600000
+
+  oauth2:
+    # After successfully authenticating with the OAuth2 Provider,
+    # we'll be generating an auth token for the user and sending the token to the
+    # redirectUri mentioned by the client in the /oauth2/authorize request.
+    # We're not using cookies because they won't work well in mobile clients.
+    authorizedRedirectUris:
+      - http://localhost:3000/oauth2/redirect
+      - myandroidapp://oauth2/redirect
+      - myiosapp://oauth2/redirect
