@@ -61,6 +61,8 @@ security:
     secret-key: ${SECURITY_JWT_SECRET_KEY}
     # 1 hour in milliseconds
     token-expiration: 3600000
+  cors:
+    allowedOrigins: http://localhost:3000, http://localhost:8080
   oauth2:
     ##  oauth2:
     #    # After successfully authenticating with the OAuth2 Provider,
