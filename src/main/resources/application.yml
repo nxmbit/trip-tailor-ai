@@ -20,22 +20,22 @@ spring:
       client:
         registration:
           google:
-            clientId: ${SPRING_OAUTH2_GOOGLE_CLIENT_ID:}
-            clientSecret: ${SPRING_OAUTH2_GOOGLE_CLIENT_SECRET:}
+            clientId: ${SPRING_OAUTH2_GOOGLE_CLIENT_ID}
+            clientSecret: ${SPRING_OAUTH2_GOOGLE_CLIENT_SECRET}
             redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
               - profile
           facebook:
-            clientId: ${SPRING_OAUTH2_FACEBOOK_CLIENT_ID:}
-            clientSecret: ${SPRING_OAUTH2_GOOGLE_CLIENT_SECRET:}
+            clientId: ${SPRING_OAUTH2_FACEBOOK_CLIENT_ID}
+            clientSecret: ${SPRING_OAUTH2_FACEBOOK_CLIENT_SECRET}
             redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
               - public_profile
           github:
-            clientId: ${SPRING_OAUTH2_GITHUB_CLIENT_ID:}
-            clientSecret: ${SPRING_OAUTH2_GITHUB_CLIENT_SECRET:}
+            clientId: ${SPRING_OAUTH2_GITHUB_CLIENT_ID}
+            clientSecret: ${SPRING_OAUTH2_GITHUB_CLIENT_SECRET}
             redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - user:email
@@ -61,12 +61,12 @@ security:
     secret-key: ${SECURITY_JWT_SECRET_KEY}
     # 1 hour in milliseconds
     token-expiration: 3600000
-
   oauth2:
-    # After successfully authenticating with the OAuth2 Provider,
-    # we'll be generating an auth token for the user and sending the token to the
-    # redirectUri mentioned by the client in the /oauth2/authorize request.
-    # We're not using cookies because they won't work well in mobile clients.
+    ##  oauth2:
+    #    # After successfully authenticating with the OAuth2 Provider,
+    #    # we'll be generating an auth token for the user and sending the token to the
+    #    # redirectUri mentioned by the client in the /oauth2/authorize request.
+    #    # We're not using cookies because they won't work well in mobile clients.
     authorizedRedirectUris:
       - http://localhost:3000/oauth2/redirect
       - myandroidapp://oauth2/redirect

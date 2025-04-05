@@ -1,5 +1,6 @@
 package com.ai.triptailor.oauth2;
 
+import com.ai.triptailor.config.OAuth2Properties;
 import com.ai.triptailor.exception.UnauthorizedRedirectException;
 import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.service.JwtService;
@@ -17,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,17 +28,17 @@ import static com.ai.triptailor.oauth2.HttpCookieOAuth2AuthorizationRequestRepos
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtService jwtService;
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-
-    @Value("${security.oauth2.authorizedRedirectUris}")
-    private List<String> authorizedRedirectUris;
+    private final OAuth2Properties oAuth2Properties;
 
     @Autowired
     public OAuth2LoginSuccessHandler(
             JwtService jwtService,
-            HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository
+            HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository,
+            OAuth2Properties oAuth2Properties
     ) {
         this.jwtService = jwtService;
         this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
+        this.oAuth2Properties = oAuth2Properties;
     }
 
     @Override
@@ -45,7 +47,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             HttpServletResponse response,
             Authentication authentication
     ) throws IOException, ServletException {
-        String targetUrl = determineTargetUrl(request, response, authentication);
+        String targetUrl = getTargetUrl(request, response, authentication);
 
         if (response.isCommitted()) {
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
@@ -86,7 +88,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private boolean isAuthorizedRedirectUri(String uri) {
         URI clientRedirectUri = URI.create(uri);
 
-        return authorizedRedirectUris
+        return oAuth2Properties.getAuthorizedRedirectUris()
                 .stream()
                 .anyMatch(authRedirectUri -> {
                     // Only validate host and port. Let the clients use different paths if they want to
