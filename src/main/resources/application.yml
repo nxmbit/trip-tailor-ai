@@ -50,6 +50,9 @@ spring:
   ai:
     openai:
       api-key: ${SPRING_AI_OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o
 
   # Config Import
   config:
@@ -73,3 +76,10 @@ security:
       - http://localhost:3000/oauth2/redirect
       - myandroidapp://oauth2/redirect
       - myiosapp://oauth2/redirect
+
+# Google Maps Configuration
+google:
+  maps:
+    api:
+        key: ${GOOGLE_MAPS_API_KEY}
+
