@@ -1,7 +1,5 @@
 package com.ai.triptailor.config;
 
-import com.ai.triptailor.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.ai.triptailor.oauth2.OAuth2LoginFailureHandler;
 import com.ai.triptailor.oauth2.OAuth2LoginSuccessHandler;
 import com.ai.triptailor.service.OAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;

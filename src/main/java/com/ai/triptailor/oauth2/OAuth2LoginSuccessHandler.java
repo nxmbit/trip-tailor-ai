@@ -48,7 +48,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         String targetUrl = determineTargetUrl(request, response, authentication);
 
-        if (!isAuthorizedRedirectUri(targetUrl)) {
+        if (!isAuthorizedRedirectUri(targetUrl) && !targetUrl.equals("/")) {
             throw new UnauthorizedRedirectException("Not an authorized redirect URI");
         }
 

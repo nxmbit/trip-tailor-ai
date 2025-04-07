@@ -22,21 +22,18 @@ spring:
           google:
             clientId: ${SPRING_OAUTH2_GOOGLE_CLIENT_ID}
             clientSecret: ${SPRING_OAUTH2_GOOGLE_CLIENT_SECRET}
-            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
               - profile
           facebook:
             clientId: ${SPRING_OAUTH2_FACEBOOK_CLIENT_ID}
             clientSecret: ${SPRING_OAUTH2_FACEBOOK_CLIENT_SECRET}
-            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
               - public_profile
           github:
             clientId: ${SPRING_OAUTH2_GITHUB_CLIENT_ID}
             clientSecret: ${SPRING_OAUTH2_GITHUB_CLIENT_SECRET}
-            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - user:email
               - read:user
