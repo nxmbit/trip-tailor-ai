@@ -1,7 +1,10 @@
 package com.ai.triptailor.service;
 
 import com.ai.triptailor.dto.LoginRequestDto;
+import com.ai.triptailor.dto.RefreshTokenRequestDto;
 import com.ai.triptailor.dto.RegisterRequestDto;
+import com.ai.triptailor.exception.RefreshTokenException;
+import com.ai.triptailor.model.RefreshToken;
 import com.ai.triptailor.model.User;
 import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.repository.UserRepository;
@@ -14,22 +17,25 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private JwtService jwtService;
-    private AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     @Autowired
     public AuthService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
-            AuthenticationManager authenticationManager
+            AuthenticationManager authenticationManager,
+            RefreshTokenService refreshTokenService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public User register(RegisterRequestDto userData) {
@@ -63,11 +69,36 @@ public class AuthService {
         );
 
         String jwtToken = jwtService.createToken(new UserPrincipal(user));
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
         return new LoginResponse(
                 jwtToken,
+                refreshToken.getToken(),
                 user.getEmail(),
-                jwtService.getExpirationDate(jwtToken)
+                jwtService.getExpirationDate(jwtToken),
+                refreshToken.getExpiryDate().toEpochMilli()
         );
+    }
+
+    public LoginResponse refreshToken(RefreshTokenRequestDto refreshTokenRequest) {
+        String refreshToken = refreshTokenRequest.getRefreshToken();
+
+        return refreshTokenService.findByRefreshToken(refreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String jwtToken = jwtService.createToken(new UserPrincipal(user));
+                    refreshTokenService.deleteByUserId(user.getId());
+                    RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId()); //refresh token rotation
+
+                    return new LoginResponse(
+                            jwtToken,
+                            newRefreshToken.getToken(),
+                            user.getEmail(),
+                            jwtService.getExpirationDate(jwtToken),
+                            newRefreshToken.getExpiryDate().toEpochMilli()
+                    );
+                })
+                .orElseThrow(() -> new RefreshTokenException("Refresh token is not in database!"));
     }
 }

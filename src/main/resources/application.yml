@@ -58,9 +58,14 @@ spring:
 # JWT Configuration
 security:
   jwt:
-    secret-key: ${SECURITY_JWT_SECRET_KEY}
-    # 1 hour in milliseconds
-    token-expiration: 3600000
+    access-token:
+      secret-key: ${SECURITY_JWT_SECRET_KEY}
+      # 1 hour in milliseconds
+      token-expiration: 3600000
+    refresh-token:
+      token-expiration: 604800000
+#      for testing:
+#        token-expiration: 60000
   cors:
     allowedOrigins: http://localhost:3000, http://localhost:8080
   oauth2:
@@ -78,5 +83,5 @@ security:
 google:
   maps:
     api:
-        key: ${GOOGLE_MAPS_API_KEY}
+      key: ${GOOGLE_MAPS_API_KEY}
 
