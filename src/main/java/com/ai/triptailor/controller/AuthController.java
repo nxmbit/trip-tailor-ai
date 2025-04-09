@@ -6,6 +6,7 @@ import com.ai.triptailor.model.User;
 import com.ai.triptailor.response.LoginResponse;
 import com.ai.triptailor.service.AuthService;
 import com.ai.triptailor.service.JwtService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,13 +28,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequestDto userData) {
+    public ResponseEntity<User> register(@Valid @RequestBody RegisterRequestDto userData) {
         User user = authService.register(userData);
         return ResponseEntity.ok(user);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequestDto userData) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequestDto userData) {
         LoginResponse loginResponse = authService.authenticate(userData);
         return ResponseEntity.ok(loginResponse);
     }
