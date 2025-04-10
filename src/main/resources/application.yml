@@ -77,9 +77,17 @@ security:
       - myandroidapp://oauth2/redirect
       - myiosapp://oauth2/redirect
 
+# AWS S3 Configuration
+aws:
+  s3:
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
+    region: ${AWS_REGION}
+    bucket-name: ${AWS_BUCKET_NAME}
+
 # Google Maps Configuration
 google:
   maps:
     api:
-        key: ${GOOGLE_MAPS_API_KEY}
+      key: ${GOOGLE_MAPS_API_KEY}
 
