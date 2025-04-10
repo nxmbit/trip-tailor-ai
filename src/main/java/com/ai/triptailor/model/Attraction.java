@@ -11,7 +11,7 @@ import java.util.Map;
 public class Attraction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "trip_day_id", nullable = false)
@@ -27,31 +27,31 @@ public class Attraction {
 
     private double latitude;
     private double longitude;
-    private String imageUrl;
+    private String imageFileName;
     private int visitOrder; // Order of visit in the trip day, evaluate if this is needed
     private double visitDuration; // in hours
 
     public Attraction() {}
 
     public Attraction(Long id, TripDay tripDay, Map<String, String> name, Map<String, String> description,
-                      double latitude, double longitude, String imageUrl, int visitOrder, double visitDuration) {
-        Id = id;
+                      double latitude, double longitude, String imageFileName, int visitOrder, double visitDuration) {
+        this.id = id;
         this.tripDay = tripDay;
         this.name = name;
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.imageUrl = imageUrl;
+        this.imageFileName = imageFileName;
         this.visitOrder = visitOrder;
         this.visitDuration = visitDuration;
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public TripDay getTripDay() {
@@ -94,12 +94,12 @@ public class Attraction {
         this.longitude = longitude;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImageFileName() {
+        return imageFileName;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageFileName(String imageUrl) {
+        this.imageFileName = imageUrl;
     }
 
     public int getVisitOrder() {
