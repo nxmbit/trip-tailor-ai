@@ -1,22 +1,27 @@
 package com.ai.triptailor.response;
 
 public class LoginResponse {
-    private String token;
+    private String jwtToken;
+    private String refreshToken;
     private String email;
-    private long expirationDate;
+    private long jwtExpirationDate;
+    private long refreshTokenExpirationDate;
 
-    public LoginResponse(String token, String email, long expirationDate) {
-        this.token = token;
+    public LoginResponse(String jwtToken, String refreshToken, String email, long jwtExpirationDate,
+                         long refreshTokenExpirationDate) {
+        this.jwtToken = jwtToken;
+        this.refreshToken = refreshToken;
         this.email = email;
-        this.expirationDate = expirationDate;
+        this.jwtExpirationDate = jwtExpirationDate;
+        this.refreshTokenExpirationDate = refreshTokenExpirationDate;
     }
 
-    public String getToken() {
-        return token;
+    public String getJwtToken() {
+        return jwtToken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
     }
 
     public String getEmail() {
@@ -27,11 +32,27 @@ public class LoginResponse {
         this.email = email;
     }
 
-    public long getExpirationDate() {
-        return expirationDate;
+    public long getJwtExpirationDate() {
+        return jwtExpirationDate;
     }
 
-    public void setExpirationDate(long expirationDate) {
-        this.expirationDate = expirationDate;
+    public void setJwtExpirationDate(long jwtExpirationDate) {
+        this.jwtExpirationDate = jwtExpirationDate;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public long getRefreshTokenExpirationDate() {
+        return refreshTokenExpirationDate;
+    }
+
+    public void setRefreshTokenExpirationDate(long refreshTokenExpirationDate) {
+        this.refreshTokenExpirationDate = refreshTokenExpirationDate;
     }
 }

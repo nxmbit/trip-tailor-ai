@@ -1,5 +1,7 @@
 package com.ai.triptailor.oauth2;
 
+import org.springframework.util.StringUtils;
+
 import java.util.Map;
 
 public class GithubOAuth2UserInfo extends OAuth2UserInfo {
@@ -15,12 +17,18 @@ public class GithubOAuth2UserInfo extends OAuth2UserInfo {
 
     @Override
     public String getName() {
-        return (String) attributes.get("name");
+        return (String) attributes.get("login");
     }
 
     @Override
     public String getEmail() {
-        return (String) attributes.get("email");
+        // Get email, or use GitHub username as fallback
+        String email = (String) attributes.get("email");
+        if (!StringUtils.hasText(email)) {
+            String login = (String) attributes.get("login");
+            return login + "@github.triptailor.user"; // Create a placeholder email
+        }
+        return email;
     }
 
     @Override
