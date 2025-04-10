@@ -2,8 +2,10 @@ package com.ai.triptailor.oauth2;
 
 import com.ai.triptailor.config.OAuth2Properties;
 import com.ai.triptailor.exception.UnauthorizedRedirectException;
+import com.ai.triptailor.model.RefreshToken;
 import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.service.JwtService;
+import com.ai.triptailor.service.RefreshTokenService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,14 +23,17 @@ import java.net.URI;
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtService jwtService;
     private final OAuth2Properties oAuth2Properties;
+    private final RefreshTokenService refreshTokenService;
 
     @Autowired
     public OAuth2LoginSuccessHandler(
             JwtService jwtService,
-            OAuth2Properties oAuth2Properties
+            OAuth2Properties oAuth2Properties,
+            RefreshTokenService refreshTokenService
     ) {
         this.jwtService = jwtService;
         this.oAuth2Properties = oAuth2Properties;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -44,7 +49,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Override
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        String token = jwtService.createToken(userPrincipal);
+        String jwtToken = jwtService.createToken(userPrincipal);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrincipal.getId());
 
         String targetUrl = determineTargetUrl(request, response, authentication);
 
@@ -52,7 +58,32 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             throw new UnauthorizedRedirectException("Not an authorized redirect URI");
         }
 
-        targetUrl = UriComponentsBuilder.fromUriString(targetUrl).queryParam("token", token).build().toUriString();
+        // TODO: handle mobile clients, asses whether sending query params is safe
+
+        // Set the JWT and refresh token as HttpOnly cookies
+        // These are only meant for token transfer to the client
+        Cookie accessTokenCookie = new Cookie("access_token", jwtToken);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(300); // 5 min
+        response.addCookie(accessTokenCookie);
+
+        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken.getToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(300); // 5 min
+        response.addCookie(refreshTokenCookie);
+
+        // Add non-sensitive user info to the redirect URL
+        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
+                .queryParam("email", userPrincipal.getUsername())
+                .queryParam("expiresIn", jwtService.getExpirationDate(jwtToken))
+                .queryParam("refreshExpiresIn", refreshToken.getExpiryDate())
+                .build().toUriString();
+
+
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
@@ -64,11 +95,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .anyMatch(authRedirectUri -> {
                     // Only validate host and port. Let the clients use different paths if they want to
                     URI authorizedURI = URI.create(authRedirectUri);
-                    if(authorizedURI.getHost().equalsIgnoreCase(clientRedirectUri.getHost())
-                            && authorizedURI.getPort() == clientRedirectUri.getPort()) {
-                        return true;
-                    }
-                    return false;
+                    return authorizedURI.getHost().equalsIgnoreCase(clientRedirectUri.getHost())
+                            && authorizedURI.getPort() == clientRedirectUri.getPort();
                 });
     }
 
