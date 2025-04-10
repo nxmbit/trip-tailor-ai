@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -50,6 +49,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         String jwtToken = jwtService.createToken(userPrincipal);
+        refreshTokenService.deleteByUserId(userPrincipal.getId());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrincipal.getId());
 
         String targetUrl = determineTargetUrl(request, response, authentication);
@@ -75,14 +75,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(300); // 5 min
         response.addCookie(refreshTokenCookie);
-
-        // Add non-sensitive user info to the redirect URL
-        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("email", userPrincipal.getUsername())
-                .queryParam("expiresIn", jwtService.getExpirationDate(jwtToken))
-                .queryParam("refreshExpiresIn", refreshToken.getExpiryDate())
-                .build().toUriString();
-
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
