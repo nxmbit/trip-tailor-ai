@@ -1,7 +1,9 @@
-import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/services/auth_service.dart';
-import 'package:frontend/widgets/custom_scaffold.dart';
+import 'package:frontend/utils/form_validators.dart';
+import 'package:frontend/widgets/welcome_scaffold.dart';
+import 'package:frontend/widgets/oauth_buttons.dart';
+import 'package:frontend/constants/ui_constants.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -27,9 +29,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Future<void> _handleSignIn() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       final success = await _authService.login(
@@ -39,34 +39,27 @@ class _SignInScreenState extends State<SignInScreen> {
 
       if (!mounted) return;
 
-      setState(() {
-        _isLoading = false;
-      });
-
       if (success) {
-        if (!mounted) return;
-        Navigator.of(context).pushReplacementNamed('/home');
+        _navigateToHome();
       } else {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invalid credentials. Please try again.'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        _showErrorMessage('Invalid credentials. Please try again.');
       }
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('An error occurred: ${e.toString()}'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      _showErrorMessage('An error occurred: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  void _navigateToHome() {
+    Navigator.of(context).pushReplacementNamed('/home');
+  }
+
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+    );
   }
 
   @override
@@ -74,131 +67,131 @@ class _SignInScreenState extends State<SignInScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return CustomScaffold(
+    return WelcomeScaffold(
       child: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: UIConstants.screenPadding,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Card(
-                elevation: 0,
-                color: colorScheme.surface,
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          "Sign In",
-                          style: textTheme.headlineMedium?.copyWith(
-                            color: colorScheme.onSurface,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 32),
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            prefixIcon: const Icon(Icons.email_outlined),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            if (!RegExp(
-                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                            ).hasMatch(value)) {
-                              return 'Please enter a valid email';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            prefixIcon: const Icon(Icons.lock_outline),
-                          ),
-                          obscureText: true,
-                          textInputAction: TextInputAction.done,
-                          onFieldSubmitted: (_) => _handleSignIn(),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 24),
-                        FilledButton(
-                          onPressed: _isLoading ? null : _handleSignIn,
-                          child:
-                              _isLoading
-                                  ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(),
-                                  )
-                                  : const Text('Sign In'),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Or sign in with',
-                          textAlign: TextAlign.center,
-                          style: textTheme.headlineSmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 16,
-                          children: [
-                            GoogleAuthButton(
-                              onPressed: () {},
-                              style: AuthButtonStyle(
-                                buttonType: AuthButtonType.icon,
-                              ),
-                            ),
-                            GithubAuthButton(
-                              onPressed: () {},
-                              style: AuthButtonStyle(
-                                buttonType: AuthButtonType.icon,
-                              ),
-                            ),
-                            FacebookAuthButton(
-                              onPressed: () {},
-                              style: AuthButtonStyle(
-                                buttonType: AuthButtonType.icon,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        TextButton(
-                          onPressed:
-                              () => Navigator.of(
-                                context,
-                              ).pushReplacementNamed('/'),
-                          child: const Text('Back to Welcome'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              constraints: const BoxConstraints(
+                maxWidth: UIConstants.maxFormWidth,
               ),
+              child: _buildSignInCard(colorScheme, textTheme),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSignInCard(ColorScheme colorScheme, TextTheme textTheme) {
+    return Card(
+      elevation: 0,
+      color: colorScheme.surface,
+      child: Padding(
+        padding: UIConstants.cardPadding,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildHeader(textTheme, colorScheme),
+              const SizedBox(height: UIConstants.defaultSpacing),
+              _buildEmailField(),
+              const SizedBox(height: UIConstants.defaultSpacing),
+              _buildPasswordField(),
+              const SizedBox(height: UIConstants.defaultSpacing),
+              _buildSignInButton(),
+              const SizedBox(height: UIConstants.defaultSpacing),
+              const Divider(),
+              const SizedBox(height: UIConstants.defaultSpacing),
+              _buildSocialAuthSection(textTheme, colorScheme),
+              const SizedBox(height: UIConstants.defaultSpacing),
+              const Divider(),
+              const SizedBox(height: UIConstants.defaultSpacing),
+              const _BackToWelcomeButton(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(TextTheme textTheme, ColorScheme colorScheme) {
+    return Text(
+      "Sign In",
+      style: textTheme.headlineMedium?.copyWith(color: colorScheme.onSurface),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildEmailField() {
+    return TextFormField(
+      controller: _emailController,
+      decoration: const InputDecoration(
+        labelText: 'Email',
+        prefixIcon: Icon(Icons.email_outlined),
+      ),
+      keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.next,
+      validator: Validators.validateEmail,
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextFormField(
+      controller: _passwordController,
+      decoration: const InputDecoration(
+        labelText: 'Password',
+        prefixIcon: Icon(Icons.lock_outline),
+      ),
+      obscureText: true,
+      textInputAction: TextInputAction.done,
+      onFieldSubmitted: (_) => _handleSignIn(),
+      validator: Validators.validatePassword,
+    );
+  }
+
+  Widget _buildSignInButton() {
+    return FilledButton(
+      onPressed: _isLoading ? null : _handleSignIn,
+      child:
+          _isLoading
+              ? const SizedBox(
+                height: UIConstants.loadingIndicatorSize,
+                width: UIConstants.loadingIndicatorSize,
+                child: CircularProgressIndicator(),
+              )
+              : const Text('Sign In'),
+    );
+  }
+
+  Widget _buildSocialAuthSection(TextTheme textTheme, ColorScheme colorScheme) {
+    return Column(
+      children: [
+        Text(
+          'Or sign in with',
+          textAlign: TextAlign.center,
+          style: textTheme.headlineSmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: UIConstants.defaultSpacing),
+        const SocialAuthButtons(),
+      ],
+    );
+  }
+}
+
+class _BackToWelcomeButton extends StatelessWidget {
+  const _BackToWelcomeButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () => Navigator.of(context).pushReplacementNamed('/'),
+      child: const Text('Back to Welcome'),
     );
   }
 }

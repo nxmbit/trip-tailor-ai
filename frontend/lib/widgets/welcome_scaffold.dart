@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CustomScaffold extends StatelessWidget {
-  const CustomScaffold({super.key, required this.child});
+class WelcomeScaffold extends StatelessWidget {
+  const WelcomeScaffold({super.key, required this.child});
 
   final Widget child;
 

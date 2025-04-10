@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/widgets/custom_scaffold.dart';
+import 'package:frontend/widgets/welcome_scaffold.dart';
+import 'package:frontend/constants/ui_constants.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -9,63 +10,26 @@ class WelcomeScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
-    return CustomScaffold(
+    return WelcomeScaffold(
       child: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: UIConstants.screenPadding,
             child: Card(
               elevation: 0,
               color: colorScheme.surface,
               child: Padding(
-                padding: const EdgeInsets.all(32.0),
+                padding: UIConstants.cardPadding,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Title and welcome text
-                    Text(
-                      'tripTailor.ai',
-                      style: textTheme.displayLarge?.copyWith(
-                        color: colorScheme.primary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Welcome back!',
-                      style: textTheme.headlineMedium?.copyWith(
-                        color: colorScheme.onSurface,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Plan your trip with us',
-                      style: textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 32),
-
-                    // Buttons
-                    Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
-                      alignment: WrapAlignment.center,
-                      children: [
-                        FilledButton(
-                          onPressed:
-                              () => Navigator.of(context).pushNamed('/signin'),
-                          child: const Text('Sign In'),
-                        ),
-                        FilledButton.tonal(
-                          onPressed:
-                              () => Navigator.of(context).pushNamed('/signup'),
-                          child: const Text('Sign Up'),
-                        ),
-                      ],
-                    ),
+                    _buildTitle(textTheme, colorScheme),
+                    const SizedBox(height: UIConstants.defaultSpacing),
+                    _buildWelcomeText(textTheme, colorScheme),
+                    const SizedBox(height: UIConstants.smallSpacing),
+                    _buildSubtitle(textTheme, colorScheme),
+                    const SizedBox(height: UIConstants.largePadding),
+                    _buildButtons(context),
                   ],
                 ),
               ),
@@ -73,6 +37,48 @@ class WelcomeScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTitle(TextTheme textTheme, ColorScheme colorScheme) {
+    return Text(
+      'tripTailor.ai',
+      style: textTheme.displayLarge?.copyWith(color: colorScheme.primary),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildWelcomeText(TextTheme textTheme, ColorScheme colorScheme) {
+    return Text(
+      'Welcome back!',
+      style: textTheme.headlineMedium?.copyWith(color: colorScheme.onSurface),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildSubtitle(TextTheme textTheme, ColorScheme colorScheme) {
+    return Text(
+      'Plan your trip with us',
+      style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildButtons(BuildContext context) {
+    return Wrap(
+      spacing: UIConstants.buttonSpacing,
+      runSpacing: UIConstants.buttonSpacing,
+      alignment: WrapAlignment.center,
+      children: [
+        FilledButton(
+          onPressed: () => Navigator.of(context).pushNamed('/signin'),
+          child: const Text('Sign In'),
+        ),
+        FilledButton.tonal(
+          onPressed: () => Navigator.of(context).pushNamed('/signup'),
+          child: const Text('Sign Up'),
+        ),
+      ],
     );
   }
 }
