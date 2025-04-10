@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "app_user")
@@ -38,6 +40,9 @@ public class User {
     @Column(name = "providers_id")
     private String providersId;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Trip> trips;
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
@@ -49,6 +54,21 @@ public class User {
     }
 
     public User() {}
+
+    public void addTrip(Trip trip) {
+        if (this.trips == null) {
+            this.trips = new HashSet<>();
+        }
+        this.trips.add(trip);
+        trip.setUser(this);
+    }
+
+    public void removeTrip(Trip trip) {
+        if (this.trips != null) {
+            this.trips.remove(trip);
+            trip.setUser(null);
+        }
+    }
 
     public Long getId() {
         return id;
