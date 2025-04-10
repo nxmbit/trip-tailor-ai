@@ -69,6 +69,7 @@ public class AuthService {
         );
 
         String jwtToken = jwtService.createToken(new UserPrincipal(user));
+        refreshTokenService.deleteByUserId(user.getId());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
         return new LoginResponse(
