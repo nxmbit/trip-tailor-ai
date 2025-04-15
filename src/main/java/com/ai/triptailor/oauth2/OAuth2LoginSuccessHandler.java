@@ -1,7 +1,5 @@
 package com.ai.triptailor.oauth2;
 
-import com.ai.triptailor.config.OAuth2Properties;
-import com.ai.triptailor.exception.UnauthorizedRedirectException;
 import com.ai.triptailor.model.RefreshToken;
 import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.service.JwtService;
@@ -11,27 +9,26 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
-import java.net.URI;
 
 @Component
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    @Value("${security.oauth2.redirectUri}")
+    private String redirectUri;
+
     private final JwtService jwtService;
-    private final OAuth2Properties oAuth2Properties;
     private final RefreshTokenService refreshTokenService;
 
     @Autowired
     public OAuth2LoginSuccessHandler(
             JwtService jwtService,
-            OAuth2Properties oAuth2Properties,
             RefreshTokenService refreshTokenService
     ) {
         this.jwtService = jwtService;
-        this.oAuth2Properties = oAuth2Properties;
         this.refreshTokenService = refreshTokenService;
     }
 
@@ -52,14 +49,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         refreshTokenService.deleteByUserId(userPrincipal.getId());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrincipal.getId());
 
-        String targetUrl = determineTargetUrl(request, response, authentication);
-
-        if (!isAuthorizedRedirectUri(targetUrl) && !targetUrl.equals("/")) {
-            throw new UnauthorizedRedirectException("Not an authorized redirect URI");
-        }
-
-        // TODO: handle mobile clients, asses whether sending query params is safe
-
         // Set the JWT and refresh token as HttpOnly cookies
         // These are only meant for token transfer to the client
         Cookie accessTokenCookie = new Cookie("access_token", jwtToken);
@@ -76,20 +65,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         refreshTokenCookie.setMaxAge(300); // 5 min
         response.addCookie(refreshTokenCookie);
 
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        getRedirectStrategy().sendRedirect(request, response, redirectUri);
     }
-
-    private boolean isAuthorizedRedirectUri(String uri) {
-        URI clientRedirectUri = URI.create(uri);
-
-        return oAuth2Properties.getAuthorizedRedirectUris()
-                .stream()
-                .anyMatch(authRedirectUri -> {
-                    // Only validate host and port. Let the clients use different paths if they want to
-                    URI authorizedURI = URI.create(authRedirectUri);
-                    return authorizedURI.getHost().equalsIgnoreCase(clientRedirectUri.getHost())
-                            && authorizedURI.getPort() == clientRedirectUri.getPort();
-                });
-    }
-
 }
