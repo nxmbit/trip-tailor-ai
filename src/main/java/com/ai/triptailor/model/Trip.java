@@ -1,24 +1,36 @@
 package com.ai.triptailor.model;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
 
-import java.util.Date;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 public class Trip {
     @Id
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     private String imageFileName;
 
-    private String destination;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> destination = new HashMap<>();
 
-    private String description;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> description = new HashMap<>();
 
-    private Date tripStartDate;
+    private String googlePlacesId;
 
-    private Date tripEndDate;
+    private Instant tripStartDate;
+
+    private Instant tripEndDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -30,7 +42,9 @@ public class Trip {
     public Trip() {
     }
 
-    public Trip(Long id, String imageFileName, String destination, String description, Date tripStartDate, Date tripEndDate, User user) {
+    public Trip(UUID id, String imageFileName, Map<String, String> destination,
+                Map<String, String> description, Instant tripStartDate,
+                Instant tripEndDate, User user) {
         this.id = id;
         this.imageFileName = imageFileName;
         this.destination = destination;
@@ -40,11 +54,11 @@ public class Trip {
         this.user = user;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -56,35 +70,19 @@ public class Trip {
         this.imageFileName = imageUrl;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public Date getTripStartDate() {
+    public Instant getTripStartDate() {
         return tripStartDate;
     }
 
-    public void setTripStartDate(Date tripStartDate) {
+    public void setTripStartDate(Instant tripStartDate) {
         this.tripStartDate = tripStartDate;
     }
 
-    public Date getTripEndDate() {
+    public Instant getTripEndDate() {
         return tripEndDate;
     }
 
-    public void setTripEndDate(Date tripEndDate) {
+    public void setTripEndDate(Instant tripEndDate) {
         this.tripEndDate = tripEndDate;
     }
 
@@ -102,5 +100,45 @@ public class Trip {
 
     public void setTripDays(Set<TripDay> tripDays) {
         this.tripDays = tripDays;
+    }
+
+    public Map<String, String> getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Map<String, String> destination) {
+        this.destination = destination;
+    }
+
+    public String getGooglePlacesId() {
+        return googlePlacesId;
+    }
+
+    public void setGooglePlacesId(String googlePlacesId) {
+        this.googlePlacesId = googlePlacesId;
+    }
+
+    public Map<String, String> getDescription() {
+        return description;
+    }
+
+    public void setDescription(Map<String, String> description) {
+        this.description = description;
+    }
+
+    public void addDestination(String languageCode, String text) {
+        this.destination.put(languageCode, text);
+    }
+
+    public void addDescription(String languageCode, String text) {
+        this.description.put(languageCode, text);
+    }
+
+    public String getDestination(String languageCode) {
+        return this.destination.getOrDefault(languageCode, this.destination.getOrDefault("en", ""));
+    }
+
+    public String getDescription(String languageCode) {
+        return this.description.getOrDefault(languageCode, this.description.getOrDefault("en", ""));
     }
 }
