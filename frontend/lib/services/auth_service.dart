@@ -1,38 +1,22 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/constants/api_constants.dart';
+import 'package:dio/dio.dart';
+import 'package:frontend/interceptors/auth_interceptor.dart';
 
 class AuthService {
-  static const String _baseUrl = 'http://localhost:8080/auth';
   final _storage = const FlutterSecureStorage();
-  Timer? _logoutTimer;
-  final _logoutController = StreamController<void>.broadcast();
-  Stream<void> get onLogout => _logoutController.stream;
-
-  void _setLogoutTimer(String expirationDateStr) {
-    _logoutTimer?.cancel();
-    final expirationDate = DateTime.parse(expirationDateStr);
-    final timeToExpiry = expirationDate.difference(DateTime.now());
-
-    print('Setting logout timer for: ${timeToExpiry.inSeconds} seconds');
-
-    if (timeToExpiry.isNegative) {
-      print('Token already expired, logging out immediately');
-      logout();
-      return;
-    }
-
-    _logoutTimer = Timer(timeToExpiry, () {
-      print('Timer expired, logging out user');
-      logout();
-    });
-  }
-
-  void dispose() {
-    _logoutTimer?.cancel();
-    _logoutController.close();
+  final _dio = Dio(
+    BaseOptions(
+      baseUrl: APIConstants.baseUrl,
+      validateStatus: (status) {
+        return status! < 201;
+      },
+    ),
+  );
+  AuthService() {
+    _dio.interceptors.clear(); // Clear any existing interceptors
+    _dio.interceptors.addAll([AuthInterceptor(this, _dio), LogInterceptor()]);
   }
 
   Future<bool> register({
@@ -41,14 +25,9 @@ class AuthService {
     required String username,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/register'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'email': email,
-          'password': password,
-          'username': username,
-        }),
+      final response = await _dio.post(
+        APIConstants.registerEndpoint,
+        data: {'email': email, 'password': password, 'username': username},
       );
 
       return response.statusCode == 200;
@@ -60,36 +39,45 @@ class AuthService {
 
   Future<bool> login({required String email, required String password}) async {
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'email': email, 'password': password}),
+      final response = await _dio.post(
+        APIConstants.loginEndpoint,
+        data: {'email': email, 'password': password},
       );
-
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final token = data['token'];
-        final expirationTimestamp = data['expirationDate'] as int;
+        final data = response.data;
+        final jwtToken = data['jwtToken'];
+        final jwtExpirationTimestamp = data['jwtExpirationDate'] as int;
+        final refreshToken = data['refreshToken'];
+        final refreshExpirationTimestamp =
+            data['refreshTokenExpirationDate'] as int;
 
-        // Convert timestamp to ISO8601 string for storage and timer
-        final expirationDateStr =
+        final jwtExpirationDateStr =
             DateTime.fromMillisecondsSinceEpoch(
-              expirationTimestamp,
+              jwtExpirationTimestamp,
             ).toIso8601String();
 
-        // Store token and expiration date securely
-        await _storage.write(key: 'token', value: token);
-        await _storage.write(key: 'tokenExpiration', value: expirationDateStr);
+        final refreshExpirationDateStr =
+            DateTime.fromMillisecondsSinceEpoch(
+              refreshExpirationTimestamp,
+            ).toIso8601String();
+
+        await _storage.write(key: 'jwtToken', value: jwtToken);
+        await _storage.write(
+          key: 'jwtTokenExpiration',
+          value: jwtExpirationDateStr,
+        );
+        await _storage.write(key: 'refreshToken', value: refreshToken);
+        await _storage.write(
+          key: 'refreshTokenExpiration',
+          value: refreshExpirationDateStr,
+        );
 
         final isVerified = await verifyTokenStorage();
         if (!isVerified) {
           print('Warning: Token storage verification failed');
-          await logout();
+          await logout(notifyServer: false);
           return false;
         }
-
-        print('Login successful, setting up logout timer');
-        _setLogoutTimer(expirationDateStr);
         return true;
       }
       return false;
@@ -99,42 +87,42 @@ class AuthService {
     }
   }
 
-  Future<bool> signInWithProvider(String provider) async {
+  Future<void> logout({bool notifyServer = true}) async {
     try {
-      final response = await http.get(
-        Uri.parse('$_baseUrl/$provider'),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        // Handle successful OAuth authentication
-        return true;
+      if (notifyServer) {
+        try {
+          await _dio.post(APIConstants.logoutEndpoint);
+        } catch (e) {
+          print('Server logout failed, proceeding with client logout: $e');
+        }
       }
-      return false;
+
+      // Client-side cleanup
+      await _storage.deleteAll();
     } catch (e) {
-      print('Error during $provider authentication: $e');
+      print('Logout error: $e');
+    }
+  }
+
+  Future<bool> test() async {
+    try {
+      final response = await _dio.get(APIConstants.testEndpoint);
+      if (response.statusCode == 200) {
+        print('Test successful: ${response.data}');
+        return true;
+      } else {
+        print('Test failed: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Test error: $e');
       return false;
     }
   }
 
-  // Helper methods for token management
-  Future<String?> getToken() async {
-    return await _storage.read(key: 'token');
-  }
+  //TOKEN SECTION
 
-  Future<String?> getTokenExpiration() async {
-    return await _storage.read(key: 'tokenExpiration');
-  }
-
-  Future<void> logout() async {
-    _logoutTimer?.cancel();
-    await _storage.delete(key: 'token');
-    await _storage.delete(key: 'tokenExpiration');
-    _logoutController.add(null);
-    print('User logged out and token cleared');
-  }
-
-  Future<bool> isLoggedIn() async {
+  Future<bool> isAuthenticated() async {
     final token = await getToken();
     final expiration = await getTokenExpiration();
 
@@ -150,19 +138,33 @@ class AuthService {
     try {
       final token = await getToken();
       final expiration = await getTokenExpiration();
+      final refreshToken = await getRefreshToken();
+      final refreshExpiration = await getRefreshTokenExpiration();
 
-      if (token == null || expiration == null) {
-        print('Token verification failed: token or expiration is null');
+      if (token == null ||
+          expiration == null ||
+          refreshToken == null ||
+          refreshExpiration == null) {
+        print(
+          'Token verification failed: token, refresh token, or expiration is null',
+        );
         return false;
       }
 
-      // Verify expiration date format
       try {
         final expirationDate = DateTime.parse(expiration);
+        final refreshExpirationDate = DateTime.parse(refreshExpiration);
+
         print('Token verification successful:');
         print('- Token exists: ${token.isNotEmpty}');
         print('- Expiration date: $expirationDate');
         print('- Is expired: ${expirationDate.isBefore(DateTime.now())}');
+        print('- Refresh token exists: ${refreshToken.isNotEmpty}');
+        print('- Refresh expiration date: $refreshExpirationDate');
+        print(
+          '- Is refresh token expired: ${refreshExpirationDate.isBefore(DateTime.now())}',
+        );
+
         return true;
       } catch (e) {
         print('Token verification failed: invalid expiration date format');
@@ -174,22 +176,82 @@ class AuthService {
     }
   }
 
-  Future<bool> test() async {
+  Future<bool> refreshTokens() async {
     try {
-      final response = await http.get(
-        Uri.parse('http://localhost:8080/test'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${await getToken()}',
-        },
+      final refreshToken = await getRefreshToken();
+      final refreshExpiration = await getRefreshTokenExpiration();
+
+      if (refreshToken == null || refreshExpiration == null) {
+        print('No refresh token or expiration available');
+        return false;
+      }
+
+      final refreshExpirationDate = DateTime.parse(refreshExpiration);
+      if (refreshExpirationDate.isBefore(DateTime.now())) {
+        print('Refresh token has expired');
+        return false;
+      }
+
+      final response = await _dio.post(
+        APIConstants.refreshTokenEndpoint,
+        data: {'refreshToken': refreshToken},
       );
-      print('Test response status: ${response.statusCode}');
-      print('Test response body: ${response.body}');
-      await verifyTokenStorage();
-      return response.statusCode == 200;
+
+      if (response.statusCode == 200) {
+        await _saveTokens(response.data);
+        return true;
+      }
+
+      return false;
     } catch (e) {
-      print('Test error: $e');
+      print('Token refresh error: $e');
       return false;
     }
+  }
+
+  Future<void> _saveTokens(Map<String, dynamic> data) async {
+    final jwtToken = data['jwtToken'];
+    final jwtExpirationTimestamp = data['jwtExpirationDate'] as int;
+    final refreshToken = data['refreshToken'];
+    final refreshExpirationTimestamp =
+        data['refreshTokenExpirationDate'] as int;
+
+    final jwtExpirationDateStr =
+        DateTime.fromMillisecondsSinceEpoch(
+          jwtExpirationTimestamp,
+        ).toIso8601String();
+
+    final refreshExpirationDateStr =
+        DateTime.fromMillisecondsSinceEpoch(
+          refreshExpirationTimestamp,
+        ).toIso8601String();
+
+    await _storage.write(key: 'jwtToken', value: jwtToken);
+    await _storage.write(
+      key: 'jwtTokenExpiration',
+      value: jwtExpirationDateStr,
+    );
+    await _storage.write(key: 'refreshToken', value: refreshToken);
+    await _storage.write(
+      key: 'refreshTokenExpiration',
+      value: refreshExpirationDateStr,
+    );
+  }
+
+  // Helper methods for token management
+  Future<String?> getToken() async {
+    return await _storage.read(key: 'jwtToken');
+  }
+
+  Future<String?> getTokenExpiration() async {
+    return await _storage.read(key: 'jwtTokenExpiration');
+  }
+
+  Future<String?> getRefreshToken() async {
+    return await _storage.read(key: 'refreshToken');
+  }
+
+  Future<String?> getRefreshTokenExpiration() async {
+    return await _storage.read(key: 'refreshTokenExpiration');
   }
 }

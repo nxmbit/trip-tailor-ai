@@ -14,7 +14,7 @@ class SecureRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: authService.isLoggedIn(),
+      future: authService.isAuthenticated(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -28,10 +28,13 @@ class SecureRoute extends StatelessWidget {
 
         // Redirect to sign in if not authenticated
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.of(context).pushReplacementNamed('/signin');
+          authService.logout(notifyServer: false);
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil("/signin", (route) => false);
         });
 
-        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        return const SizedBox.shrink();
       },
     );
   }

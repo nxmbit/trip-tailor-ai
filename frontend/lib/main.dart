@@ -5,7 +5,6 @@ import 'package:frontend/screens/signup_screen.dart';
 import 'package:frontend/screens/welcome_screen.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/theme/app_theme.dart';
-import 'package:frontend/widgets/auth_wrapper.dart';
 import 'package:frontend/widgets/secure_route.dart';
 
 void main() {
@@ -19,24 +18,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AuthWrapper(
-      authService: _authService,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Trip Tailor',
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        routes: {
-          '/': (context) => const WelcomeScreen(),
-          "/signin": (context) => const SignInScreen(),
-          "/signup": (context) => const SignUpScreen(),
-          "/home":
-              (context) =>
-                  SecureRoute(authService: _authService, child: HomeScreen()),
-        },
-        initialRoute: "/",
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Trip Tailor',
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      routes: {
+        '/': (context) => const WelcomeScreen(),
+        "/signin": (context) => const SignInScreen(),
+        "/signup": (context) => const SignUpScreen(),
+        "/home":
+            (context) =>
+                SecureRoute(authService: _authService, child: HomeScreen()),
+      },
+      initialRoute: "/",
     );
   }
 }

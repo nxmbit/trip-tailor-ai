@@ -178,7 +178,7 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
         const SizedBox(height: UIConstants.defaultSpacing),
-        const SocialAuthButtons(),
+        SocialAuthButtons(),
       ],
     );
   }
