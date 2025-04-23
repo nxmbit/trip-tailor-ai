@@ -9,15 +9,16 @@ import com.ai.triptailor.response.LoginResponse;
 import com.ai.triptailor.service.AuthService;
 import com.ai.triptailor.service.JwtService;
 import com.ai.triptailor.service.RefreshTokenService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -60,4 +61,28 @@ public class AuthController {
         refreshTokenService.deleteByUserId(userId);
         return ResponseEntity.ok().body(Map.of("message", "Logout successful"));
     }
+
+    @GetMapping("/tokens")
+    public ResponseEntity<?> getTokens(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = null;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refresh_token".equals(cookie.getName())) {
+                    refreshToken = cookie.getValue();
+                }
+            }
+        }
+
+        if (refreshToken != null) {
+            LoginResponse response = authService.validateTokensFromCookies(refreshToken);
+            if (response != null) {
+                return ResponseEntity.ok(response);
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
 }

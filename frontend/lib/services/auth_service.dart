@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/constants/api_constants.dart';
 import 'package:dio/dio.dart';
 import 'package:frontend/interceptors/auth_interceptor.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthService {
   final _storage = const FlutterSecureStorage();
@@ -253,5 +254,49 @@ class AuthService {
 
   Future<String?> getRefreshTokenExpiration() async {
     return await _storage.read(key: 'refreshTokenExpiration');
+  }
+
+  Future<bool> handleSocialAuth(String provider) async {
+    try {
+      final authUrl = '${APIConstants.baseUrl}${APIConstants.oauth2Endpoint}$provider';
+
+      // Launch the URL in the browser
+      final Uri uri = Uri.parse(authUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          webOnlyWindowName: '_self', // Prevents opening in new tab
+          mode: LaunchMode.platformDefault,
+        );
+        return true;
+      } else {
+        print('Could not launch OAuth URL: $authUrl');
+        return false;
+      }
+    } catch (e) {
+      print('Social auth error: $e');
+      return false;
+    }
+  }
+
+  Future<bool> processSocialAuthCallback() async {
+    try {
+      // Call endpoint to exchange cookies for tokens
+      final response = await _dio.get(
+        APIConstants.tokensEndpoint,
+        options: Options(
+          extra: {'withCredentials': true}
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        await _saveTokens(response.data);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Social auth callback error: $e');
+      return false;
+    }
   }
 }

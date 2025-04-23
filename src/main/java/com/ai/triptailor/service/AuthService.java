@@ -102,4 +102,25 @@ public class AuthService {
                 })
                 .orElseThrow(() -> new RefreshTokenException("Refresh token is not in database!"));
     }
+
+    public LoginResponse validateTokensFromCookies(String refreshToken) {
+        return refreshTokenService.findByRefreshToken(refreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(token -> {
+                    User user = token.getUser();
+                    // Create new tokens
+                    String newJwtToken = jwtService.createToken(new UserPrincipal(user));
+                    refreshTokenService.deleteByUserId(user.getId());
+                    RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
+
+                    return new LoginResponse(
+                            newJwtToken,
+                            newRefreshToken.getToken(),
+                            user.getEmail(),
+                            jwtService.getExpirationDate(newJwtToken),
+                            newRefreshToken.getExpiryDate().toEpochMilli()
+                    );
+                })
+                .orElse(null);
+    }
 }

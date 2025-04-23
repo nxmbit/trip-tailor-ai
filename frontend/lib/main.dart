@@ -4,6 +4,7 @@ import 'package:frontend/screens/signin_screen.dart';
 import 'package:frontend/screens/signup_screen.dart';
 import 'package:frontend/screens/welcome_screen.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/screens/oauth_redirect_handler.dart';
 import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/widgets/secure_route.dart';
 
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         "/home":
             (context) =>
                 SecureRoute(authService: _authService, child: HomeScreen()),
+        "/oauth2/redirect": (context) => const OAuthRedirectHandler(),
       },
       initialRoute: "/",
     );
