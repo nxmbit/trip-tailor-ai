@@ -43,6 +43,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Trip> trips;
 
+    private long totalGenerations;
+
+    private long inputTokens;
+
+    private long outputTokens;
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
@@ -51,6 +57,9 @@ public class User {
         this.authProvider = AuthProvider.local; // Default to local authentication
         this.profileImageUrl = null;
         this.providersId = null;
+        this.totalGenerations = 0;
+        this.inputTokens = 0;
+        this.outputTokens = 0;
     }
 
     public User() {}
@@ -132,5 +141,37 @@ public class User {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public long getTotalGenerations() {
+        return totalGenerations;
+    }
+
+    public void setTotalGenerations(long totalGenerations) {
+        this.totalGenerations = totalGenerations;
+    }
+
+    public long getInputTokens() {
+        return inputTokens;
+    }
+
+    public void setInputTokens(long inputTokens) {
+        this.inputTokens = inputTokens;
+    }
+
+    public long getOutputTokens() {
+        return outputTokens;
+    }
+
+    public void setOutputTokens(long outputTokens) {
+        this.outputTokens = outputTokens;
+    }
+
+    public Set<Trip> getTrips() {
+        return trips;
+    }
+
+    public void setTrips(Set<Trip> trips) {
+        this.trips = trips;
     }
 }

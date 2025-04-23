@@ -12,10 +12,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class GoogleMapsService {
     private final GeoApiContext geoApiContext;
+    private final Random random = new Random();
 
     @Autowired
     public GoogleMapsService(GeoApiContext geoApiContext) {
@@ -51,6 +53,18 @@ public class GoogleMapsService {
     public Optional<byte[]> getFirstImageFromPlace(PlacesSearchResult place) {
         if (place.photos != null && place.photos.length > 0) {
             String photoReference = place.photos[0].photoReference;
+            return getImageBytesFromReference(photoReference);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<byte[]> getRandomImageFromTopNPhotos(PlacesSearchResult place, int n) {
+        if (n <= 0) throw new IllegalArgumentException("Parameter n must be positive");
+
+        if (place.photos != null && place.photos.length > 0) {
+            int randomIndex = random.nextInt(Math.min(n, place.photos.length));
+            String photoReference = place.photos[randomIndex].photoReference;
             return getImageBytesFromReference(photoReference);
         } else {
             return Optional.empty();

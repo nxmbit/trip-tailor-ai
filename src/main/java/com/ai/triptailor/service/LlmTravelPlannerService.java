@@ -1,28 +1,43 @@
 package com.ai.triptailor.service;
 
 import com.ai.triptailor.dto.GenerateTravelPlanRequestDto;
+import com.ai.triptailor.llm.schema.DestinationDescription;
+import com.ai.triptailor.model.Attraction;
 import com.ai.triptailor.model.Trip;
+import com.ai.triptailor.model.TripDay;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Locale;
+import java.time.Duration;
 
 @Service
 public class LlmTravelPlannerService {
+    private static final Logger logger = LoggerFactory.getLogger(LlmTravelPlannerService.class);
+
     private final S3StorageService s3StorageService;
     private final GoogleTimeSpentService googleTimeSpentService;
-    private final OpenAiChatModel openAiChatModel;
+    private final GoogleMapsService googleMapsService;
+    private final ChatClient chatClient;
+
+    private final String SYSTEM_PROMPT = "You are a travel planner.";
 
     @Autowired
     public LlmTravelPlannerService(
             S3StorageService s3StorageService,
-            GoogleTimeSpentService googleTimeSpentService, OpenAiChatModel openAiChatModel
+            GoogleTimeSpentService googleTimeSpentService,
+            GoogleMapsService googleMapsService,
+            ChatClient.Builder chatClientBuilder
     ) {
         this.s3StorageService = s3StorageService;
         this.googleTimeSpentService = googleTimeSpentService;
-        this.openAiChatModel = openAiChatModel;
+        this.googleMapsService = googleMapsService;
+        this.chatClient = chatClientBuilder.build();
     }
 
     public Trip generateTravelPlan(@Valid GenerateTravelPlanRequestDto request) {
@@ -30,6 +45,37 @@ public class LlmTravelPlannerService {
         trip.addDestination("en", request.getDestination());
         trip.setTripStartDate(request.getStartDate());
         trip.setTripEndDate(request.getEndDate());
+
+        // Calculate trip duration in days
+        Duration duration = Duration.between(trip.getTripStartDate(), trip.getTripEndDate());
+        long days = (int) duration.toDays();
+
+        // Search for place using Google Maps API, if not found throw an exception
+        var placesSearchResult = googleMapsService.searchPlace(request.getDestination());
+        if (placesSearchResult.isEmpty()) {
+            throw new RuntimeException("Destination not found");
+        }
+        var place = placesSearchResult.get();
+        trip.setGooglePlacesId(place.placeId);
+
+        // For more variety across different travel plans to the same place,
+        // get random photo from top 5 photo search results
+        googleMapsService.getRandomImageFromTopNPhotos(place, 5)
+                .ifPresent(imageBytes -> {
+                    s3StorageService.uploadFile(imageBytes, "image/jpeg", "jpg")
+                            .ifPresent(trip::setImageFileName);
+                });
+
+        // Generate trip description
+        DestinationDescription description = chatClient.prompt()
+                .system(SYSTEM_PROMPT)
+                .user("Generate a description about the travel destination " + request.getDestination())
+                .call()
+                .entity(DestinationDescription.class);
+
+        System.out.println(description);
+
+        // Generate daily itinerary
 
         return trip;
     }

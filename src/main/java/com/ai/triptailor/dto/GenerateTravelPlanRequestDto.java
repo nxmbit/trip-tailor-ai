@@ -1,6 +1,7 @@
 package com.ai.triptailor.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
 import java.util.List;
@@ -9,10 +10,10 @@ public class GenerateTravelPlanRequestDto {
     @NotBlank(message = "Destination is required")
     private String destination;
 
-    @NotBlank(message = "Travel start date is required")
+    @NotNull(message = "Travel start date is required")
     private Instant startDate;
 
-    @NotBlank(message = "Travel end date is required")
+    @NotNull(message = "Travel end date is required")
     private Instant endDate;
 
     private List<String> desiredDestinations;

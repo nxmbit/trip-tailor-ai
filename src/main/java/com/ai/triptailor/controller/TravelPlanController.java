@@ -26,7 +26,4 @@ public class TravelPlanController {
         return ResponseEntity.ok(llmTravelPlannerService.generateTravelPlan(request));
     }
 
-
-
-
 }

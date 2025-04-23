@@ -65,4 +65,29 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(body);
     }
+
+    @ExceptionHandler(org.springframework.ai.retry.NonTransientAiException.class)
+    public ResponseEntity<Map<String, Object>> handleAiException(
+            org.springframework.ai.retry.NonTransientAiException ex,
+            HttpServletRequest request) {
+
+        logger.error("AI service error: {}", ex.getMessage());
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
+        body.put("error", "Service Unavailable");
+
+        // Check if it's a quota error
+        if (ex.getMessage().contains("insufficient_quota")) {
+            body.put("message", "AI service quota exceeded. Please try again later.");
+        } else {
+            body.put("message", "There was an issue with the AI service. Please try again later.");
+        }
+
+        body.put("path", request.getRequestURI());
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(body);
+    }
 }
