@@ -1,11 +1,11 @@
 package com.ai.triptailor.controller;
 
-import com.ai.triptailor.dto.LoginRequestDto;
-import com.ai.triptailor.dto.RefreshTokenRequestDto;
-import com.ai.triptailor.dto.RegisterRequestDto;
+import com.ai.triptailor.request.LoginRequestDto;
+import com.ai.triptailor.request.RefreshTokenRequestDto;
+import com.ai.triptailor.request.RegisterRequestDto;
 import com.ai.triptailor.model.User;
 import com.ai.triptailor.model.UserPrincipal;
-import com.ai.triptailor.response.LoginResponse;
+import com.ai.triptailor.response.LoginResponseDto;
 import com.ai.triptailor.service.AuthService;
 import com.ai.triptailor.service.JwtService;
 import com.ai.triptailor.service.RefreshTokenService;
@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -43,14 +42,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequestDto userData) {
-        LoginResponse loginResponse = authService.authenticate(userData);
-        return ResponseEntity.ok(loginResponse);
+    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto userData) {
+        LoginResponseDto loginResponseDto = authService.authenticate(userData);
+        return ResponseEntity.ok(loginResponseDto);
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<LoginResponse> refreshToken(@Valid @RequestBody RefreshTokenRequestDto refreshTokenRequest) {
-        LoginResponse refreshTokenResponse = authService.refreshToken(refreshTokenRequest);
+    public ResponseEntity<LoginResponseDto> refreshToken(@Valid @RequestBody RefreshTokenRequestDto refreshTokenRequest) {
+        LoginResponseDto refreshTokenResponse = authService.refreshToken(refreshTokenRequest);
         return ResponseEntity.ok(refreshTokenResponse);
     }
 
@@ -76,7 +75,7 @@ public class AuthController {
         }
 
         if (refreshToken != null) {
-            LoginResponse response = authService.validateTokensFromCookies(refreshToken);
+            LoginResponseDto response = authService.validateTokensFromCookies(refreshToken);
             if (response != null) {
                 return ResponseEntity.ok(response);
             }
