@@ -45,19 +45,11 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Override
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        String jwtToken = jwtService.createToken(userPrincipal);
         refreshTokenService.deleteByUserId(userPrincipal.getId());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrincipal.getId());
 
-        // Set the JWT and refresh token as HttpOnly cookies
-        // These are only meant for token transfer to the client
-        Cookie accessTokenCookie = new Cookie("access_token", jwtToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(300); // 5 min
-        response.addCookie(accessTokenCookie);
-
+        // Set the refresh token as HttpOnly cookie
+        // it is only meant for token transfer to the client
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken.getToken());
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true);

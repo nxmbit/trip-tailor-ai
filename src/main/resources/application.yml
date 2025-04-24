@@ -49,8 +49,7 @@ spring:
       api-key: ${SPRING_AI_OPENAI_API_KEY}
       chat:
         options:
-          model: gpt-4.1
-          temperature: 1.0
+          model: gpt-4o
 
   # Config Import
   config:
@@ -67,8 +66,7 @@ security:
   cors:
     allowedOrigins: http://localhost:3000, http://localhost:8080
   oauth2:
-    redirectUri: http://tinder.com
-#    redirectUri: http://localhost:3000/oauth2/redirect
+    redirectUri: http://localhost:3000/#/oauth2/redirect
 
 # AWS S3 Configuration
 aws:

@@ -1,14 +1,14 @@
 package com.ai.triptailor.response;
 
-public class LoginResponse {
+public class LoginResponseDto {
     private String jwtToken;
     private String refreshToken;
     private String email;
     private long jwtExpirationDate;
     private long refreshTokenExpirationDate;
 
-    public LoginResponse(String jwtToken, String refreshToken, String email, long jwtExpirationDate,
-                         long refreshTokenExpirationDate) {
+    public LoginResponseDto(String jwtToken, String refreshToken, String email, long jwtExpirationDate,
+                            long refreshTokenExpirationDate) {
         this.jwtToken = jwtToken;
         this.refreshToken = refreshToken;
         this.email = email;
