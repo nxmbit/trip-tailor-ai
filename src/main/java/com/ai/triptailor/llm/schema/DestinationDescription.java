@@ -4,10 +4,10 @@ import org.springframework.context.annotation.Description;
 
 public record DestinationDescription(
         @Description("About the place in at least 50 words")
-        String aboutThePlace,
+        String aboutTheDestination,
 
         @Description("History of the place in at least 50 words")
-        String placeHistory,
+        String destinationHistory,
 
         @Description("Best time to visit")
         String bestTimeToVisit,

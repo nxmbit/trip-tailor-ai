@@ -1,5 +1,6 @@
 package com.ai.triptailor.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
@@ -26,12 +27,25 @@ public class Trip {
     @Column(columnDefinition = "jsonb")
     private Map<String, String> description = new HashMap<>();
 
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> bestTimeToVisit = new HashMap<>();
+
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> destinationHistory = new HashMap<>();
+
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String[]> localCuisineRecommendations = new HashMap<>();
+
     private String googlePlacesId;
 
     private Instant tripStartDate;
 
     private Instant tripEndDate;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -140,5 +154,54 @@ public class Trip {
 
     public String getDescription(String languageCode) {
         return this.description.getOrDefault(languageCode, this.description.getOrDefault("en", ""));
+    }
+
+    public Map<String, String> getBestTimeToVisit() {
+        return bestTimeToVisit;
+    }
+
+    public void setBestTimeToVisit(Map<String, String> bestTimeToVisit) {
+        this.bestTimeToVisit = bestTimeToVisit;
+    }
+
+    public void addBestTimeToVisit(String languageCode, String text) {
+        this.bestTimeToVisit.put(languageCode, text);
+    }
+
+    public String getBestTimeToVisit(String languageCode) {
+        return this.bestTimeToVisit.getOrDefault(languageCode, this.bestTimeToVisit.getOrDefault("en", ""));
+    }
+
+    public Map<String, String[]> getLocalCuisineRecommendations() {
+        return localCuisineRecommendations;
+    }
+
+    public void setLocalCuisineRecommendations(Map<String, String[]> localCuisineRecommendations) {
+        this.localCuisineRecommendations = localCuisineRecommendations;
+    }
+
+    public void addLocalCuisineRecommendations(String languageCode, String[] recommendations) {
+        this.localCuisineRecommendations.put(languageCode, recommendations);
+    }
+
+    public String[] getLocalCuisineRecommendations(String languageCode) {
+        return this.localCuisineRecommendations.getOrDefault(languageCode,
+                this.localCuisineRecommendations.getOrDefault("en", new String[0]));
+    }
+
+    public Map<String, String> getDestinationHistory() {
+        return destinationHistory;
+    }
+
+    public void setDestinationHistory(Map<String, String> destinationHistory) {
+        this.destinationHistory = destinationHistory;
+    }
+
+    public void addDestinationHistory(String languageCode, String text) {
+        this.destinationHistory.put(languageCode, text);
+    }
+
+    public String getDestinationHistory(String languageCode) {
+        return this.destinationHistory.getOrDefault(languageCode, this.destinationHistory.getOrDefault("en", ""));
     }
 }

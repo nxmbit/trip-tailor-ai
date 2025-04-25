@@ -14,34 +14,32 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", nullable = false)
+    @Column(nullable = false)
     private String username;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(name = "password")
     @JsonIgnore
     private String password;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @Column(name = "auth_provider")
     @NotNull
     @Enumerated(EnumType.STRING)
     private AuthProvider authProvider;
 
-    @Column(name = "profile_image_url")
     private String profileImageUrl;
 
     // This field is used for OAuth2 providers like Google, Facebook, etc.
     // It stores the unique identifier provided by the OAuth2 provider.
-    @Column(name = "providers_id")
     private String providersId;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Trip> trips;
+
+    private Long generationsNumber;
 
     public User(String username, String email, String password) {
         this.username = username;
@@ -68,6 +66,14 @@ public class User {
             this.trips.remove(trip);
             trip.setUser(null);
         }
+    }
+
+    public Set<Trip> getTrips() {
+        return trips;
+    }
+
+    public void setTrips(Set<Trip> trips) {
+        this.trips = trips;
     }
 
     public Long getId() {
@@ -134,5 +140,11 @@ public class User {
         this.enabled = enabled;
     }
 
+    public Long getGenerationsNumber() {
+        return generationsNumber;
+    }
 
+    public void setGenerationsNumber(Long generationsNumber) {
+        this.generationsNumber = generationsNumber;
+    }
 }

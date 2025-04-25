@@ -1,18 +1,18 @@
 package com.ai.triptailor.service;
 
-import com.ai.triptailor.dto.GenerateTravelPlanRequestDto;
+import com.ai.triptailor.model.User;
+import com.ai.triptailor.repository.TripRepository;
+import com.ai.triptailor.repository.UserRepository;
+import com.ai.triptailor.request.GenerateTravelPlanRequestDto;
 import com.ai.triptailor.llm.schema.DestinationDescription;
-import com.ai.triptailor.model.Attraction;
 import com.ai.triptailor.model.Trip;
-import com.ai.triptailor.model.TripDay;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.prompt.SystemPromptTemplate;
-import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 
@@ -24,6 +24,9 @@ public class LlmTravelPlannerService {
     private final GoogleTimeSpentService googleTimeSpentService;
     private final GoogleMapsService googleMapsService;
     private final ChatClient chatClient;
+    private final UserProfileService userProfileService;
+    private final TripRepository tripRepository;
+    private final UserRepository userRepository;
 
     private final String SYSTEM_PROMPT = "You are a travel planner.";
 
@@ -32,14 +35,21 @@ public class LlmTravelPlannerService {
             S3StorageService s3StorageService,
             GoogleTimeSpentService googleTimeSpentService,
             GoogleMapsService googleMapsService,
-            ChatClient.Builder chatClientBuilder
+            ChatClient.Builder chatClientBuilder,
+            UserProfileService userProfileService,
+            TripRepository tripRepository,
+            UserRepository userRepository
     ) {
         this.s3StorageService = s3StorageService;
         this.googleTimeSpentService = googleTimeSpentService;
         this.googleMapsService = googleMapsService;
         this.chatClient = chatClientBuilder.build();
+        this.userProfileService = userProfileService;
+        this.tripRepository = tripRepository;
+        this.userRepository = userRepository;
     }
 
+    @Transactional
     public Trip generateTravelPlan(@Valid GenerateTravelPlanRequestDto request) {
         Trip trip = new Trip();
         trip.addDestination("en", request.getDestination());
@@ -73,9 +83,25 @@ public class LlmTravelPlannerService {
                 .call()
                 .entity(DestinationDescription.class);
 
-        System.out.println(description);
+        // TODO: error handling
+        trip.addDescription("en", description.aboutTheDestination());
+        trip.addBestTimeToVisit("en", description.bestTimeToVisit());
+        trip.addLocalCuisineRecommendations("en", description.localCuisineRecommendations());
+        trip.addDestinationHistory("en", description.destinationHistory());
 
         // Generate daily itinerary
+
+        // Associate trip with the current user - fail if user cannot be found
+        User currentUser = userProfileService.getCurrentUser();
+
+        if (currentUser.getGenerationsNumber() == null) {
+            currentUser.setGenerationsNumber(1L);
+        } else {
+            currentUser.setGenerationsNumber(currentUser.getGenerationsNumber() + 1);
+        }
+
+        currentUser.addTrip(trip);
+        userRepository.save(currentUser);
 
         return trip;
     }

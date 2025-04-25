@@ -1,5 +1,6 @@
 package com.ai.triptailor.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ public class TripDay {
     private int dayNumber;
     private String description;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "trip_id", nullable = false)
     private Trip trip;

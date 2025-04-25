@@ -1,9 +1,12 @@
 package com.ai.triptailor.service;
 
 import com.ai.triptailor.model.User;
+import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.repository.UserRepository;
 import com.ai.triptailor.response.UserProfileResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,5 +28,18 @@ public class UserProfileService {
                 user.getUsername(),
                 user.getProfileImageUrl()
         );
+    }
+
+    public User getCurrentUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal userPrincipal) {
+                return userRepository.findById(userPrincipal.getId())
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+            }
+            throw new RuntimeException("Not authenticated");
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving current user", e);
+        }
     }
 }

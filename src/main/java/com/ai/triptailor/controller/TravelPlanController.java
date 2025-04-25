@@ -1,6 +1,6 @@
 package com.ai.triptailor.controller;
 
-import com.ai.triptailor.dto.GenerateTravelPlanRequestDto;
+import com.ai.triptailor.request.GenerateTravelPlanRequestDto;
 import com.ai.triptailor.model.Trip;
 import com.ai.triptailor.service.LlmTravelPlannerService;
 import jakarta.validation.Valid;
