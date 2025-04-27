@@ -16,8 +16,8 @@ public class Attraction {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "trip_day_id", nullable = false)
-    private TripDay tripDay;
+    @JoinColumn(name = "travel_plan_day_id", nullable = false)
+    private TravelPlanDay travelPlanDay;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
@@ -27,26 +27,16 @@ public class Attraction {
     @Column(columnDefinition = "jsonb")
     private Map<String, String> description = new HashMap<>();
 
+    private String googlePlacesId;
     private double latitude;
     private double longitude;
     private String imageFileName;
     private int visitOrder; // Order of visit in the trip day, evaluate if this is needed
-    private double visitDuration; // in hours
+    private int visitDuration; // in minutes
+    private int numberOfUserRatings;
+    private double averageRating;
 
     public Attraction() {}
-
-    public Attraction(Long id, TripDay tripDay, Map<String, String> name, Map<String, String> description,
-                      double latitude, double longitude, String imageFileName, int visitOrder, double visitDuration) {
-        this.id = id;
-        this.tripDay = tripDay;
-        this.name = name;
-        this.description = description;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.imageFileName = imageFileName;
-        this.visitOrder = visitOrder;
-        this.visitDuration = visitDuration;
-    }
 
     public Long getId() {
         return id;
@@ -56,12 +46,12 @@ public class Attraction {
         this.id = id;
     }
 
-    public TripDay getTripDay() {
-        return tripDay;
+    public TravelPlanDay setTravelPlanDay() {
+        return travelPlanDay;
     }
 
-    public void setTripDay(TripDay tripDay) {
-        this.tripDay = tripDay;
+    public void setTravelPlanDay(TravelPlanDay travelPlanDay) {
+        this.travelPlanDay = travelPlanDay;
     }
 
     public Map<String, String> getName() {
@@ -72,12 +62,28 @@ public class Attraction {
         this.name = name;
     }
 
+    public void addName(String languageCode, String text) {
+        this.name.put(languageCode, text);
+    }
+
+    public String getName(String languageCode) {
+        return this.name.getOrDefault(languageCode, this.name.getOrDefault("en", ""));
+    }
+
     public Map<String, String> getDescription() {
         return description;
     }
 
     public void setDescription(Map<String, String> description) {
         this.description = description;
+    }
+
+    public void addDescription(String languageCode, String text) {
+        this.description.put(languageCode, text);
+    }
+
+    public String getDescription(String languageCode) {
+        return this.description.getOrDefault(languageCode, this.description.getOrDefault("en", ""));
     }
 
     public double getLatitude() {
@@ -112,11 +118,35 @@ public class Attraction {
         this.visitOrder = visitOrder;
     }
 
-    public double getVisitDuration() {
+    public int getVisitDuration() {
         return visitDuration;
     }
 
-    public void setVisitDuration(double visitDuration) {
+    public void setVisitDuration(int visitDuration) {
         this.visitDuration = visitDuration;
+    }
+
+    public String getGooglePlacesId() {
+        return googlePlacesId;
+    }
+
+    public void setGooglePlacesId(String googlePlacesId) {
+        this.googlePlacesId = googlePlacesId;
+    }
+
+    public int getNumberOfUserRatings() {
+        return numberOfUserRatings;
+    }
+
+    public void setNumberOfUserRatings(int numberOfUserRatings) {
+        this.numberOfUserRatings = numberOfUserRatings;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double rating) {
+        this.averageRating = rating;
     }
 }

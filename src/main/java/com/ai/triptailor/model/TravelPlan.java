@@ -6,13 +6,11 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
-public class Trip {
+public class TravelPlan {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -41,31 +39,21 @@ public class Trip {
 
     private String googlePlacesId;
 
-    private Instant tripStartDate;
+    private LocalDateTime travelStartDate;
 
-    private Instant tripEndDate;
+    private LocalDateTime travelEndDate;
+
+    private Instant createdAt;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TripDay> tripDays;
+    @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TravelPlanDay> travelPlanDays;
 
-    public Trip() {
-    }
-
-    public Trip(UUID id, String imageFileName, Map<String, String> destination,
-                Map<String, String> description, Instant tripStartDate,
-                Instant tripEndDate, User user) {
-        this.id = id;
-        this.imageFileName = imageFileName;
-        this.destination = destination;
-        this.description = description;
-        this.tripStartDate = tripStartDate;
-        this.tripEndDate = tripEndDate;
-        this.user = user;
+    public TravelPlan() {
     }
 
     public UUID getId() {
@@ -84,20 +72,20 @@ public class Trip {
         this.imageFileName = imageUrl;
     }
 
-    public Instant getTripStartDate() {
-        return tripStartDate;
+    public LocalDateTime getTravelStartDate() {
+        return travelStartDate;
     }
 
-    public void setTripStartDate(Instant tripStartDate) {
-        this.tripStartDate = tripStartDate;
+    public void setTravelStartDate(LocalDateTime tripStartDate) {
+        this.travelStartDate = tripStartDate;
     }
 
-    public Instant getTripEndDate() {
-        return tripEndDate;
+    public LocalDateTime getTravelEndDate() {
+        return travelEndDate;
     }
 
-    public void setTripEndDate(Instant tripEndDate) {
-        this.tripEndDate = tripEndDate;
+    public void setTravelEndDate(LocalDateTime tripEndDate) {
+        this.travelEndDate = tripEndDate;
     }
 
     public User getUser() {
@@ -108,12 +96,20 @@ public class Trip {
         this.user = user;
     }
 
-    public Set<TripDay> getTripDays() {
-        return tripDays;
+    public Set<TravelPlanDay> getTravelPlanDays() {
+        return travelPlanDays;
     }
 
-    public void setTripDays(Set<TripDay> tripDays) {
-        this.tripDays = tripDays;
+    public void setTravelPlanDays(Set<TravelPlanDay> travelPlanDays) {
+        this.travelPlanDays = travelPlanDays;
+    }
+
+    public void addTravelPlanDay(TravelPlanDay travelPlanDay) {
+        if (this.travelPlanDays == null) {
+            this.travelPlanDays = new HashSet<>();
+        }
+        this.travelPlanDays.add(travelPlanDay);
+        travelPlanDay.setTravelPlan(this);
     }
 
     public Map<String, String> getDestination() {
@@ -203,5 +199,13 @@ public class Trip {
 
     public String getDestinationHistory(String languageCode) {
         return this.destinationHistory.getOrDefault(languageCode, this.destinationHistory.getOrDefault("en", ""));
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 }

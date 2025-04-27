@@ -37,7 +37,7 @@ public class User {
     private String providersId;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Trip> trips;
+    private Set<TravelPlan> travelPlans;
 
     private Long generationsNumber;
 
@@ -53,27 +53,27 @@ public class User {
 
     public User() {}
 
-    public void addTrip(Trip trip) {
-        if (this.trips == null) {
-            this.trips = new HashSet<>();
+    public void addTravelPlan(TravelPlan travelPlan) {
+        if (this.travelPlans == null) {
+            this.travelPlans = new HashSet<>();
         }
-        this.trips.add(trip);
-        trip.setUser(this);
+        this.travelPlans.add(travelPlan);
+        travelPlan.setUser(this);
     }
 
-    public void removeTrip(Trip trip) {
-        if (this.trips != null) {
-            this.trips.remove(trip);
-            trip.setUser(null);
+    public void removeTravelPlan(TravelPlan travelPlan) {
+        if (this.travelPlans != null) {
+            this.travelPlans.remove(travelPlan);
+            travelPlan.setUser(null);
         }
     }
 
-    public Set<Trip> getTrips() {
-        return trips;
+    public Set<TravelPlan> getTravelPlans() {
+        return travelPlans;
     }
 
-    public void setTrips(Set<Trip> trips) {
-        this.trips = trips;
+    public void setTravelPlans(Set<TravelPlan> travelPlans) {
+        this.travelPlans = travelPlans;
     }
 
     public Long getId() {

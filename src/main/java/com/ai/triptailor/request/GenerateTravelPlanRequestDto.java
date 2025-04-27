@@ -1,20 +1,17 @@
 package com.ai.triptailor.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class GenerateTravelPlanRequestDto {
     @NotBlank(message = "Destination is required")
     private String destination;
 
-    @NotNull(message = "Travel start date is required")
-    private Instant startDate;
+    private LocalDateTime startDate;
 
-    @NotNull(message = "Travel end date is required")
-    private Instant endDate;
+    private LocalDateTime endDate;
 
     private List<String> desiredDestinations;
 
@@ -28,19 +25,19 @@ public class GenerateTravelPlanRequestDto {
         this.destination = destination;
     }
 
-    public Instant getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Instant startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Instant getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Instant endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 

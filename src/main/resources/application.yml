@@ -49,11 +49,16 @@ spring:
       api-key: ${SPRING_AI_OPENAI_API_KEY}
       chat:
         options:
-          model: gpt-4o
+          model: gpt-4.1
 
   # Config Import
   config:
     import: optional:file:.env[.properties]
+
+# Logging Configuration
+logging:
+  level:
+    root: ${LOGGING_LEVEL}
 
 # JWT Configuration
 security:
@@ -75,6 +80,7 @@ aws:
     secret-key: ${AWS_SECRET_KEY}
     region: ${AWS_REGION}
     bucket-name: ${AWS_BUCKET_NAME}
+    link-expiration: 3600
 
 # Google Maps Configuration
 google:
