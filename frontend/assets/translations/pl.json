@@ -1,0 +1,41 @@
+{
+  "app": {
+    "title": "tripTailor.ai",
+    "subtitle": "Zaplanuj swoją podróż z nami"
+  },
+  "auth": {
+    "username": "Nazwa użytkownika",
+    "email": "Email",
+    "password": "Hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "signIn": "Zaloguj się",
+    "signUp": "Zarejestruj się",
+    "providerSignIn": "Lub zaloguj się przez",
+    "backToWelcome": "Powrót do ekranu powitalnego",
+    "errorMessage": "Wystąpił błąd: ",
+    "signUpError": "Rejestracja nie powiodła się. Spróbuj ponownie.",
+    "signInError": "Nieprawidłowe dane logowania. Spróbuj ponownie."
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "language": "Język",
+    "mobileDarkMode": "Tryb ciemny",
+    "theme": "Motyw",
+    "darkTheme": "Ciemny",
+    "lightTheme": "Jasny",
+    "logout": "Wyloguj"
+  },
+  "navigation": {
+    "home": "Strona główna",
+    "tripPlanner": "Planer podróży",
+    "yourTrips": "Twoje podróże"
+  },
+  "home": {
+    "days": "dni",
+    "exampleTripsTitle": "Przykładowe podróże - Wypróbuj nas!",
+    "recentTripsTitle": "Ostatnio utworzone podróże",
+    "welcomeTitle": "Witaj w tripTailor.ai",
+    "welcomeSubtitle": "Spersonalizowane doświadczenia podróżnicze stworzone specjalnie dla Ciebie",
+    "welcomeButton": "Zaplanuj nową podróż"
+  }
+}
