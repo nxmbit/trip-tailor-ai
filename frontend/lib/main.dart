@@ -1,40 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/home_screen.dart';
-import 'package:frontend/screens/signin_screen.dart';
-import 'package:frontend/screens/signup_screen.dart';
-import 'package:frontend/screens/welcome_screen.dart';
-import 'package:frontend/services/auth_service.dart';
-import 'package:frontend/screens/oauth_redirect_handler.dart';
-import 'package:frontend/theme/app_theme.dart';
-import 'package:frontend/widgets/secure_route.dart';
+import 'package:frontend/app/app.dart';
+import 'package:frontend/presentation/state/providers/providers_setup.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
-}
+  // This ensures Flutter bindings are initialized before using platform channels
+  WidgetsFlutterBinding.ensureInitialized();
+  // Pre-initialize the language provider
+  // final languageProvider = LanguageProvider();
+  // languageProvider.init();
 
-class MyApp extends StatelessWidget {
-  final _authService = AuthService();
-
-  MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Trip Tailor',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      routes: {
-        '/': (context) => const WelcomeScreen(),
-        "/signin": (context) => const SignInScreen(),
-        "/signup": (context) => const SignUpScreen(),
-        "/home":
-            (context) =>
-                SecureRoute(authService: _authService, child: HomeScreen()),
-        "/oauth2/redirect": (context) => const OAuthRedirectHandler(),
-      },
-      initialRoute: "/",
-    );
-  }
+  runApp(
+    MultiProvider(
+      providers: getProviders(),
+      // providers: [
+      //   ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      //   ChangeNotifierProvider.value(value: languageProvider),
+      // ],
+      child: MyApp(),
+    ),
+  );
 }

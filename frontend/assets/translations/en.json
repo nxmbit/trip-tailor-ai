@@ -1,0 +1,55 @@
+{
+  "app": {
+    "title": "tripTailor.ai",
+    "subtitle": "Plan your trip with us"
+  },
+  "auth": {
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "providerSignIn": "Or sign in with",
+    "backToWelcome": "Back to Welcome",
+    "errorMessage": "An error occurred: ",
+    "signUpError": "Registration failed. Please try again.",
+    "signInError": "Invalid credentials. Please try again.",
+    "missingUsername": "Please enter your username",
+    "missingEmail": "Please enter your email",
+    "invalidEmail": "Please enter a valid email",
+    "missingPassword": "Please enter a password",
+    "invalidPassword": "Password must be at least 6 characters",
+    "missingConfirmPassword": "Please confirm your password",
+    "invalidConfirmPassword": "Passwords do not match"
+  },
+  "oauth": {
+    "processMessage": "Processing authentication...",
+    "successMessage": "Authentication successful! Redirecting...",
+    "failedMessage": "Authentication failed. Please try again.",
+    "errorMessage": "Error during authentication:",
+    "returnToLogin": "Return to Login"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "mobileDarkMode": "Dark Mode",
+    "theme": "Theme",
+    "darkTheme": "Dark",
+    "lightTheme": "Light",
+    "logout": "Logout"
+  },
+  "navigation": {
+    "home": "Home",
+    "tripPlanner": "Trip Planner",
+    "yourTrips": "Your Trips"
+  },
+  "home": {
+    "days": "days",
+    "exampleTripsTitle": "Example Trips - Try us out!",
+    "recentTripsTitle": "Recently created trips",
+    "welcomeTitle": "Welcome to tripTailor.ai",
+    "welcomeSubtitle": "Personalized travel experiences designed just for you",
+    "welcomeButton": "Plan a New Trip"
+  }
+}
