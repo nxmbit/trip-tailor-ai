@@ -11,7 +11,7 @@ class UserProvider with ChangeNotifier {
 
   UserProvider({required this.userService}) {
     // Initialize user data when provider is created
-    _initializeUser();
+    // _initializeUser();
   }
 
   // Getters for UI state
@@ -20,31 +20,14 @@ class UserProvider with ChangeNotifier {
   User? get user => userService.currentUser;
   bool get isAuthenticated => userService.isAuthenticated;
 
-  // Initialize user
-  Future<void> _initializeUser() async {
+  // Refresh user data
+  Future<void> initializeUser() async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
       await userService.initializeUser();
-      _isLoading = false;
-      notifyListeners();
-    } catch (e) {
-      _isLoading = false;
-      _error = e.toString();
-      notifyListeners();
-    }
-  }
-
-  // Refresh user data
-  Future<void> refreshUser() async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
-    try {
-      await userService.refreshUser();
       _isLoading = false;
       notifyListeners();
     } catch (e) {

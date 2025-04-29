@@ -15,12 +15,14 @@ class ApiClient {
 
   ApiClient({required this.tokenService}) {
     dio = _createDio();
+    // Add interceptors that don't depend on auth service
+    _setupBaseInterceptors();
   }
 
   // Set auth service after it's created (to avoid circular dependency)
   void setAuthService(AuthService authService) {
     _authService = authService;
-    _setupInterceptors();
+    _setupAuthInterceptors();
   }
 
   Dio _createDio() {
@@ -35,23 +37,27 @@ class ApiClient {
     );
   }
 
-  void _setupInterceptors() {
+  // Setup interceptors that don't depend on auth service
+  void _setupBaseInterceptors() {
     dio.interceptors.clear();
 
     // Add auth token interceptor
     dio.interceptors.add(AuthTokenInterceptor(tokenService));
 
-    // Add token refresh interceptor if auth service is available
-    if (_authService != null) {
-      dio.interceptors.add(
-        TokenRefreshInterceptor(tokenService, dio, _authService!),
-      );
-    }
-
     // Add logging in debug mode
     if (kDebugMode) {
       dio.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
+      );
+    }
+  }
+
+  // Setup interceptors that depend on auth service
+  void _setupAuthInterceptors() {
+    // Add token refresh interceptor if auth service is available
+    if (_authService != null) {
+      dio.interceptors.add(
+        TokenRefreshInterceptor(tokenService, dio, _authService!),
       );
     }
   }

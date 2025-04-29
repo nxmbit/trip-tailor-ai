@@ -23,7 +23,7 @@ List<SingleChildWidget> getProviders() {
   final userRepository = UserRepository(apiClient);
 
   // Create service layer
-  final userService = UserService(userRepository);
+  final userService = UserService(userRepository, authService);
 
   // Return all providers
   return [
@@ -35,7 +35,7 @@ List<SingleChildWidget> getProviders() {
 
     // UI state providers
     ChangeNotifierProvider(create: (_) => ThemeProvider()),
-    ChangeNotifierProvider(create: (_) => LanguageProvider()..init()),
+    ChangeNotifierProvider.value(value: LanguageProvider()..init()),
     ChangeNotifierProvider(
       create: (_) => UserProvider(userService: userService),
     ),

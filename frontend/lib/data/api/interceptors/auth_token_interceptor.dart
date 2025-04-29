@@ -13,7 +13,7 @@ class AuthTokenInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     // Skip token for auth endpoints
-    final publicEndpoints = ['/signin', '/signup'];
+    final publicEndpoints = ['/signin', '/signup', '/'];
     if (publicEndpoints.contains(options.path)) {
       return handler.next(options);
     }

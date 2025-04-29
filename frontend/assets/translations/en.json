@@ -23,6 +23,13 @@
     "missingConfirmPassword": "Please confirm your password",
     "invalidConfirmPassword": "Passwords do not match"
   },
+  "oauth": {
+    "processMessage": "Processing authentication...",
+    "successMessage": "Authentication successful! Redirecting...",
+    "failedMessage": "Authentication failed. Please try again.",
+    "errorMessage": "Error during authentication:",
+    "returnToLogin": "Return to Login"
+  },
   "settings": {
     "title": "Settings",
     "language": "Language",

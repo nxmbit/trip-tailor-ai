@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+//TODO: current language is stored in secure storage and is cleared along with tokens while logout
 class LanguageProvider extends ChangeNotifier {
   // Default language
   Locale _locale = Locale(
@@ -16,9 +17,32 @@ class LanguageProvider extends ChangeNotifier {
 
   // Initialize from saved preferences
   Future<void> init() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedLanguage = prefs.getString('language') ?? 'en';
-    await setLanguage(savedLanguage);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // First check if there's a saved preference
+      final savedLanguage = prefs.getString('language');
+
+      if (savedLanguage != null) {
+        // Use saved preference
+        await setLanguage(savedLanguage);
+      } else {
+        // Use system locale, defaulting to 'en' if can't detect
+        final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+        final languageCode = systemLocale.languageCode;
+
+        // Check if we support this language
+        if (['en', 'pl'].contains(languageCode)) {
+          await setLanguage(languageCode);
+        } else {
+          await setLanguage('en'); // Default to English
+        }
+      }
+    } catch (e) {
+      print('Error initializing language: $e');
+      // Fallback to English on error
+      await setLanguage('en');
+    }
   }
 
   // Inside your LanguageProvider class

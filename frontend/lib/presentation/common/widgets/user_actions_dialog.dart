@@ -109,7 +109,8 @@ class UserActionsDialog extends StatelessWidget {
                               Navigator.pop(context);
 
                               // Use userProvider to access user service for logout
-                              userProvider.userService.clearUser();
+                              //perform logout
+                              userProvider.userService.logoutUser();
 
                               if (context.mounted) {
                                 Navigator.of(context).pushNamedAndRemoveUntil(

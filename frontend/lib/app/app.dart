@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/presentation/features/auth/screens/oauth_redirect_handler.dart';
 import 'package:frontend/presentation/state/providers/language_provider.dart';
 import 'package:frontend/presentation/state/providers/theme_provider.dart';
 import 'package:frontend/presentation/common/layouts/desktop_scaffold.dart';
@@ -14,6 +15,11 @@ import 'package:frontend/presentation/features/welcome/screens/welcome_screen.da
 import 'package:frontend/core/config/theme/app_theme.dart';
 import 'package:frontend/core/utils/secure_route.dart';
 import 'package:provider/provider.dart';
+
+import '../presentation/features/auth/screens/splash_screen.dart';
+
+//TODO: switch to go router
+//TODO: split into routes and app.dart
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -33,7 +39,8 @@ class MyApp extends StatelessWidget {
           themeMode: themeProvider.themeMode,
           locale: languageProvider.locale,
           routes: {
-            '/': (context) => const WelcomeScreen(),
+            '/': (context) => const SplashScreen(),
+            "/welcome": (context) => const WelcomeScreen(),
             "/signin": (context) => const SignInScreen(),
             "/signup": (context) => const SignUpScreen(),
             "/home":
@@ -74,6 +81,7 @@ class MyApp extends StatelessWidget {
                     ),
                   ),
                 ),
+            "/oauth2/redirect": (context) => const OAuthRedirectHandler(),
           },
           initialRoute: "/",
         );

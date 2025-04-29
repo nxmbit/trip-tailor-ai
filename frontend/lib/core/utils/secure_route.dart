@@ -26,7 +26,7 @@ class SecureRoute extends StatelessWidget {
           // Ensure user data is loaded if authenticated
           if (userProvider.user == null && !userProvider.isLoading) {
             // Initialize user data if not already loading
-            userProvider.refreshUser();
+            userProvider.initializeUser();
           }
           return child;
         }
@@ -34,7 +34,7 @@ class SecureRoute extends StatelessWidget {
         // Redirect to sign in if not authenticated
         WidgetsBinding.instance.addPostFrameCallback((_) {
           authService.logout();
-          userProvider.userService.clearUser();
+          userProvider.userService.logoutUser();
 
           Navigator.of(
             context,

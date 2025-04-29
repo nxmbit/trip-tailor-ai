@@ -48,7 +48,7 @@ class SignInState {
 
       if (success) {
         // After successful login, refresh user data
-        await userProvider.refreshUser();
+        await userProvider.initializeUser();
       } else {
         setError('Invalid email or password');
       }

@@ -1,6 +1,9 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:frontend/data/api/api_client.dart';
 import 'package:frontend/data/api/endpoints.dart';
 import 'package:frontend/domain/services/token_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthService {
   final ApiClient _apiClient;
@@ -36,7 +39,8 @@ class AuthService {
         data: {'email': email, 'password': password},
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.data != null) {
+        debugPrint('Token response: ${response.data}');
         await _tokenService.saveTokens(
           jwtToken: response.data['jwtToken'],
           jwtExpirationTimestamp: response.data['jwtExpirationDate'],
@@ -93,5 +97,57 @@ class AuthService {
 
     // If neither token is valid, user is not authenticated
     return false;
+  }
+
+  Future<bool> handleSocialAuth(String provider) async {
+    try {
+      final authUrl =
+          '${APIConstants.baseUrl}${APIConstants.oauth2Endpoint}$provider';
+
+      // Launch the URL in the browser
+      final Uri uri = Uri.parse(authUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          webOnlyWindowName: '_self', // Prevents opening in new tab
+          mode: LaunchMode.platformDefault,
+        );
+        return true;
+      } else {
+        debugPrint('Could not launch OAuth URL: $authUrl');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Social auth error: $e');
+      return false;
+    }
+  }
+
+  // Process the callback from social auth providers
+  Future<bool> processSocialAuthCallback() async {
+    try {
+      Dio tempDio = Dio();
+      // Call endpoint to exchange cookies for tokens
+      final response = await tempDio.get(
+        '${APIConstants.baseUrl}${APIConstants.tokensEndpoint}',
+        options: Options(extra: {'withCredentials': true}),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        // Use tokenService to save the tokens
+        await _tokenService.saveTokens(
+          jwtToken: response.data['jwtToken'],
+          jwtExpirationTimestamp: response.data['jwtExpirationDate'],
+          refreshToken: response.data['refreshToken'],
+          refreshExpirationTimestamp:
+              response.data['refreshTokenExpirationDate'],
+        );
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Social auth callback error: $e');
+      return false;
+    }
   }
 }

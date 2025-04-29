@@ -14,7 +14,21 @@
     "backToWelcome": "Powrót do ekranu powitalnego",
     "errorMessage": "Wystąpił błąd: ",
     "signUpError": "Rejestracja nie powiodła się. Spróbuj ponownie.",
-    "signInError": "Nieprawidłowe dane logowania. Spróbuj ponownie."
+    "signInError": "Nieprawidłowe dane logowania. Spróbuj ponownie.",
+    "missingUsername": "Proszę podać nazwę użytkownika",
+    "missingEmail": "Proszę podać email",
+    "invalidEmail": "Proszę podać poprawny email",
+    "missingPassword": "Proszę podać hasło",
+    "invalidPassword": "Hasło musi mieć co najmniej 6 znaków",
+    "missingConfirmPassword": "Proszę potwierdzić hasło",
+    "invalidConfirmPassword": "Hasła nie są zgodne"
+  },
+  "oauth": {
+    "processMessage": "Przetwarzanie uwierzytelniania...",
+    "successMessage": "Uwierzytelnianie zakończone sukcesem! Przekierowywanie...",
+    "failedMessage": "Uwierzytelnianie nie powiodło się. Spróbuj ponownie.",
+    "errorMessage": "Błąd podczas uwierzytelniania:",
+    "returnToLogin": "Powrót do logowania"
   },
   "settings": {
     "title": "Ustawienia",

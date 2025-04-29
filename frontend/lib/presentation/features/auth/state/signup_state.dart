@@ -56,7 +56,7 @@ class SignUpState {
 
         if (loginSuccess) {
           // If login successful, refresh user data
-          await userProvider.refreshUser();
+          await userProvider.initializeUser();
         }
 
         return loginSuccess;

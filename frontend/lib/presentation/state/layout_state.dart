@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
-import 'package:frontend/domain/services/auth_service.dart';
 import 'package:frontend/presentation/common/widgets/settings_dialog.dart';
 import 'package:frontend/presentation/common/widgets/user_actions_dialog.dart';
 import 'package:frontend/presentation/state/providers/language_provider.dart';
@@ -213,18 +212,13 @@ class LayoutState {
             onTap: () {
               Navigator.pop(context);
               // Get services from provider
-              final authService = Provider.of<AuthService>(
-                context,
-                listen: false,
-              );
               final userProvider = Provider.of<UserProvider>(
                 context,
                 listen: false,
               );
 
               // Perform logout
-              authService.logout();
-              userProvider.userService.clearUser();
+              userProvider.userService.logoutUser();
 
               if (context.mounted) {
                 Navigator.of(

@@ -1,5 +1,3 @@
-//TODO: fix error messages (not loading from json file)
-
 class Validators {
   static String? validateUsername(String? value, String missingValueMessage) {
     if (value == null || value.isEmpty) {

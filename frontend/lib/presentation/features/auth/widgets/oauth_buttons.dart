@@ -1,42 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:auth_buttons/auth_buttons.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/domain/services/auth_service.dart';
 
-//TODO split this into folder structure
 class SocialAuthButtons extends StatelessWidget {
-  SocialAuthButtons({super.key});
+  const SocialAuthButtons({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Get the AuthService from the provider
+    final authService = Provider.of<AuthService>(context, listen: false);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GoogleAuthButton(
-          onPressed: _handleGoogleAuth,
+          onPressed: () => _handleSocialAuth(context, 'google', authService),
           style: const AuthButtonStyle(buttonType: AuthButtonType.icon),
         ),
         const SizedBox(width: 16.0),
         GithubAuthButton(
-          onPressed: () => _handleGithubAuth(context),
+          onPressed: () => _handleSocialAuth(context, 'github', authService),
           style: const AuthButtonStyle(buttonType: AuthButtonType.icon),
         ),
         const SizedBox(width: 16.0),
         FacebookAuthButton(
-          onPressed: _handleFacebookAuth,
+          onPressed: () => _handleSocialAuth(context, 'facebook', authService),
           style: const AuthButtonStyle(buttonType: AuthButtonType.icon),
         ),
       ],
     );
   }
 
-  void _handleGoogleAuth() {
-    print("Google auth clicked");
-  }
+  void _handleSocialAuth(
+    BuildContext context,
+    String provider,
+    AuthService authService,
+  ) async {
+    try {
+      // Show loading indicator or feedback
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Redirecting to login...")));
 
-  void _handleGithubAuth(BuildContext context) async {
-    print("Github auth clicked");
-  }
+      // Use the injected AuthService
+      final success = await authService.handleSocialAuth(provider);
 
-  void _handleFacebookAuth() {
-    print("Facebook auth clicked");
+      if (!success && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to launch $provider authentication")),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
+    }
   }
 }
