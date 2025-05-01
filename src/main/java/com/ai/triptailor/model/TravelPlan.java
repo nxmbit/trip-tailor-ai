@@ -5,6 +5,7 @@ import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -43,6 +44,8 @@ public class TravelPlan {
 
     private LocalDateTime travelEndDate;
 
+    private int tripLength;
+
     private Instant createdAt;
 
     @JsonIgnore
@@ -52,6 +55,17 @@ public class TravelPlan {
 
     @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TravelPlanDay> travelPlanDays;
+
+    @PrePersist
+    @PreUpdate
+    private void calculateTripLength() {
+        if (travelStartDate != null && travelEndDate != null) {
+            this.tripLength = (int) Duration.between(
+                            travelStartDate.toLocalDate().atStartOfDay(),
+                            travelEndDate.toLocalDate().atStartOfDay())
+                    .toDays() + 1;
+        }
+    }
 
     public TravelPlan() {
     }
@@ -207,5 +221,13 @@ public class TravelPlan {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public int getTripLength() {
+        return tripLength;
+    }
+
+    public void setTripLength(int tripLength) {
+        this.tripLength = tripLength;
     }
 }

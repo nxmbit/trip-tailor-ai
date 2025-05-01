@@ -1,14 +1,14 @@
 package com.ai.triptailor.service;
 
-import com.ai.triptailor.request.LoginRequestDto;
-import com.ai.triptailor.request.RefreshTokenRequestDto;
-import com.ai.triptailor.request.RegisterRequestDto;
+import com.ai.triptailor.request.LoginRequest;
+import com.ai.triptailor.request.RefreshTokenRequest;
+import com.ai.triptailor.request.RegisterRequest;
 import com.ai.triptailor.exception.RefreshTokenException;
 import com.ai.triptailor.model.RefreshToken;
 import com.ai.triptailor.model.User;
 import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.repository.UserRepository;
-import com.ai.triptailor.response.LoginResponseDto;
+import com.ai.triptailor.response.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,7 +38,7 @@ public class AuthService {
         this.refreshTokenService = refreshTokenService;
     }
 
-    public User register(RegisterRequestDto userData) {
+    public User register(RegisterRequest userData) {
         User user = new User(
                 userData.getUsername(),
                 userData.getEmail(),
@@ -53,7 +53,7 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public LoginResponseDto authenticate(LoginRequestDto userData) {
+    public LoginResponse authenticate(LoginRequest userData) {
         User user = userRepository.findByemail(userData.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + userData.getEmail()));
 
@@ -72,7 +72,7 @@ public class AuthService {
         refreshTokenService.deleteByUserId(user.getId());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
-        return new LoginResponseDto(
+        return new LoginResponse(
                 jwtToken,
                 refreshToken.getToken(),
                 user.getEmail(),
@@ -81,7 +81,7 @@ public class AuthService {
         );
     }
 
-    public LoginResponseDto refreshToken(RefreshTokenRequestDto refreshTokenRequest) {
+    public LoginResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
         String refreshToken = refreshTokenRequest.getRefreshToken();
 
         return refreshTokenService.findByRefreshToken(refreshToken)
@@ -92,7 +92,7 @@ public class AuthService {
                     refreshTokenService.deleteByUserId(user.getId());
                     RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId()); //refresh token rotation
 
-                    return new LoginResponseDto(
+                    return new LoginResponse(
                             jwtToken,
                             newRefreshToken.getToken(),
                             user.getEmail(),
@@ -103,7 +103,7 @@ public class AuthService {
                 .orElseThrow(() -> new RefreshTokenException("Refresh token is not in database!"));
     }
 
-    public LoginResponseDto validateTokensFromCookies(String refreshToken) {
+    public LoginResponse validateTokensFromCookies(String refreshToken) {
         return refreshTokenService.findByRefreshToken(refreshToken)
                 .map(refreshTokenService::verifyExpiration)
                 .map(token -> {
@@ -113,7 +113,7 @@ public class AuthService {
                     refreshTokenService.deleteByUserId(user.getId());
                     RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
 
-                    return new LoginResponseDto(
+                    return new LoginResponse(
                             newJwtToken,
                             newRefreshToken.getToken(),
                             user.getEmail(),

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class GenerateTravelPlanRequestDto {
+public class GenerateTravelPlanRequest {
     @NotBlank(message = "Destination is required")
     private String destination;
 

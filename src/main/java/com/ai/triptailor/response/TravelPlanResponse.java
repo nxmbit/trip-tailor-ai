@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public class TravelPlanResponseDto {
+public class TravelPlanResponse {
     private UUID travelPlanId;
     private String language;
     private String destination;
@@ -18,7 +18,7 @@ public class TravelPlanResponseDto {
     private String imageUrl;
     private Instant createdAt;
     private String[] localCuisineRecommendations;
-    private List<TravelPlanDayDto> itinerary;
+    private List<TravelPlanDay> itinerary;
 
     public UUID getTravelPlanId() {
         return travelPlanId;
@@ -100,11 +100,11 @@ public class TravelPlanResponseDto {
         this.localCuisineRecommendations = localCuisineRecommendations;
     }
 
-    public List<TravelPlanDayDto> getItinerary() {
+    public List<TravelPlanDay> getItinerary() {
         return itinerary;
     }
 
-    public void setItinerary(List<TravelPlanDayDto> itinerary) {
+    public void setItinerary(List<TravelPlanDay> itinerary) {
         this.itinerary = itinerary;
     }
 

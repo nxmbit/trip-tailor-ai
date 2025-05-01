@@ -1,6 +1,6 @@
 package com.ai.triptailor.response;
 
-public class AttractionDto {
+public class AttractionResponse {
     private int visitOrder;
     private String name;
     private String description;

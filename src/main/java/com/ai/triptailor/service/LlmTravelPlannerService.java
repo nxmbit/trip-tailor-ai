@@ -10,7 +10,7 @@ import com.ai.triptailor.model.TravelPlanDay;
 import com.ai.triptailor.model.User;
 import com.ai.triptailor.repository.TravelPlanRepository;
 import com.ai.triptailor.repository.UserRepository;
-import com.ai.triptailor.request.GenerateTravelPlanRequestDto;
+import com.ai.triptailor.request.GenerateTravelPlanRequest;
 import com.ai.triptailor.llm.schema.DestinationDescriptionSchema;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,16 +65,15 @@ public class LlmTravelPlannerService {
     }
 
     @Transactional
-    public UUID generateTravelPlan(@Valid GenerateTravelPlanRequestDto request) {
+    public UUID generateTravelPlan(@Valid GenerateTravelPlanRequest request) {
         TravelPlan travelPlan = new TravelPlan();
         travelPlan.addDestination("en", request.getDestination());
         travelPlan.setTravelStartDate(request.getStartDate());
         travelPlan.setTravelEndDate(request.getEndDate());
         validateTravelDates(travelPlan);
 
-        // Calculate trip duration in days
-        Duration duration = Duration.between(travelPlan.getTravelStartDate(), travelPlan.getTravelEndDate());
-        long days = (int) duration.toDays();
+        // Get trip duration
+        int tripDuration = calculateTravelDuration(travelPlan.getTravelStartDate(), travelPlan.getTravelEndDate());
 
         // Search for place using Google Maps API, if not found throw an exception
         var placesSearchResult = googleMapsService.searchPlace(request.getDestination());
@@ -102,7 +101,7 @@ public class LlmTravelPlannerService {
         setDestinationDescriptionSchemaInTravelPlan(travelPlan, description, Language.ENGLISH);
 
         // Generate itinerary
-        TravelPlanSchema travelPlanSchema = generateTravelPlan(days, request.getDestination(),
+        TravelPlanSchema travelPlanSchema = generateTravelPlan(tripDuration, request.getDestination(),
                 travelPlan.getTravelStartDate(), travelPlan.getTravelEndDate());
 
         // Create travel plan days with attractions from the generated schema
@@ -179,7 +178,7 @@ public class LlmTravelPlannerService {
         currentUser.addTravelPlan(travelPlan);
         userRepository.save(currentUser);
 
-        return travelPlanRepository.save(travelPlan).getId();
+        return travelPlan.getId();
     }
 
     private DestinationDescriptionSchema generateDestinationDescription(String destination) {
@@ -199,11 +198,12 @@ public class LlmTravelPlannerService {
         }
     }
 
-    private TravelPlanSchema generateTravelPlan(long days, String destination, LocalDateTime startDate, LocalDateTime endDate) {
+    private TravelPlanSchema generateTravelPlan(int tripDuration, String destination,
+                                                LocalDateTime startDate, LocalDateTime endDate) {
         try {
             return chatClient.prompt()
                     .system(SYSTEM_PROMPT)
-                    .user("Generate a detailed daily itinerary for a " + days + " day trip to " +
+                    .user("Generate a detailed daily itinerary for a " + tripDuration + " day trip to " +
                             destination + " from " + startDate + " to " + endDate)
                     .call()
                     .entity(TravelPlanSchema.class);
@@ -245,7 +245,6 @@ public class LlmTravelPlannerService {
                         .replace("}", "leftCurlyBrace")
                         .replace("[", "leftSquareBracket")
                         .replace("]", "rightSquareBracket");
-                ;
 
                 DestinationDescriptionSchema translatedSchema = chatClient.prompt()
                         .system("You are responsible for translating the description of travel plans.")
@@ -298,7 +297,7 @@ public class LlmTravelPlannerService {
                 String safeJson = travelPlanSchemaJson.get().replace("{", "rightCurlyBrace")
                         .replace("}", "leftCurlyBrace")
                         .replace("[", "leftSquareBracket")
-                        .replace("]", "rightSquareBracket");;
+                        .replace("]", "rightSquareBracket");
 
                 TravelPlanSchema translatedSchema = chatClient.prompt()
                         .system("You are responsible for translating travel itineraries.")
@@ -394,14 +393,18 @@ public class LlmTravelPlannerService {
     }
 
     private void validateTravelDates(TravelPlan travelPlan) {
-        Duration duration = Duration.between(travelPlan.getTravelStartDate(), travelPlan.getTravelEndDate());
-        long days = duration.toDays();
+        int days = calculateTravelDuration(travelPlan.getTravelStartDate(), travelPlan.getTravelEndDate());
 
         if (days < 1) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Travel duration must be at least 1 day");
         }
         if (days > 10) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Travel duration cannot exceed 30 days");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Travel duration cannot exceed 10 days");
         }
+    }
+
+    private int calculateTravelDuration(LocalDateTime startDate, LocalDateTime endDate) {
+        return (int) Duration.between(startDate.toLocalDate().atStartOfDay(), endDate.toLocalDate().atStartOfDay())
+                .toDays() + 1;
     }
 }

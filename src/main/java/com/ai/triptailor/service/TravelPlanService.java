@@ -1,15 +1,17 @@
 package com.ai.triptailor.service;
 
+import com.ai.triptailor.llm.enums.Language;
 import com.ai.triptailor.model.TravelPlan;
-import com.ai.triptailor.model.TravelPlanDay;
 import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.repository.TravelPlanRepository;
-import com.ai.triptailor.response.TravelPlanResponseDto;
-import com.ai.triptailor.response.TravelPlanDayDto;
-import com.ai.triptailor.response.AttractionDto;
+import com.ai.triptailor.response.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +34,7 @@ public class TravelPlanService {
         this.s3StorageService = s3StorageService;
     }
 
-    public TravelPlanResponseDto getTravelPlanById(UUID id, String language) {
+    public TravelPlanResponse getTravelPlanById(UUID id, String language) {
         TravelPlan travelPlan = travelPlanRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Travel plan not found"));
 
@@ -56,7 +58,7 @@ public class TravelPlanService {
         return false;
     }
 
-    public TravelPlanResponseDto getUserOwnedTravelPlanById(UUID id, String language) {
+    public TravelPlanResponse getUserOwnedTravelPlanById(UUID id, String language) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // Get current user ID from UserPrincipal
@@ -79,12 +81,103 @@ public class TravelPlanService {
         return convertToResponseDto(travelPlan, language);
     }
 
-    public TravelPlanResponseDto convertToResponseDto(TravelPlan travelPlan) {
-        return convertToResponseDto(travelPlan, "en");
+    public void deleteTravelPlanById(UUID id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Get current user ID from UserPrincipal
+        if (!(authentication.getPrincipal() instanceof UserPrincipal)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized");
+        }
+
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        Long currentUserId = userPrincipal.getId();
+
+        // Find the travel plan
+        TravelPlan travelPlan = travelPlanRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Travel plan not found"));
+
+        // Check if the travel plan belongs to the current user
+        if (!travelPlan.getUser().getId().equals(currentUserId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized to delete this travel plan");
+        }
+
+        // Delete the travel plan
+        travelPlanRepository.delete(travelPlan);
     }
 
-    public TravelPlanResponseDto convertToResponseDto(TravelPlan travelPlan, String language) {
-        TravelPlanResponseDto dto = new TravelPlanResponseDto();
+    public TravelPlanInfoPagingResponse getInfoOfTravelPlans(
+            int page,
+            int size,
+            String sortBy,
+            String sortDirection,
+            String languageCode
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Get current user ID from UserPrincipal
+        if (!(authentication.getPrincipal() instanceof UserPrincipal)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized");
+        }
+
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        Long currentUserId = userPrincipal.getId();
+
+        // Validate language code
+        Language language = Arrays.stream(Language.values())
+                .filter(lang -> lang.getCode().equals(languageCode))
+                .findFirst()
+                .orElse(Language.ENGLISH);
+
+        // Create sort direction
+        Sort.Direction direction = "asc".equalsIgnoreCase(sortDirection) ?
+                Sort.Direction.ASC : Sort.Direction.DESC;
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(direction, sortBy)
+        );
+
+        Page<TravelPlan> travelPlansPage = travelPlanRepository.findByUserId(currentUserId, pageable);
+
+        // Convert to response DTOs
+        List<TravelPlanInfoResponse> travelPlanInfos = travelPlansPage.getContent().stream()
+                .map(plan -> {
+                    // Get image URL from s3
+                    String imageUrl = null;
+                    if (!StringUtils.isBlank(plan.getImageFileName())) {
+                        imageUrl = s3StorageService.generatePresignedUrl(plan.getImageFileName()).orElse(null);
+                    }
+
+                    return TravelPlanInfoResponse.builder()
+                            .id(plan.getId())
+                            .language(language.getCode())
+                            .destination(getLocalizedText(plan.getDestination(), language.getCode()))
+                            .imageUrl(imageUrl)
+                            .numberOfDays(plan.getTripLength())
+                            .createdAt(plan.getCreatedAt())
+                            .travelStartDate(plan.getTravelStartDate())
+                            .travelEndDate(plan.getTravelEndDate())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return new TravelPlanInfoPagingResponse(
+                travelPlanInfos,
+                size,
+                page,
+                travelPlansPage.getTotalPages(),
+                (int) travelPlansPage.getTotalElements(),
+                travelPlanInfos.isEmpty()
+        );
+    }
+
+    public TravelPlanResponse convertToResponseDto(TravelPlan travelPlan) {
+        return convertToResponseDto(travelPlan, Language.ENGLISH.getCode());
+    }
+
+    public TravelPlanResponse convertToResponseDto(TravelPlan travelPlan, String language) {
+        TravelPlanResponse dto = new TravelPlanResponse();
 
         // Set basic trip information
         dto.setTravelPlanId(travelPlan.getId());
@@ -113,41 +206,41 @@ public class TravelPlanService {
 
         // Map days and attractions
         if (travelPlan.getTravelPlanDays() != null) {
-            List<TravelPlanDayDto> dayDtos = travelPlan.getTravelPlanDays().stream()
-                    .sorted(Comparator.comparing(TravelPlanDay::getDayNumber))
+            List<TravelPlanDay> dayDtos = travelPlan.getTravelPlanDays().stream()
+                    .sorted(Comparator.comparing(com.ai.triptailor.model.TravelPlanDay::getDayNumber))
                     .map(day -> {
-                        TravelPlanDayDto dayDto = new TravelPlanDayDto();
+                        TravelPlanDay dayDto = new TravelPlanDay();
                         dayDto.setDayNumber(day.getDayNumber());
                         dayDto.setDate(day.getDate());
                         dayDto.setDescription(getLocalizedText(day.getDescription(), language));
 
                         // Map attractions for this day
                         if (day.getAttractions() != null) {
-                            List<AttractionDto> attractionDtos = day.getAttractions().stream()
+                            List<AttractionResponse> attractionResponses = day.getAttractions().stream()
                                     .map(attraction -> {
-                                        AttractionDto attractionDto = new AttractionDto();
-                                        attractionDto.setVisitOrder(attraction.getVisitOrder());
-                                        attractionDto.setName(getLocalizedText(attraction.getName(), language));
-                                        attractionDto.setDescription(getLocalizedText(attraction.getDescription(), language));
-                                        attractionDto.setLatitude(attraction.getLatitude());
-                                        attractionDto.setLongitude(attraction.getLongitude());
-                                        attractionDto.setVisitDuration(attraction.getVisitDuration());
-                                        attractionDto.setGooglePlacesId(attraction.getGooglePlacesId());
-                                        attractionDto.setAverageRating(attraction.getAverageRating());
-                                        attractionDto.setNumberOfUserRatings(attraction.getNumberOfUserRatings());
+                                        AttractionResponse attractionResponse = new AttractionResponse();
+                                        attractionResponse.setVisitOrder(attraction.getVisitOrder());
+                                        attractionResponse.setName(getLocalizedText(attraction.getName(), language));
+                                        attractionResponse.setDescription(getLocalizedText(attraction.getDescription(), language));
+                                        attractionResponse.setLatitude(attraction.getLatitude());
+                                        attractionResponse.setLongitude(attraction.getLongitude());
+                                        attractionResponse.setVisitDuration(attraction.getVisitDuration());
+                                        attractionResponse.setGooglePlacesId(attraction.getGooglePlacesId());
+                                        attractionResponse.setAverageRating(attraction.getAverageRating());
+                                        attractionResponse.setNumberOfUserRatings(attraction.getNumberOfUserRatings());
 
                                         // Generate image URL for attraction if available
                                         if (!StringUtils.isBlank(attraction.getImageFileName())) {
                                             String attractionImageUrl = s3StorageService.generatePresignedUrl(attraction.getImageFileName())
                                                     .orElse(null);
-                                            attractionDto.setImageUrl(attractionImageUrl);
+                                            attractionResponse.setImageUrl(attractionImageUrl);
                                         }
 
-                                        return attractionDto;
+                                        return attractionResponse;
                                     })
                                     .collect(Collectors.toList());
 
-                            dayDto.setAttractions(attractionDtos);
+                            dayDto.setAttractions(attractionResponses);
                         }
 
                         return dayDto;

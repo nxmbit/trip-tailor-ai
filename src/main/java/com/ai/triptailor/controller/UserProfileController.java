@@ -1,7 +1,7 @@
 package com.ai.triptailor.controller;
 
 import com.ai.triptailor.model.UserPrincipal;
-import com.ai.triptailor.response.UserProfileResponseDto;
+import com.ai.triptailor.response.UserProfileResponse;
 import com.ai.triptailor.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +22,8 @@ public class UserProfileController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserProfileResponseDto> getUserProfile(@AuthenticationPrincipal UserPrincipal currentUser) {
-        UserProfileResponseDto profile = userProfileService.getUserProfile(currentUser.getId());
+    public ResponseEntity<UserProfileResponse> getUserProfile(@AuthenticationPrincipal UserPrincipal currentUser) {
+        UserProfileResponse profile = userProfileService.getUserProfile(currentUser.getId());
         return ResponseEntity.ok(profile);
     }
 }

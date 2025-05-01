@@ -3,7 +3,7 @@ package com.ai.triptailor.service;
 import com.ai.triptailor.model.User;
 import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.repository.UserRepository;
-import com.ai.triptailor.response.UserProfileResponseDto;
+import com.ai.triptailor.response.UserProfileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,11 +19,11 @@ public class UserProfileService {
         this.userRepository = userRepository;
     }
 
-    public UserProfileResponseDto getUserProfile(Long userId) {
+    public UserProfileResponse getUserProfile(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return new UserProfileResponseDto(
+        return new UserProfileResponse(
                 user.getEmail(),
                 user.getUsername(),
                 user.getProfileImageUrl()
