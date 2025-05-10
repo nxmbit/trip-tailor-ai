@@ -33,7 +33,6 @@ class SecureRoute extends StatelessWidget {
 
         // Redirect to sign in if not authenticated
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          authService.logout();
           userProvider.userService.logoutUser();
 
           Navigator.of(

@@ -9,7 +9,10 @@ class BackToWelcomeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () => Navigator.of(context).pushReplacementNamed('/'),
-      child: Text(tr(context, 'auth.backToWelcome')),
+      child: Text(
+        tr(context, 'auth.backToWelcome'),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }

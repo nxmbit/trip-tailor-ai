@@ -9,6 +9,10 @@ import 'package:frontend/presentation/state/providers/theme_provider.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
 import 'package:provider/single_child_widget.dart';
 
+import '../../../data/repositories/generate_travel_plan_repository.dart';
+import '../../../domain/services/generate_travel_plan_service..dart';
+import 'generate_travel_provider.dart';
+
 /// Creates all providers for the app
 List<SingleChildWidget> getProviders() {
   // Create services
@@ -21,10 +25,13 @@ List<SingleChildWidget> getProviders() {
 
   // Create repositories
   final userRepository = UserRepository(apiClient);
+  final generateTravelRepository = GenerateTravelPlanRepository(apiClient);
 
   // Create service layer
   final userService = UserService(userRepository, authService);
-
+  final generateTravelPlanService = GenerateTravelPlanService(
+    generateTravelRepository,
+  );
   // Return all providers
   return [
     // Core services
@@ -32,12 +39,16 @@ List<SingleChildWidget> getProviders() {
     Provider.value(value: apiClient),
     Provider.value(value: authService),
     Provider.value(value: userService),
+    Provider.value(value: generateTravelPlanService),
 
     // UI state providers
     ChangeNotifierProvider(create: (_) => ThemeProvider()),
     ChangeNotifierProvider.value(value: LanguageProvider()..init()),
     ChangeNotifierProvider(
       create: (_) => UserProvider(userService: userService),
+    ),
+    ChangeNotifierProvider(
+      create: (_) => GenerateTravelProvider(service: generateTravelPlanService),
     ),
   ];
 }

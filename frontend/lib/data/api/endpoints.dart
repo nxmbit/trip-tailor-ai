@@ -12,5 +12,8 @@ class APIConstants {
   static const String oauth2Endpoint = 'oauth2/authorization/';
 
   // User endpoints
-  static const String currentUserEndpoint = '/api/users/profile';
+  static const String currentUserEndpoint = 'api/users/profile';
+
+  // Travel plan endpoints
+  static const String generateTravelPlanEndpoint = "api/travel-plans/generate";
 }

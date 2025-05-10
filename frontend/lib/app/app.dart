@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:frontend/presentation/features/auth/screens/oauth_redirect_handler.dart';
 import 'package:frontend/presentation/state/providers/language_provider.dart';
 import 'package:frontend/presentation/state/providers/theme_provider.dart';
@@ -38,6 +39,12 @@ class MyApp extends StatelessWidget {
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.themeMode,
           locale: languageProvider.locale,
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [Locale('en', 'US'), Locale('pl', 'PL')],
           routes: {
             '/': (context) => const SplashScreen(),
             "/welcome": (context) => const WelcomeScreen(),
