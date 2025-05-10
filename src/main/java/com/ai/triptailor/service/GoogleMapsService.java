@@ -12,10 +12,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class GoogleMapsService {
     private final GeoApiContext geoApiContext;
+    private final Random random = new Random();
 
     @Autowired
     public GoogleMapsService(GeoApiContext geoApiContext) {
@@ -57,6 +59,26 @@ public class GoogleMapsService {
         }
     }
 
+    public Optional<byte[]> getRandomImageFromTopNPhotos(PlacesSearchResult place, int n) {
+        if (n <= 0) throw new IllegalArgumentException("Parameter n must be positive");
+
+        if (place.photos != null && place.photos.length > 0) {
+            int randomIndex = random.nextInt(Math.min(n, place.photos.length));
+            String photoReference = place.photos[randomIndex].photoReference;
+            return getImageBytesFromReference(photoReference);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public double getRating(PlacesSearchResult place) {
+        return place.rating;
+    }
+
+    public int getUserRatingsTotal(PlacesSearchResult place) {
+        return place.userRatingsTotal;
+    }
+
     public String getPlaceId(PlacesSearchResult place) {
         return place.placeId;
     }
@@ -69,15 +91,27 @@ public class GoogleMapsService {
         return place.name;
     }
 
-    public double getLatitude(PlacesSearchResult place) {
-        return place.geometry.location.lat;
+    public Optional<Double> getLatitude(PlacesSearchResult place) {
+        if (place.geometry != null && place.geometry.location != null) {
+            return Optional.of(place.geometry.location.lat);
+        }
+        return Optional.empty();
     }
 
-    public double getLongitude(PlacesSearchResult place) {
-        return place.geometry.location.lng;
+    public Optional<Double> getLongitude(PlacesSearchResult place) {
+        if (place.geometry != null && place.geometry.location != null) {
+            return Optional.of(place.geometry.location.lng);
+        }
+        return Optional.empty();
     }
 
-    //TODO: implement getting opening and closing hours
+    //TODO when finding open hours, check for special cases like holidays or special events during the users stay
+    public Optional<String[]> getOpeningHours(PlacesSearchResult place) {
+        if (place.openingHours != null && place.openingHours.weekdayText != null) {
+            return Optional.of(place.openingHours.weekdayText);
+        }
+        return Optional.empty();
+    }
 
 
 }

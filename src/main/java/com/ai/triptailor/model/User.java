@@ -14,34 +14,32 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", nullable = false)
+    @Column(nullable = false)
     private String username;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(name = "password")
     @JsonIgnore
     private String password;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @Column(name = "auth_provider")
     @NotNull
     @Enumerated(EnumType.STRING)
     private AuthProvider authProvider;
 
-    @Column(name = "profile_image_url")
     private String profileImageUrl;
 
     // This field is used for OAuth2 providers like Google, Facebook, etc.
     // It stores the unique identifier provided by the OAuth2 provider.
-    @Column(name = "providers_id")
     private String providersId;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Trip> trips;
+    private Set<TravelPlan> travelPlans;
+
+    private Long generationsNumber;
 
     public User(String username, String email, String password) {
         this.username = username;
@@ -55,19 +53,27 @@ public class User {
 
     public User() {}
 
-    public void addTrip(Trip trip) {
-        if (this.trips == null) {
-            this.trips = new HashSet<>();
+    public void addTravelPlan(TravelPlan travelPlan) {
+        if (this.travelPlans == null) {
+            this.travelPlans = new HashSet<>();
         }
-        this.trips.add(trip);
-        trip.setUser(this);
+        this.travelPlans.add(travelPlan);
+        travelPlan.setUser(this);
     }
 
-    public void removeTrip(Trip trip) {
-        if (this.trips != null) {
-            this.trips.remove(trip);
-            trip.setUser(null);
+    public void removeTravelPlan(TravelPlan travelPlan) {
+        if (this.travelPlans != null) {
+            this.travelPlans.remove(travelPlan);
+            travelPlan.setUser(null);
         }
+    }
+
+    public Set<TravelPlan> getTravelPlans() {
+        return travelPlans;
+    }
+
+    public void setTravelPlans(Set<TravelPlan> travelPlans) {
+        this.travelPlans = travelPlans;
     }
 
     public Long getId() {
@@ -132,5 +138,13 @@ public class User {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Long getGenerationsNumber() {
+        return generationsNumber;
+    }
+
+    public void setGenerationsNumber(Long generationsNumber) {
+        this.generationsNumber = generationsNumber;
     }
 }

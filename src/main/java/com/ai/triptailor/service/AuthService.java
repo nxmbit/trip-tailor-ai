@@ -1,8 +1,8 @@
 package com.ai.triptailor.service;
 
-import com.ai.triptailor.dto.LoginRequestDto;
-import com.ai.triptailor.dto.RefreshTokenRequestDto;
-import com.ai.triptailor.dto.RegisterRequestDto;
+import com.ai.triptailor.request.LoginRequest;
+import com.ai.triptailor.request.RefreshTokenRequest;
+import com.ai.triptailor.request.RegisterRequest;
 import com.ai.triptailor.exception.RefreshTokenException;
 import com.ai.triptailor.model.RefreshToken;
 import com.ai.triptailor.model.User;
@@ -38,7 +38,7 @@ public class AuthService {
         this.refreshTokenService = refreshTokenService;
     }
 
-    public User register(RegisterRequestDto userData) {
+    public User register(RegisterRequest userData) {
         User user = new User(
                 userData.getUsername(),
                 userData.getEmail(),
@@ -53,7 +53,7 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public LoginResponse authenticate(LoginRequestDto userData) {
+    public LoginResponse authenticate(LoginRequest userData) {
         User user = userRepository.findByemail(userData.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + userData.getEmail()));
 
@@ -81,7 +81,7 @@ public class AuthService {
         );
     }
 
-    public LoginResponse refreshToken(RefreshTokenRequestDto refreshTokenRequest) {
+    public LoginResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
         String refreshToken = refreshTokenRequest.getRefreshToken();
 
         return refreshTokenService.findByRefreshToken(refreshToken)
@@ -101,5 +101,26 @@ public class AuthService {
                     );
                 })
                 .orElseThrow(() -> new RefreshTokenException("Refresh token is not in database!"));
+    }
+
+    public LoginResponse validateTokensFromCookies(String refreshToken) {
+        return refreshTokenService.findByRefreshToken(refreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(token -> {
+                    User user = token.getUser();
+                    // Create new tokens
+                    String newJwtToken = jwtService.createToken(new UserPrincipal(user));
+                    refreshTokenService.deleteByUserId(user.getId());
+                    RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
+
+                    return new LoginResponse(
+                            newJwtToken,
+                            newRefreshToken.getToken(),
+                            user.getEmail(),
+                            jwtService.getExpirationDate(newJwtToken),
+                            newRefreshToken.getExpiryDate().toEpochMilli()
+                    );
+                })
+                .orElse(null);
     }
 }

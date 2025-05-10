@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +65,51 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
+                .body(body);
+    }
+
+    @ExceptionHandler(org.springframework.ai.retry.NonTransientAiException.class)
+    public ResponseEntity<Map<String, Object>> handleAiException(
+            org.springframework.ai.retry.NonTransientAiException ex,
+            HttpServletRequest request) {
+
+        logger.error("AI service error: {}", ex.getMessage());
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
+        body.put("error", "Service Unavailable");
+
+        // Check if it's a quota error
+        if (ex.getMessage().contains("insufficient_quota")) {
+            body.put("message", "AI service quota exceeded. Please try again later.");
+        } else {
+            body.put("message", "There was an issue with the AI service. Please try again later.");
+        }
+
+        body.put("path", request.getRequestURI());
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(body);
+    }
+
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<Map<String, Object>> handleResponseStatusException(
+            ResponseStatusException ex,
+            HttpServletRequest request) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", ex.getStatusCode().value());
+
+        // Use HttpStatus enum to get the reason phrase
+        String reasonPhrase = HttpStatus.valueOf(ex.getStatusCode().value()).getReasonPhrase();
+        body.put("error", reasonPhrase);
+
+        body.put("message", ex.getReason());
+        body.put("path", request.getRequestURI());
+
+        return ResponseEntity
+                .status(ex.getStatusCode())
                 .body(body);
     }
 }

@@ -2,7 +2,7 @@ package com.ai.triptailor.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class RefreshTokenRequestDto {
+public class RefreshTokenRequest {
     @NotBlank
     private String refreshToken;
 

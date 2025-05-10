@@ -24,13 +24,18 @@ public class S3StorageService {
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
 
+    @Value("${aws.s3.link-expiration}")
+    private long linkExpiration;
+
     private final S3Client s3Client;
+    private final S3Presigner presigner;
 
     private static final Logger logger = LoggerFactory.getLogger(S3StorageService.class);
 
     @Autowired
-    public S3StorageService(S3Client s3Client) {
+    public S3StorageService(S3Client s3Client, S3Presigner s3Presigner) {
         this.s3Client = s3Client;
+        this.presigner = s3Presigner;
     }
 
     /**
@@ -164,8 +169,6 @@ public class S3StorageService {
      */
     public Optional<String> generatePresignedUrl(String key, long expirationSeconds) {
         try {
-            S3Presigner presigner = S3Presigner.create();
-
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
@@ -186,5 +189,15 @@ public class S3StorageService {
             logger.error("Error generating presigned URL: {}", e.getMessage(), e);
             return Optional.empty();
         }
+    }
+
+    /**
+     * Generates a pre-signed URL for temporary access to a file with default expiration
+     *
+     * @param key S3 object key
+     * @return Optional containing the pre-signed URL if successful
+     */
+    public Optional<String> generatePresignedUrl(String key) {
+        return generatePresignedUrl(key, linkExpiration);
     }
 }

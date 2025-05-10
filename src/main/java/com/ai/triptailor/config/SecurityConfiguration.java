@@ -42,7 +42,7 @@ public class SecurityConfiguration {
                         .authenticationEntryPoint(restAuthenticationEntryPoint))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/logout").authenticated()
-                        .requestMatchers("/auth/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/auth/**", "/oauth2/**", "/test").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
