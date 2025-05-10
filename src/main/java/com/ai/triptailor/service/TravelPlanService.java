@@ -45,8 +45,7 @@ public class TravelPlanService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // Get current user ID from UserPrincipal
-        if (authentication.getPrincipal() instanceof UserPrincipal) {
-            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        if (authentication.getPrincipal() instanceof UserPrincipal userPrincipal) {
             Long currentUserId = userPrincipal.getId();
 
             // Find the travel plan and check if it belongs to the current user
@@ -217,6 +216,7 @@ public class TravelPlanService {
                         // Map attractions for this day
                         if (day.getAttractions() != null) {
                             List<AttractionResponse> attractionResponses = day.getAttractions().stream()
+                                    .sorted(Comparator.comparing(com.ai.triptailor.model.Attraction::getVisitOrder))
                                     .map(attraction -> {
                                         AttractionResponse attractionResponse = new AttractionResponse();
                                         attractionResponse.setVisitOrder(attraction.getVisitOrder());
