@@ -28,6 +28,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -102,7 +103,7 @@ public class LlmTravelPlannerService {
 
         // Generate itinerary
         TravelPlanSchema travelPlanSchema = generateTravelPlan(tripDuration, request.getDestination(),
-                travelPlan.getTravelStartDate(), travelPlan.getTravelEndDate());
+                request.getDesiredAttractions(), travelPlan.getTravelStartDate(), travelPlan.getTravelEndDate());
 
         // Create travel plan days with attractions from the generated schema
         for (TravelPlanDaySchema daySchema : travelPlanSchema.days()) {
@@ -173,12 +174,11 @@ public class LlmTravelPlannerService {
             currentUser.setGenerationsNumber(currentUser.getGenerationsNumber() + 1);
         }
 
+        travelPlan.setUser(currentUser);
         travelPlan.setCreatedAt(Instant.now());
+        TravelPlan savedTravelPlan = travelPlanRepository.save(travelPlan);
 
-        currentUser.addTravelPlan(travelPlan);
-        userRepository.save(currentUser);
-
-        return travelPlan.getId();
+        return savedTravelPlan.getId();
     }
 
     private DestinationDescriptionSchema generateDestinationDescription(String destination) {
@@ -198,13 +198,28 @@ public class LlmTravelPlannerService {
         }
     }
 
-    private TravelPlanSchema generateTravelPlan(int tripDuration, String destination,
+    private TravelPlanSchema generateTravelPlan(int tripDuration, String destination, List<String> desiredAttractions,
                                                 LocalDateTime startDate, LocalDateTime endDate) {
         try {
+            StringBuilder promptBuilder = new StringBuilder();
+            promptBuilder.append("Generate a detailed daily itinerary for a ")
+                    .append(tripDuration)
+                    .append(" day trip to ")
+                    .append(destination)
+                    .append(" from ")
+                    .append(startDate)
+                    .append(" to ")
+                    .append(endDate);
+
+            if (desiredAttractions != null && !desiredAttractions.isEmpty()) {
+                promptBuilder.append(". Make sure to also include the following attractions that the user specifically wants to see: ");
+                promptBuilder.append(String.join(", ", desiredAttractions));
+                promptBuilder.append("Also suggest other must-see attractions, local experiences, and hidden gems beyond what the user requested.");
+            }
+
             return chatClient.prompt()
                     .system(SYSTEM_PROMPT)
-                    .user("Generate a detailed daily itinerary for a " + tripDuration + " day trip to " +
-                            destination + " from " + startDate + " to " + endDate)
+                    .user(promptBuilder.toString())
                     .call()
                     .entity(TravelPlanSchema.class);
         } catch (Exception e) {
@@ -249,7 +264,6 @@ public class LlmTravelPlannerService {
                 DestinationDescriptionSchema translatedSchema = chatClient.prompt()
                         .system("You are responsible for translating the description of travel plans.")
                         .user("Translate this travel plan description from English to " + languageName + ":\n" + safeJson)
-                        //.user(prompt)
                         .call()
                         .entity(DestinationDescriptionSchema.class);
 

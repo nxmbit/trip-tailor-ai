@@ -13,9 +13,7 @@ public class GenerateTravelPlanRequest {
 
     private LocalDateTime endDate;
 
-    private List<String> desiredDestinations;
-
-    private List<String> desiredActivityTypes;
+    private List<String> desiredAttractions;
 
     public String getDestination() {
         return destination;
@@ -41,19 +39,11 @@ public class GenerateTravelPlanRequest {
         this.endDate = endDate;
     }
 
-    public List<String> getDesiredDestinations() {
-        return desiredDestinations;
+    public List<String> getDesiredAttractions() {
+        return desiredAttractions;
     }
 
-    public void setDesiredDestinations(List<String> desiredDestinations) {
-        this.desiredDestinations = desiredDestinations;
-    }
-
-    public List<String> getDesiredActivityTypes() {
-        return desiredActivityTypes;
-    }
-
-    public void setDesiredActivityTypes(List<String> desiredActivityTypes) {
-        this.desiredActivityTypes = desiredActivityTypes;
+    public void setDesiredAttractions(List<String> desiredAttractions) {
+        this.desiredAttractions = desiredAttractions;
     }
 }
