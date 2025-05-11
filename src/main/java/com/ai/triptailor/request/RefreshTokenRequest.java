@@ -1,4 +1,4 @@
-package com.ai.triptailor.dto;
+package com.ai.triptailor.request;
 
 import jakarta.validation.constraints.NotBlank;
 
