@@ -20,6 +20,9 @@ RUN mkdir $APP
 COPY . $APP
 WORKDIR $APP
 
+# Create an empty .env file required for compilation if it doesn't exist
+RUN touch .env
+
 RUN flutter clean
 RUN flutter pub get
 RUN flutter build web
@@ -30,6 +33,11 @@ FROM nginx:stable
 
 # copy the info of the builded web app to nginx
 COPY --from=build-env /app/build/web /usr/share/nginx/html
+
+# Create script to generate .env at container startup
+RUN echo '#!/bin/sh' > /docker-entrypoint.d/30-env-config.sh && \
+    echo 'echo "API_BASE_URL=$API_BASE_URL" > /usr/share/nginx/html/assets/.env' >> /docker-entrypoint.d/30-env-config.sh && \
+    chmod +x /docker-entrypoint.d/30-env-config.sh
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
