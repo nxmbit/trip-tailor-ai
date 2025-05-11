@@ -68,7 +68,7 @@ class LanguageProvider extends ChangeNotifier {
   Future<void> setLanguage(String languageCode) async {
     if (languageCode == _locale.languageCode && _isLoaded) return; // No change
     // Load the translations
-    String languageFile = 'translations/${languageCode}.json';
+    String languageFile = 'assets/translations/${languageCode}.json';
     String jsonString = await rootBundle.loadString(languageFile);
     _translations = json.decode(jsonString);
 
