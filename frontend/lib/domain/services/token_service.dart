@@ -1,12 +1,16 @@
+import 'dart:html' as html;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:frontend/data/api/endpoints.dart';
 
 class TokenService {
-  final _storage = const FlutterSecureStorage();
-  final Dio _dio; // Add Dio for API requests
+  final FlutterSecureStorage? _secureStorage;
+  final Dio _dio;
 
-  TokenService({Dio? dio}) : _dio = dio ?? Dio();
+  TokenService({Dio? dio})
+      : _secureStorage = kIsWeb ? null : const FlutterSecureStorage(),
+        _dio = dio ?? Dio();
 
   // Store tokens
   Future<void> saveTokens({
@@ -15,39 +19,82 @@ class TokenService {
     required String refreshToken,
     required int refreshExpirationTimestamp,
   }) async {
+    // Check for null values to avoid the null check operator error
+    if (jwtToken == null || jwtExpirationTimestamp == null ||
+        refreshToken == null || refreshExpirationTimestamp == null) {
+      print('Warning: Attempted to save tokens with null values');
+      throw Exception('Cannot save tokens: One or more values are null');
+    }
+
     final jwtExpirationDateStr =
-        DateTime.fromMillisecondsSinceEpoch(
-          jwtExpirationTimestamp,
-        ).toIso8601String();
+    DateTime.fromMillisecondsSinceEpoch(
+      jwtExpirationTimestamp,
+    ).toIso8601String();
 
     final refreshExpirationDateStr =
-        DateTime.fromMillisecondsSinceEpoch(
-          refreshExpirationTimestamp,
-        ).toIso8601String();
+    DateTime.fromMillisecondsSinceEpoch(
+      refreshExpirationTimestamp,
+    ).toIso8601String();
 
-    await _storage.write(key: 'jwtToken', value: jwtToken);
-    await _storage.write(
-      key: 'jwtTokenExpiration',
-      value: jwtExpirationDateStr,
-    );
-    await _storage.write(key: 'refreshToken', value: refreshToken);
-    await _storage.write(
-      key: 'refreshTokenExpiration',
-      value: refreshExpirationDateStr,
-    );
+    if (kIsWeb) {
+      // Use localStorage for web
+      html.window.localStorage['jwtToken'] = jwtToken;
+      html.window.localStorage['jwtTokenExpiration'] = jwtExpirationDateStr;
+      html.window.localStorage['refreshToken'] = refreshToken;
+      html.window.localStorage['refreshTokenExpiration'] = refreshExpirationDateStr;
+    } else {
+      // Use secure storage for mobile
+      await _secureStorage!.write(key: 'jwtToken', value: jwtToken);
+      await _secureStorage!.write(key: 'jwtTokenExpiration', value: jwtExpirationDateStr);
+      await _secureStorage!.write(key: 'refreshToken', value: refreshToken);
+      await _secureStorage!.write(key: 'refreshTokenExpiration', value: refreshExpirationDateStr);
+    }
   }
 
-  // Get tokens
-  Future<String?> getToken() async => await _storage.read(key: 'jwtToken');
-  Future<String?> getTokenExpiration() async =>
-      await _storage.read(key: 'jwtTokenExpiration');
-  Future<String?> getRefreshToken() async =>
-      await _storage.read(key: 'refreshToken');
-  Future<String?> getRefreshTokenExpiration() async =>
-      await _storage.read(key: 'refreshTokenExpiration');
+  // Get tokens with platform check
+  Future<String?> getToken() async {
+    if (kIsWeb) {
+      return html.window.localStorage['jwtToken'];
+    } else {
+      return await _secureStorage!.read(key: 'jwtToken');
+    }
+  }
+
+  Future<String?> getTokenExpiration() async {
+    if (kIsWeb) {
+      return html.window.localStorage['jwtTokenExpiration'];
+    } else {
+      return await _secureStorage!.read(key: 'jwtTokenExpiration');
+    }
+  }
+
+  Future<String?> getRefreshToken() async {
+    if (kIsWeb) {
+      return html.window.localStorage['refreshToken'];
+    } else {
+      return await _secureStorage!.read(key: 'refreshToken');
+    }
+  }
+
+  Future<String?> getRefreshTokenExpiration() async {
+    if (kIsWeb) {
+      return html.window.localStorage['refreshTokenExpiration'];
+    } else {
+      return await _secureStorage!.read(key: 'refreshTokenExpiration');
+    }
+  }
 
   // Clear tokens
-  Future<void> clearTokens() async => await _storage.deleteAll();
+  Future<void> clearTokens() async {
+    if (kIsWeb) {
+      html.window.localStorage.remove('jwtToken');
+      html.window.localStorage.remove('jwtTokenExpiration');
+      html.window.localStorage.remove('refreshToken');
+      html.window.localStorage.remove('refreshTokenExpiration');
+    } else {
+      await _secureStorage!.deleteAll();
+    }
+  }
 
   // Token validation
   Future<bool> isTokenValid() async {
@@ -74,7 +121,7 @@ class TokenService {
     }
   }
 
-  // Move refresh token logic here
+  // Refresh token logic
   Future<bool> refreshToken() async {
     try {
       final refreshToken = await getRefreshToken();
@@ -93,8 +140,7 @@ class TokenService {
           jwtToken: response.data['jwtToken'],
           jwtExpirationTimestamp: response.data['jwtExpirationDate'],
           refreshToken: response.data['refreshToken'],
-          refreshExpirationTimestamp:
-              response.data['refreshTokenExpirationDate'],
+          refreshExpirationTimestamp: response.data['refreshTokenExpirationDate'],
         );
         return true;
       }
