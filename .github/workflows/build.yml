@@ -20,10 +20,10 @@ jobs:
           cache: maven
           
       - name: Build with Maven
-        run: mvn -B package --file pom.xml -DskipTests
+        run: mvn -B package --file ./backend/pom.xml -DskipTests
         
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-jar
-          path: target/*.jar
+          path: ./backend/target/*.jar
