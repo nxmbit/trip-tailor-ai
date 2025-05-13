@@ -38,6 +38,7 @@ services:
       - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
       - LOGGING_LEVEL=${LOGGING_LEVEL}
       - WEB_FRONTEND_URL=${WEB_FRONTEND_URL}
+      - API_BASE_URL=${API_BASE_URL}
     ports:
       - "8080:8080"
 

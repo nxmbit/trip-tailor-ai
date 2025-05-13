@@ -22,18 +22,21 @@ spring:
           google:
             clientId: ${SPRING_OAUTH2_GOOGLE_CLIENT_ID}
             clientSecret: ${SPRING_OAUTH2_GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${API_BASE_URL}/login/oauth2/code/google
             scope:
               - email
               - profile
           facebook:
             clientId: ${SPRING_OAUTH2_FACEBOOK_CLIENT_ID}
             clientSecret: ${SPRING_OAUTH2_FACEBOOK_CLIENT_SECRET}
+            redirect-uri: ${API_BASE_URL}/login/oauth2/code/facebook
             scope:
               - email
               - public_profile
           github:
             clientId: ${SPRING_OAUTH2_GITHUB_CLIENT_ID}
             clientSecret: ${SPRING_OAUTH2_GITHUB_CLIENT_SECRET}
+            redirect-uri: ${API_BASE_URL}/login/oauth2/code/github
             scope:
               - user:email
               - read:user
@@ -87,4 +90,3 @@ google:
   maps:
     api:
       key: ${GOOGLE_MAPS_API_KEY}
-
