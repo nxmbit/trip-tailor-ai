@@ -34,6 +34,7 @@ spring:
           github:
             clientId: ${SPRING_OAUTH2_GITHUB_CLIENT_ID}
             clientSecret: ${SPRING_OAUTH2_GITHUB_CLIENT_SECRET}
+            redirect-uri: https://triptailorapi.nxmph.top/login/oauth2/code/github
             scope:
               - user:email
               - read:user
