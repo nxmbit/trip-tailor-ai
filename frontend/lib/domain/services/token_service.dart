@@ -38,12 +38,14 @@ class TokenService {
 
     if (kIsWeb) {
       // Use localStorage for web
+      print('Storing tokens in localStorage');
       html.window.localStorage['jwtToken'] = jwtToken;
       html.window.localStorage['jwtTokenExpiration'] = jwtExpirationDateStr;
       html.window.localStorage['refreshToken'] = refreshToken;
       html.window.localStorage['refreshTokenExpiration'] = refreshExpirationDateStr;
     } else {
       // Use secure storage for mobile
+      print('Storing tokens in secure storage');
       await _secureStorage!.write(key: 'jwtToken', value: jwtToken);
       await _secureStorage!.write(key: 'jwtTokenExpiration', value: jwtExpirationDateStr);
       await _secureStorage!.write(key: 'refreshToken', value: refreshToken);
