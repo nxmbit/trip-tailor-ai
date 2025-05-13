@@ -52,7 +52,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         // it is only meant for token transfer to the client
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken.getToken());
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(false);
+        refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(300); // 5 min
         response.addCookie(refreshTokenCookie);
