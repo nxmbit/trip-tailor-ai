@@ -88,3 +88,8 @@ google:
     api:
       key: ${GOOGLE_MAPS_API_KEY}
 
+server:
+  ssl:
+    enabled: true
+    protocol: TLS
+    enabled-protocols: TLSv1.2,TLSv1.3
