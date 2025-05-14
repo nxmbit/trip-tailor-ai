@@ -21,7 +21,7 @@ class AuthService {
   }) async {
     try {
       final response = await _apiClient.dio.post(
-        APIConstants.registerEndpoint,
+        Endpoints.registerEndpoint,
         data: {'email': email, 'password': password, 'username': username},
       );
 
@@ -35,7 +35,7 @@ class AuthService {
   Future<bool> login({required String email, required String password}) async {
     try {
       final response = await _apiClient.dio.post(
-        APIConstants.loginEndpoint,
+        Endpoints.loginEndpoint,
         data: {'email': email, 'password': password},
       );
 
@@ -63,7 +63,7 @@ class AuthService {
         try {
           final token = await _tokenService.getToken();
           if (token != null) {
-            await _apiClient.dio.post(APIConstants.logoutEndpoint);
+            await _apiClient.dio.post(Endpoints.logoutEndpoint);
           }
         } catch (e) {
           print('Server logout failed: $e');
@@ -102,7 +102,7 @@ class AuthService {
   Future<bool> handleSocialAuth(String provider) async {
     try {
       final authUrl =
-          '${APIConstants.baseUrl}${APIConstants.oauth2Endpoint}$provider';
+          '${Endpoints.baseUrl}${Endpoints.oauth2Endpoint}$provider';
 
       // Launch the URL in the browser
       final Uri uri = Uri.parse(authUrl);
@@ -129,7 +129,7 @@ class AuthService {
       Dio tempDio = Dio();
       // Call endpoint to exchange cookies for tokens
       final response = await tempDio.get(
-        '${APIConstants.baseUrl}${APIConstants.tokensEndpoint}',
+        '${Endpoints.baseUrl}${Endpoints.tokensEndpoint}',
         options: Options(extra: {'withCredentials': true}),
       );
 

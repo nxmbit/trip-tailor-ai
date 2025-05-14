@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/utils/translation_helper.dart';
+
 class HeadSection extends StatelessWidget {
   const HeadSection({super.key});
 
@@ -9,7 +11,7 @@ class HeadSection extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Plan Your Dream Trip',
+            tr(context, 'tripPlanner.headSectionTitle'),
             style: Theme.of(
               context,
             ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -17,7 +19,7 @@ class HeadSection extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Create a personalized travel itinerary using AI',
+            tr(context, 'tripPlanner.headSectionSubtitle'),
             style: Theme.of(
               context,
             ).textTheme.bodyLarge?.copyWith(color: Colors.grey.shade600),

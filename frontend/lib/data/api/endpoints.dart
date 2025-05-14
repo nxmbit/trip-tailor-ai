@@ -1,5 +1,5 @@
 // This file contains the API constants used in the application.
-class APIConstants {
+class Endpoints {
   static const String baseUrl = 'http://localhost:8080/';
 
   // Authentication endpoints

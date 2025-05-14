@@ -10,9 +10,7 @@ class UserRepository {
   /// Fetches the current user's profile
   Future<User?> getCurrentUser() async {
     try {
-      final response = await _apiClient.dio.get(
-        APIConstants.currentUserEndpoint,
-      );
+      final response = await _apiClient.dio.get(Endpoints.currentUserEndpoint);
 
       if (response.statusCode == 200) {
         return User.fromJson(response.data);

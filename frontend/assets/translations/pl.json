@@ -51,5 +51,18 @@
     "welcomeTitle": "Witaj w tripTailor.ai",
     "welcomeSubtitle": "Spersonalizowane doświadczenia podróżnicze stworzone specjalnie dla Ciebie",
     "welcomeButton": "Zaplanuj nową podróż"
+  },
+  "tripPlanner": {
+    "headSectionTitle": "Zaplanuj swoją wymarzoną podróż",
+    "headSectionSubtitle": "Stwórz spersonalizowany plan podróży za pomocą AI",
+    "destination": "Cel podróży",
+    "destinationHint": "Wprowadź lokalizację",
+    "desiredPlaces": "Dodaj wymarzone miejsca",
+    "desiredPlacesHint": "Dodaj atrakcje w",
+    "selectDestinationFirst": "Najpierw wybierz cel podróży",
+    "startDate": "Data rozpoczęcia",
+    "endDate": "Data zakończenia",
+    "selectDate": "Wybierz datę",
+    "generateButton": "Wygeneruj plan podróży"
   }
 }

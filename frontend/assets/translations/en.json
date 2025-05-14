@@ -51,5 +51,18 @@
     "welcomeTitle": "Welcome to tripTailor.ai",
     "welcomeSubtitle": "Personalized travel experiences designed just for you",
     "welcomeButton": "Plan a New Trip"
+  },
+  "tripPlanner": {
+    "headSectionTitle": "Plan Your Dream Trip",
+    "headSectionSubtitle": "Create a personalized travel itinerary using AI",
+    "destination": "Destination",
+    "destinationHint": "Enter a location",
+    "desiredPlaces": "Add Desired Places",
+    "desiredPlacesHint": "Add attractions in",
+    "selectDestinationFirst": "Select a destination first",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "selectDate": "Select date",
+    "generateButton": "Generate Trip Plan"
   }
 }
