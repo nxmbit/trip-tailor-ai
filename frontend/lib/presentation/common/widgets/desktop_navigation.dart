@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
+import 'package:go_router/go_router.dart';
 
 class DesktopNavigation extends StatelessWidget {
   const DesktopNavigation({super.key});
@@ -11,7 +12,7 @@ class DesktopNavigation extends StatelessWidget {
     return Row(
       children: [
         TextButton(
-          onPressed: () => Navigator.pushNamed(context, '/home'),
+          onPressed: () => context.go('/home'),
           child: Text(
             tr(context, 'app.title'),
             style: textTheme.displayLarge?.copyWith(
@@ -23,12 +24,12 @@ class DesktopNavigation extends StatelessWidget {
         ),
         const SizedBox(width: 32),
         TextButton(
-          onPressed: () => Navigator.pushNamed(context, '/trip-planner'),
+          onPressed: () => context.go('/trip-planner'),
           child: Text(tr(context, 'navigation.tripPlanner')),
         ),
         const SizedBox(width: 16),
         TextButton(
-          onPressed: () => Navigator.pushNamed(context, '/your-trips'),
+          onPressed: () => context.go('/your-trips'),
           child: Text(tr(context, 'navigation.yourTrips')),
         ),
       ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/domain/services/auth_service.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
@@ -35,9 +36,7 @@ class SecureRoute extends StatelessWidget {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           userProvider.userService.logoutUser();
 
-          Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil("/signin", (route) => false);
+          context.go('/signin');
         });
 
         return const SizedBox.shrink();

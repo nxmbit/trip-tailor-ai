@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/translation_helper.dart';
 
@@ -73,11 +74,11 @@ class WelcomeScreen extends StatelessWidget {
       alignment: WrapAlignment.center,
       children: [
         FilledButton(
-          onPressed: () => Navigator.of(context).pushNamed('/signin'),
+          onPressed: () => context.go('/signin'),
           child: Text(tr(context, 'auth.signIn')),
         ),
         FilledButton.tonal(
-          onPressed: () => Navigator.of(context).pushNamed('/signup'),
+          onPressed: () => context.go('/signup'),
           child: Text(tr(context, 'auth.signUp')),
         ),
       ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/utils/translation_helper.dart';
@@ -60,29 +61,16 @@ class _SplashScreenState extends State<SplashScreen> {
     // Get valid routes that require authentication
     final validSecureRoutes = ['/home', '/trip-planner', '/your-trips'];
 
-    // Check if extracted path matches any of our routes (with more detailed logging)
+    // Check if extracted path matches any of our routes
     debugPrint(
       'Path: "$path", isEmpty: ${path.isEmpty}, isRoot: ${path == '/'}',
     );
-    for (final route in validSecureRoutes) {
-      debugPrint('Checking if path matches $route: ${path == route}');
-    }
 
     // Determine target route based on current path
     String targetRoute = '/home'; // Default route
     if (path.isNotEmpty && path != '/' && validSecureRoutes.contains(path)) {
       targetRoute = path;
       debugPrint('Using current path as target: $targetRoute');
-    } else {
-      // See if path contains any of our routes (for nested URLs)
-      for (final route in validSecureRoutes) {
-        if (path.contains(route)) {
-          targetRoute = route;
-          debugPrint('Found matching route in path: $targetRoute');
-          break;
-        }
-      }
-      debugPrint('Using target route: $targetRoute');
     }
 
     // Check if user is authenticated
@@ -95,9 +83,9 @@ class _SplashScreenState extends State<SplashScreen> {
       );
 
       if (isAuthenticated) {
-        Navigator.of(context).pushReplacementNamed(targetRoute);
+        context.go(targetRoute); // Use GoRouter's context.go
       } else {
-        Navigator.of(context).pushReplacementNamed('/welcome');
+        context.go('/welcome'); // Use GoRouter's context.go
       }
     }
   }

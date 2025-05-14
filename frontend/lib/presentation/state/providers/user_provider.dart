@@ -37,6 +37,23 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  // Logout user
+  Future<void> logoutUser() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      userService.logoutUser();
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
   // Clear errors
   void clearError() {
     _error = null;

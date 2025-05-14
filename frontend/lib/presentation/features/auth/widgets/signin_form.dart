@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/utils/form_validators.dart';
 import '../../../../core/utils/translation_helper.dart';
 import '../state/signin_state.dart';
@@ -46,7 +47,7 @@ class _SignInFormState extends State<SignInForm> {
   }
 
   void _navigateToHome() {
-    Navigator.of(context).pushReplacementNamed('/home');
+    context.go('/home');
   }
 
   void _showErrorMessage(String message) {

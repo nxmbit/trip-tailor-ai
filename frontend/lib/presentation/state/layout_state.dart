@@ -5,6 +5,7 @@ import 'package:frontend/presentation/common/widgets/user_actions_dialog.dart';
 import 'package:frontend/presentation/state/providers/language_provider.dart';
 import 'package:frontend/presentation/state/providers/theme_provider.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class LayoutState {
@@ -13,13 +14,13 @@ class LayoutState {
 
   // For tracking current route for navigation indicators
   void updateSelectedIndexFromRoute(BuildContext context) {
-    final route = ModalRoute.of(context)?.settings.name ?? '';
+    final String location = GoRouterState.of(context).matchedLocation;
 
-    if (route.startsWith('/home')) {
+    if (location.startsWith('/home')) {
       currentIndex = 0;
-    } else if (route.startsWith('/trip-planner')) {
+    } else if (location.startsWith('/trip-planner')) {
       currentIndex = 1;
-    } else if (route.startsWith('/your-trips')) {
+    } else if (location.startsWith('/your-trips')) {
       currentIndex = 2;
     }
   }
@@ -43,7 +44,7 @@ class LayoutState {
 
     // Only navigate if not already on this route
     if (ModalRoute.of(context)?.settings.name != route) {
-      Navigator.pushReplacementNamed(context, route);
+      context.go(route);
     }
   }
 
@@ -218,12 +219,9 @@ class LayoutState {
               );
 
               // Perform logout
-              userProvider.userService.logoutUser();
-
+              userProvider.logoutUser();
               if (context.mounted) {
-                Navigator.of(
-                  context,
-                ).pushNamedAndRemoveUntil('/signin', (route) => false);
+                context.go('/signin');
               }
             },
           ),

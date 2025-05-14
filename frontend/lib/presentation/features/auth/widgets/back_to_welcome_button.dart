@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/translation_helper.dart';
 
@@ -8,7 +9,7 @@ class BackToWelcomeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () => Navigator.of(context).pushReplacementNamed('/welcome'),
+      onPressed: () => context.go('/welcome'),
       child: Text(
         tr(context, 'auth.backToWelcome'),
         textAlign: TextAlign.center,

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/presentation/common/widgets/action_item.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
@@ -110,13 +111,10 @@ class UserActionsDialog extends StatelessWidget {
 
                               // Use userProvider to access user service for logout
                               //perform logout
-                              userProvider.userService.logoutUser();
+                              userProvider.logoutUser();
 
                               if (context.mounted) {
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                                  '/signin',
-                                  (route) => false,
-                                );
+                                context.go('/signin');
                               }
                             },
                           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
+import 'package:go_router/go_router.dart';
 
 class WelcomeSection extends StatelessWidget {
   final bool isMobile;
@@ -44,7 +45,7 @@ class WelcomeSection extends StatelessWidget {
                     : null, // Full width container on mobile
             child: ElevatedButton(
               //TODO: possibly fix overflow
-              onPressed: () => Navigator.pushNamed(context, '/trip-planner'),
+              onPressed: () => context.go('/trip-planner'),
               child: Row(
                 mainAxisSize: MainAxisSize.min, // Always use min for the Row
                 mainAxisAlignment: MainAxisAlignment.center, // Center for both

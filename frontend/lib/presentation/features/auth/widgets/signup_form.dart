@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/utils/form_validators.dart';
 import '../../../../core/utils/translation_helper.dart';
 import '../state/signup_state.dart';
@@ -32,7 +33,7 @@ class _SignUpFormState extends State<SignUpForm> {
       if (!mounted) return;
 
       if (success) {
-        Navigator.of(context).pushReplacementNamed('/signin');
+        context.go('/signin');
       } else {
         _showErrorMessage(tr(context, 'auth.signUpError'));
       }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/domain/services/auth_service.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
@@ -58,7 +59,7 @@ class _OAuthRedirectHandlerState extends State<OAuthRedirectHandler> {
           // Use a timer instead of Future.delayed for navigation
           Future.delayed(const Duration(milliseconds: 1500), () {
             if (mounted && !Navigator.of(context).userGestureInProgress) {
-              Navigator.of(context).pushReplacementNamed('/home');
+              context.go('/home');
             }
           });
         }
@@ -101,7 +102,7 @@ class _OAuthRedirectHandlerState extends State<OAuthRedirectHandler> {
                 onPressed: () {
                   if (!_navigating) {
                     _navigating = true;
-                    Navigator.of(context).pushReplacementNamed('/signin');
+                    context.go('/signin');
                   }
                 },
                 child: Text(tr(context, 'oauth.returnToLogin')),
