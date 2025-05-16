@@ -7,11 +7,11 @@ class GenerateTravelProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   bool _isSuccess = false;
-
+  String? _tripId;
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get isSuccess => _isSuccess;
-
+  String? get tripId => _tripId;
   GenerateTravelProvider({required this.service});
 
   Future<void> generateTravelPlan({
@@ -26,7 +26,7 @@ class GenerateTravelProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await service.generateTravelPlan(
+      _tripId = await service.generateTravelPlan(
         destination: destination,
         startDate: startDate,
         endDate: endDate,

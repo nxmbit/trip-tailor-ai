@@ -64,5 +64,15 @@
     "endDate": "Data zakończenia",
     "selectDate": "Wybierz datę",
     "generateButton": "Wygeneruj plan podróży"
+  },
+  "tripDetail": {
+    "description": "Opis",
+    "bestTimeToVisit": "Najlepszy czas na wizytę",
+    "destinationHistory": "Historia miejsca",
+    "itinerary": "Plan podróży",
+    "attractions": "Atrakcje",
+    "localCuisine": "Polecane lokalne potrawy",
+    "mapView": "Widok mapy",
+    "hour": "godz."
   }
 }

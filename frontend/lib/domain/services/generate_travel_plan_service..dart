@@ -6,7 +6,7 @@ class GenerateTravelPlanService {
 
   GenerateTravelPlanService(this.repository);
 
-  Future<void> generateTravelPlan({
+  Future<String> generateTravelPlan({
     required String destination,
     DateTime? startDate,
     DateTime? endDate,
@@ -19,6 +19,6 @@ class GenerateTravelPlanService {
       desiredPlaces: desiredPlaces,
     );
 
-    await repository.generateTravelPlan(generateTravelPlan);
+    return await repository.generateTravelPlan(generateTravelPlan);
   }
 }

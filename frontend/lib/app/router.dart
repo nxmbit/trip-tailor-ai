@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend/domain/services/auth_service.dart';
 import 'package:frontend/presentation/common/layouts/desktop_scaffold.dart';
 import 'package:frontend/presentation/common/layouts/mobile_scaffold.dart';
 import 'package:frontend/presentation/common/layouts/tablet_scaffold.dart';
@@ -16,6 +15,9 @@ import 'package:frontend/presentation/features/welcome/screens/welcome_screen.da
 import 'package:frontend/presentation/features/your_trips/screens/your_trips_content.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
 
+import '../presentation/features/trip/screens/trip_detail_content.dart';
+
+//TODO: fix cleaning tokens
 class AppRouter {
   static GoRouter getRouter(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -127,6 +129,23 @@ class AppRouter {
                       child: const YourTripsContent(),
                     ),
                   ),
+            ),
+            GoRoute(
+              path: '/your-trips/:id',
+              builder: (context, state) {
+                final tripId = state.pathParameters['id']!;
+                return ResponsiveLayout(
+                  mobileScaffold: MobileScaffold(
+                    child: TripPlanDetailContent(tripId: tripId),
+                  ),
+                  tabletScaffold: TabletScaffold(
+                    child: TripPlanDetailContent(tripId: tripId),
+                  ),
+                  desktopScaffold: DesktopScaffold(
+                    child: TripPlanDetailContent(tripId: tripId),
+                  ),
+                );
+              },
             ),
           ],
         ),

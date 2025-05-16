@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/presentation/features/trip_planner/widgets/destination_field.dart';
 import 'package:frontend/presentation/features/trip_planner/widgets/submit_button.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../../../state/providers/generate_travel_provider.dart';
 import 'date_selection.dart';
 import 'desired_places_field.dart';
 
 //TODO: PREVENT SENDING REQUEST WHEN USER FILLS IN SPECIAL CHARS f.e: "/"
 //TODO: input deleting during resizing
+//TODO: better error messages for user
 class TripPlannerForm extends StatefulWidget {
   const TripPlannerForm({super.key});
 
@@ -56,8 +60,6 @@ class _TripPlannerFormState extends State<TripPlannerForm> {
   void _onDestinationChanged(String? newDestination) {
     setState(() {
       selectedDestination = newDestination;
-      // Note: We don't need to clear desired places here anymore
-      // The DesiredPlacesField handles that internally when destination changes
     });
   }
 
@@ -95,60 +97,62 @@ class _TripPlannerFormState extends State<TripPlannerForm> {
     debugPrint('Start Date: $startDate');
     debugPrint('End Date: $endDate');
 
-    // // Get the provider
-    // final generateTravelProvider = Provider.of<GenerateTravelProvider>(
-    //   context,
-    //   listen: false,
-    // );
+    // Get the provider
+    final generateTravelProvider = Provider.of<GenerateTravelProvider>(
+      context,
+      listen: false,
+    );
 
-    // // Reset any previous state
-    // generateTravelProvider.resetState();
+    // Reset any previous state
+    generateTravelProvider.resetState();
 
-    // // Show loading dialog
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: false,
-    //   builder: (BuildContext context) {
-    //     return WillPopScope(
-    //       onWillPop: () async => false, // Prevent closing with back button
-    //       child: AlertDialog(
-    //         content: Column(
-    //           mainAxisSize: MainAxisSize.min,
-    //           children: const [
-    //             CircularProgressIndicator(),
-    //             SizedBox(height: 16),
-    //             Text('Generating your travel plan...\nThis may take a minute.'),
-    //           ],
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => false, // Prevent closing with back button
+          child: AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Generating your travel plan...\nThis may take a minute.'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
 
-    // // Generate travel plan
-    // generateTravelProvider
-    //     .generateTravelPlan(
-    //       destination: selectedDestination!,
-    //       startDate: startDate,
-    //       endDate: endDate,
-    //       desiredPlaces: desiredPlaces.isNotEmpty ? desiredPlaces : null,
-    //     )
-    //     .then((_) {
-    //       // Close loading dialog
-    //       Navigator.of(context, rootNavigator: true).pop();
+    // Generate travel plan
+    generateTravelProvider
+        .generateTravelPlan(
+          destination: selectedDestination!,
+          startDate: startDate,
+          endDate: endDate,
+          desiredPlaces: desiredPlaces.isNotEmpty ? desiredPlaces : null,
+        )
+        .then((_) {
+          // Close loading dialog
+          Navigator.of(context, rootNavigator: true).pop();
 
-    //       if (generateTravelProvider.isSuccess) {
-    //         ScaffoldMessenger.of(context).showSnackBar(
-    //           const SnackBar(
-    //             content: Text('Travel plan generated successfully!'),
-    //           ),
-    //         );
-    //         // You can navigate to the plan details page here if needed
-    //       } else if (generateTravelProvider.error != null) {
-    //         ScaffoldMessenger.of(context).showSnackBar(
-    //           SnackBar(content: Text('Error: ${generateTravelProvider.error}')),
-    //         );
-    //       }
-    //     });
+          if (generateTravelProvider.isSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Travel plan generated successfully!'),
+              ),
+            );
+
+            // Navigate to trip details page with the ID
+            if (generateTravelProvider.tripId != null) {
+              context.go('/your-trips/${generateTravelProvider.tripId}');
+            }
+          } else if (generateTravelProvider.error != null) {
+            // Keep existing error handling
+          }
+        });
   }
 }

@@ -8,7 +8,9 @@ class GenerateTravelPlanRepository {
 
   GenerateTravelPlanRepository(this.apiClient);
 
-  Future<void> generateTravelPlan(GenerateTravelPlan generateTravelPlan) async {
+  Future<String> generateTravelPlan(
+    GenerateTravelPlan generateTravelPlan,
+  ) async {
     try {
       // Create options with extended timeout values
       final options = Options(
@@ -18,11 +20,17 @@ class GenerateTravelPlanRepository {
         sendTimeout: const Duration(seconds: 30),
       );
 
-      await apiClient.dio.post(
+      final response = await apiClient.dio.post(
         Endpoints.generateTravelPlanEndpoint,
         data: generateTravelPlan.toJson(),
         options: options, // Pass our custom options
       );
+      // Extract the trip ID from the response
+      if (response.data != null) {
+        return response.data["id"] as String;
+      } else {
+        throw Exception('Failed to get trip data from response');
+      }
     } on Exception catch (e) {
       throw Exception('Failed to generate travel plan: $e');
     }

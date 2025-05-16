@@ -64,5 +64,15 @@
     "endDate": "End Date",
     "selectDate": "Select date",
     "generateButton": "Generate Trip Plan"
+  },
+  "tripDetail": {
+    "description": "Description",
+    "bestTimeToVisit": "Best Time to Visit",
+    "destinationHistory": "Destination History",
+    "itinerary": "Itinerary",
+    "attractions": "Attractions",
+    "localCuisine": "Local Cuisine Recommendations",
+    "mapView": "Map View",
+    "hour": "hr"
   }
 }
