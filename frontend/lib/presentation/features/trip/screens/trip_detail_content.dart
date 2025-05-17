@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/presentation/state/providers/trip_plan_provider.dart';
 import '../../../state/providers/language_provider.dart';
@@ -68,99 +69,67 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
   }
 
   Widget _buildMobileLayout(BuildContext context, tripPlan) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TripHeaderSection(
-            tripPlan: tripPlan,
-            isDesktopView: false,
-            isTabletView: false,
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Add padding at the top to make space for the back button
+              const SizedBox(height: 48),
+              TripHeaderSection(
+                tripPlan: tripPlan,
+                isDesktopView: false,
+                isTabletView: false,
+              ),
+              const SizedBox(height: 16),
+              TripItinerarySection(tripPlan: tripPlan, isDesktopView: false),
+              const SizedBox(height: 16),
+              TripMapSection(tripPlan: tripPlan),
+              const SizedBox(height: 16),
+              TripCuisineSection(
+                recommendations: tripPlan.localCuisineRecommendations,
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          TripItinerarySection(tripPlan: tripPlan, isDesktopView: false),
-          const SizedBox(height: 16),
-          TripMapSection(tripPlan: tripPlan),
-          const SizedBox(height: 16),
-          TripCuisineSection(
-            recommendations: tripPlan.localCuisineRecommendations,
-          ),
-        ],
-      ),
+        ),
+        // Back button positioned at the top left
+        Positioned(top: 16, left: 16, child: _buildBackButton(context)),
+      ],
     );
   }
 
   Widget _buildTabletLayout(BuildContext context, tripPlan) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TripHeaderSection(
-              tripPlan: tripPlan,
-              isDesktopView: false,
-              isTabletView: true,
-            ),
-            const SizedBox(height: 24),
-
-            Flexible(
-              flex: 3,
-              fit: FlexFit.loose,
-              child: TripItinerarySection(
-                tripPlan: tripPlan,
-                isDesktopView: true,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Flexible(
-              flex: 2,
-              fit: FlexFit.loose,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TripMapSection(tripPlan: tripPlan),
-                  const SizedBox(height: 24),
-                  TripCuisineSection(
-                    recommendations: tripPlan.localCuisineRecommendations,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDesktopLayout(BuildContext context, tripPlan) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TripHeaderSection(
-              tripPlan: tripPlan,
-              isDesktopView: true,
-              isTabletView: false,
-            ),
-            const SizedBox(height: 32),
-
-            Row(
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  flex: 2,
+                // Add padding at the top to make space for the back button
+                const SizedBox(height: 48),
+                TripHeaderSection(
+                  tripPlan: tripPlan,
+                  isDesktopView: false,
+                  isTabletView: true,
+                ),
+                const SizedBox(height: 24),
+
+                Flexible(
+                  flex: 3,
+                  fit: FlexFit.loose,
                   child: TripItinerarySection(
                     tripPlan: tripPlan,
                     isDesktopView: true,
                   ),
                 ),
-                const SizedBox(width: 24),
-
-                Expanded(
+                const SizedBox(width: 16),
+                Flexible(
+                  flex: 2,
+                  fit: FlexFit.loose,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -174,7 +143,86 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
                 ),
               ],
             ),
-          ],
+          ),
+        ),
+        // Back button positioned at the top left
+        Positioned(top: 16, left: 16, child: _buildBackButton(context)),
+      ],
+    );
+  }
+
+  Widget _buildDesktopLayout(BuildContext context, tripPlan) {
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Add padding at the top to make space for the back button
+                const SizedBox(height: 48),
+                TripHeaderSection(
+                  tripPlan: tripPlan,
+                  isDesktopView: true,
+                  isTabletView: false,
+                ),
+                const SizedBox(height: 32),
+
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: TripItinerarySection(
+                        tripPlan: tripPlan,
+                        isDesktopView: true,
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TripMapSection(tripPlan: tripPlan),
+                          const SizedBox(height: 24),
+                          TripCuisineSection(
+                            recommendations:
+                                tripPlan.localCuisineRecommendations,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Back button positioned at the top left
+        Positioned(top: 16, left: 24, child: _buildBackButton(context)),
+      ],
+    );
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+    return Material(
+      color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+      elevation: 4,
+      borderRadius: BorderRadius.circular(24),
+      child: InkWell(
+        onTap: () {
+          // Navigate to your-trips page instead of trying to pop
+          context.go('/your-trips');
+        },
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [const Icon(Icons.arrow_back), const SizedBox(width: 8)],
+          ),
         ),
       ),
     );

@@ -74,5 +74,29 @@
     "localCuisine": "Polecane lokalne potrawy",
     "mapView": "Widok mapy",
     "hour": "godz."
+  },
+  "yourTrips": {
+    "title": "Twoje podróże",
+    "subtitle": "Przeglądaj swoje plany podróży",
+    "empty": "Nie masz jeszcze żadnych podróży",
+    "createTrip": "Utwórz podróż",
+    "numberOfYourTrips": "Liczba Twoich podróży:",
+    "retry": "Spróbuj ponownie",
+    "sort": "Sortuj",
+    "sortOptions": {
+      "creationDate": "Data utworzenia",
+      "creationDateOldest": "Data utworzenia (najstarsze)",
+      "startDate": "Data rozpoczęcia",
+      "startDateLatest": "Data rozpoczęcia (najnowsze)",
+      "tripLength": "Długość podróży",
+      "destinationAZ": "Cel podróży (A-Z)",
+      "destinationZA": "Cel podróży (Z-A)"
+    },
+    "pagination": {
+      "previous": "Poprzednia",
+      "next": "Następna",
+      "page": "Strona",
+      "of": "z"
+    }
   }
 }

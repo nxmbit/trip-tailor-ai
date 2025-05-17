@@ -74,5 +74,29 @@
     "localCuisine": "Local Cuisine Recommendations",
     "mapView": "Map View",
     "hour": "hr"
+  },
+  "yourTrips": {
+    "title": "Your Trips",
+    "subtitle": "Browse your travel plans",
+    "empty": "You don't have any trips yet",
+    "createTrip": "Create Trip",
+    "numberOfYourTrips": "Number of your trips:",
+    "retry": "Retry",
+    "sort": "Sort",
+    "sortOptions": {
+      "creationDate": "Creation Date",
+      "creationDateOldest": "Creation Date (oldest)",
+      "startDate": "Start Date",
+      "startDateLatest": "Start Date (latest)",
+      "tripLength": "Trip Length",
+      "destinationAZ": "Destination (A-Z)",
+      "destinationZA": "Destination (Z-A)"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of"
+    }
   }
 }
