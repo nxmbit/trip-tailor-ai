@@ -51,7 +51,9 @@ List<SingleChildWidget> getProviders() {
     ChangeNotifierProvider(create: (_) => ThemeProvider()),
     ChangeNotifierProvider.value(value: LanguageProvider()..init()),
     ChangeNotifierProvider(
-      create: (_) => UserProvider(userService: userService),
+      create:
+          (_) =>
+              UserProvider(userService: userService, authService: authService),
     ),
     ChangeNotifierProvider(
       create: (_) => GenerateTravelProvider(service: generateTravelPlanService),

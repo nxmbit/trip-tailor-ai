@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/utils/translation_helper.dart';
 import '../../../../domain/services/auth_service.dart';
+import '../../../../app/router.dart';
+import '../../../state/providers/user_provider.dart';
 
 //TODO: possibly make it be shown only when the app is loading
 class SplashScreen extends StatefulWidget {
@@ -22,70 +24,36 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkAuthentication() async {
     final authService = Provider.of<AuthService>(context, listen: false);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
     // Give the splash screen time to be visible
     await Future.delayed(const Duration(seconds: 1));
-
-    // Get the current URL path from the browser with hash-routing support
-    String path = '';
-    try {
-      // Get the full URL from Uri.base
-      final Uri uri = Uri.parse(Uri.base.toString());
-
-      // For hash-based routing, we need to check the fragment
-      if (uri.hasFragment) {
-        path = uri.fragment;
-        debugPrint('Extracted path from fragment: $path');
-      } else {
-        path = uri.path;
-        debugPrint('Extracted path from URI path: $path');
-      }
-
-      // Debug print to see what's happening
-      debugPrint('Current URL: ${Uri.base.toString()}');
-
-      // Ensure path starts with / for consistency with route names
-      if (!path.startsWith('/') && path.isNotEmpty) {
-        path = '/$path';
-        debugPrint('Added leading slash: $path');
-      }
-
-      // Normalize the path (remove trailing slash except for root path)
-      if (path.endsWith('/') && path.length > 1) {
-        path = path.substring(0, path.length - 1);
-        debugPrint('Normalized path: $path');
-      }
-    } catch (e) {
-      debugPrint('Error extracting path: $e');
-    }
-
-    // Get valid routes that require authentication
-    final validSecureRoutes = ['/home', '/trip-planner', '/your-trips'];
-
-    // Check if extracted path matches any of our routes
-    debugPrint(
-      'Path: "$path", isEmpty: ${path.isEmpty}, isRoot: ${path == '/'}',
-    );
-
-    // Determine target route based on current path
-    String targetRoute = '/home'; // Default route
-    if (path.isNotEmpty && path != '/' && validSecureRoutes.contains(path)) {
-      targetRoute = path;
-      debugPrint('Using current path as target: $targetRoute');
-    }
 
     // Check if user is authenticated
     final isAuthenticated = await authService.isAuthenticated();
 
+    // Update the UserProvider with the correct auth state
+    if (userProvider.isAuthenticated != isAuthenticated) {
+      userProvider.updateAuthState(isAuthenticated);
+    }
+
+    // If authenticated, also load the user data
+    if (isAuthenticated) {
+      await userProvider.initializeUser();
+    }
+
     if (mounted) {
       debugPrint('Authentication status: $isAuthenticated');
-      debugPrint(
-        'Navigating to: ${isAuthenticated ? targetRoute : '/welcome'}',
-      );
 
       if (isAuthenticated) {
-        context.go(targetRoute); // Use GoRouter's context.go
+        // Get the last route if available, otherwise go to home
+        final lastRoute = await AppRouter.getLastRoute();
+        final targetRoute = lastRoute ?? '/home';
+        debugPrint('Navigating to last route: $targetRoute');
+        context.go(targetRoute);
       } else {
-        context.go('/welcome'); // Use GoRouter's context.go
+        // If not authenticated, go to welcome screen
+        context.go('/welcome');
       }
     }
   }

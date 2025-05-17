@@ -210,19 +210,12 @@ class LayoutState {
               tr(context, 'settings.logout'),
               style: TextStyle(color: Colors.red),
             ),
-            onTap: () {
+            onTap: () async {
               Navigator.pop(context);
-              // Get services from provider
-              final userProvider = Provider.of<UserProvider>(
+              await Provider.of<UserProvider>(
                 context,
                 listen: false,
-              );
-
-              // Perform logout
-              userProvider.logoutUser();
-              if (context.mounted) {
-                context.go('/signin');
-              }
+              ).logoutUser();
             },
           ),
         ],

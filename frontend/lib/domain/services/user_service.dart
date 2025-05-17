@@ -7,9 +7,7 @@ class UserService {
   final AuthService _authService;
   User? _currentUser;
 
-  UserService(this._userRepository, this._authService) {
-    // Initialize user data
-  }
+  UserService(this._userRepository, this._authService);
 
   // Public getters
   User? get currentUser => _currentUser;
@@ -24,9 +22,14 @@ class UserService {
     }
   }
 
-  // Clear user data (for logout)
-  void logoutUser() {
+  // Clear user data only (for logout)
+  void clearUser() {
     _currentUser = null;
-    _authService.logout();
+  }
+
+  // Handle complete logout
+  Future<void> logoutUser() async {
+    _currentUser = null;
+    await _authService.logout();
   }
 }

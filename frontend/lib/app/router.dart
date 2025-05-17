@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend/presentation/common/layouts/desktop_scaffold.dart';
 import 'package:frontend/presentation/common/layouts/mobile_scaffold.dart';
 import 'package:frontend/presentation/common/layouts/tablet_scaffold.dart';
@@ -15,52 +16,108 @@ import 'package:frontend/presentation/features/welcome/screens/welcome_screen.da
 import 'package:frontend/presentation/features/your_trips/screens/your_trips_content.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
 
+import '../domain/services/auth_service.dart';
 import '../presentation/features/trip/screens/trip_detail_content.dart';
 
-//TODO: fix cleaning tokens
 class AppRouter {
+  // Constants for route storage
+  static const String _lastRouteKey = 'last_authenticated_route';
+
+  // List of all protected routes that require authentication
+  static final List<String> _protectedRoutes = [
+    '/home',
+    '/trip-planner',
+    '/your-trips',
+  ];
+
+  // List of public routes that don't require authentication
+  static final List<String> _publicRoutes = [
+    '/signin',
+    '/signup',
+    '/welcome',
+    '/oauth2/redirect',
+    '/',
+  ];
+
   static GoRouter getRouter(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
 
     return GoRouter(
       initialLocation: '/',
       debugLogDiagnostics: true,
-      refreshListenable: userProvider, // Listen to user changes
+      refreshListenable: userProvider,
       redirect: (context, state) async {
-        // Force refresh auth status on every redirection
-        final isLoggedIn = userProvider.isAuthenticated;
+        // Important: For page refreshes, we need to rely on the token check
+        // instead of the in-memory userProvider state
+        final isLoggedIn = await authService.isAuthenticated();
 
-        debugPrint("isLoggedIn: $isLoggedIn");
-        debugPrint(
-          'Router redirect - path: ${state.matchedLocation}, authenticated: $isLoggedIn',
+        // Synchronize UserProvider with the actual authentication state
+        // This ensures the UI updates correctly after the auth check
+        if (userProvider.isAuthenticated != isLoggedIn) {
+          // Update the UserProvider without triggering another redirect
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            userProvider.updateAuthState(isLoggedIn);
+          });
+        }
+
+        final isInitializing = userProvider.isLoading;
+        final isGoingToPublicRoute = _publicRoutes.contains(
+          state.matchedLocation,
+        );
+        final isGoingToProtectedRoute = _isProtectedRoute(
+          state.matchedLocation,
         );
 
-        // Auth pages that don't require authentication
-        final isGoingToAuth =
-            state.matchedLocation == '/signin' ||
-            state.matchedLocation == '/signup' ||
-            state.matchedLocation == '/welcome';
+        debugPrint(
+          'Router redirect - path: ${state.matchedLocation}, authenticated: $isLoggedIn, initializing: $isInitializing',
+        );
 
-        // Splash screen
-        final isGoingToSplash = state.matchedLocation == '/';
+        // If we're still initializing and going to the splash screen, don't redirect
+        if (isInitializing && state.matchedLocation == '/') {
+          return null;
+        }
 
-        // Not logged in but trying to access a protected route
-        if (!isLoggedIn && !isGoingToAuth && !isGoingToSplash) {
+        // Case 1: Not logged in but trying to access a protected route
+        if (!isLoggedIn && isGoingToProtectedRoute) {
+          // Save the attempted path for later redirect after login
+          await _saveLastRoute("/home");
           debugPrint('Not authenticated, redirecting to /signin');
           return '/signin';
         }
 
-        // Logged in but trying to access an auth route
-        if (isLoggedIn && isGoingToAuth) {
-          debugPrint('Already authenticated, redirecting to /home');
-          return '/home';
+        // Case 2: Logged in but trying to access a public auth route
+        if (isLoggedIn &&
+            isGoingToPublicRoute &&
+            state.matchedLocation != '/') {
+          if (state.matchedLocation == '/oauth2/redirect') {
+            // Don't redirect from OAuth handler
+            return null;
+          }
+          debugPrint(
+            'Already authenticated, redirecting to last route or /home',
+          );
+          // Return to the last known route or home
+          final lastRoute = await _getLastRoute();
+          return lastRoute ?? '/home';
+        }
+
+        // Case 3: Initial app load (splash screen)
+        if (state.matchedLocation == '/') {
+          // SplashScreen will handle the redirect logic
+          return null;
+        }
+
+        // Save the current route if user is authenticated and on a protected route
+        if (isLoggedIn && isGoingToProtectedRoute) {
+          await _saveLastRoute(state.matchedLocation);
         }
 
         // No redirect needed
         return null;
       },
       routes: [
-        // Splash screen route
+        // Splash screen route - handles initial routing logic
         GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
 
         // Auth routes
@@ -151,6 +208,53 @@ class AppRouter {
         ),
       ],
     );
+  }
+
+  // Helper method to check if a route is protected
+  static bool _isProtectedRoute(String path) {
+    // Check exact matches
+    if (_protectedRoutes.contains(path)) {
+      return true;
+    }
+
+    // Check for routes with parameters (like /your-trips/:id)
+    for (final route in _protectedRoutes) {
+      if (path.startsWith('$route/')) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Save last authenticated route to preferences
+  static Future<void> _saveLastRoute(String route) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_lastRouteKey, route);
+    debugPrint('Saved last route: $route');
+  }
+
+  // Get last authenticated route from preferences
+  static Future<String?> getLastRoute() async {
+    return _getLastRoute();
+  }
+
+  static Future<String?> _getLastRoute() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastRoute = prefs.getString(_lastRouteKey);
+    debugPrint('Retrieved last route: $lastRoute');
+    return lastRoute;
+  }
+
+  static Future<void> resetLastRoute() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_lastRouteKey);
+
+      debugPrint('Reset last route');
+    } catch (e) {
+      debugPrint('Error resetting last route: $e');
+    }
   }
 }
 
