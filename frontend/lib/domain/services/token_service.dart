@@ -47,7 +47,12 @@ class TokenService {
       await _storage.read(key: 'refreshTokenExpiration');
 
   // Clear tokens
-  Future<void> clearTokens() async => await _storage.deleteAll();
+  Future<void> clearTokens() async {
+    await _storage.delete(key: 'jwtToken');
+    await _storage.delete(key: 'jwtTokenExpiration');
+    await _storage.delete(key: 'refreshToken');
+    await _storage.delete(key: 'refreshTokenExpiration');
+  }
 
   // Token validation
   Future<bool> isTokenValid() async {

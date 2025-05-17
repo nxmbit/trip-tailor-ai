@@ -24,11 +24,14 @@ class UserSection extends StatelessWidget {
 
     return Consumer<UserProvider>(
       builder: (context, userProvider, _) {
+        if (userProvider.isLoading) {
+          return _buildLoadingIndicator(displayMode);
+        }
         final user = userProvider.user;
 
         // Use default values if user is not loaded yet
-        final username = user?.username ?? 'Username';
-        final email = user?.email ?? 'example@example.com';
+        final username = user?.username ?? '';
+        final email = user?.email ?? '';
         final imageUrl =
             user?.photoUrl.isNotEmpty == true ? user!.photoUrl : null;
 
@@ -56,6 +59,28 @@ class UserSection extends StatelessWidget {
 
         return InkWell(onTap: onTap, child: userSection);
       },
+    );
+  }
+
+  Widget _buildLoadingIndicator(UserSectionDisplayMode mode) {
+    // Different sized indicators based on display mode
+    double size;
+    switch (mode) {
+      case UserSectionDisplayMode.mobile:
+        size = 32.0; // Circle avatar size
+        break;
+      case UserSectionDisplayMode.tablet:
+        size = 50.0;
+        break;
+      case UserSectionDisplayMode.desktop:
+        size = 60.0;
+        break;
+    }
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: const Center(child: CircularProgressIndicator(strokeWidth: 2.0)),
     );
   }
 
