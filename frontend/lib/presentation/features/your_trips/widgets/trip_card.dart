@@ -23,7 +23,7 @@ class TripCard extends StatelessWidget {
               child:
                   trip.imageUrl.isNotEmpty
                       ? Image.network(
-                        'https://corsproxy.io/?${Uri.encodeFull(trip.imageUrl)}',
+                        trip.imageUrl,
                         fit: BoxFit.cover,
                         errorBuilder:
                             (context, error, stackTrace) => Container(
@@ -140,7 +140,6 @@ class TripCard extends StatelessWidget {
   }
 
   String _formatDateRange(DateTime start, DateTime end) {
-    // Create a DateFormat that respects the current locale
     final DateFormat formatter = DateFormat('d/M/yyyy');
 
     return '${formatter.format(start)} - ${formatter.format(end)}';

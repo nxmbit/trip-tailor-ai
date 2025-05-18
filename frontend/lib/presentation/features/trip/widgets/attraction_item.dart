@@ -96,7 +96,7 @@ class AttractionItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(
                         attraction.imageUrl.isNotEmpty
-                            ? 'https://corsproxy.io/?${Uri.encodeFull(attraction.imageUrl)}'
+                            ? attraction.imageUrl
                             : '',
                         height: 150,
                         width: double.infinity,
@@ -234,7 +234,7 @@ class AttractionItem extends StatelessWidget {
                     width: 80,
                     height: 80,
                     child: Image.network(
-                      'https://corsproxy.io/?${Uri.encodeFull(attraction.imageUrl)}',
+                      attraction.imageUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
@@ -277,7 +277,7 @@ class AttractionItem extends StatelessWidget {
                     maxWidth: MediaQuery.of(context).size.width * 0.9,
                   ),
                   child: Image.network(
-                    'https://corsproxy.io/?${Uri.encodeFull(imageUrl)}',
+                    imageUrl,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(

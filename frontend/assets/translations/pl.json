@@ -50,7 +50,9 @@
     "recentTripsTitle": "Ostatnio utworzone podróże",
     "welcomeTitle": "Witaj w tripTailor.ai",
     "welcomeSubtitle": "Spersonalizowane doświadczenia podróżnicze stworzone specjalnie dla Ciebie",
-    "welcomeButton": "Zaplanuj nową podróż"
+    "welcomeButton": "Zaplanuj nową podróż",
+    "viewAllTrips": "Zobacz wszystkie podróże",
+    "noTripsYet": "Nie masz jeszcze żadnych podróży"
   },
   "tripPlanner": {
     "headSectionTitle": "Zaplanuj swoją wymarzoną podróż",

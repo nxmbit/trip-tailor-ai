@@ -7,7 +7,6 @@ import '../../../../domain/services/auth_service.dart';
 import '../../../../app/router.dart';
 import '../../../state/providers/user_provider.dart';
 
-//TODO: possibly make it be shown only when the app is loading
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 

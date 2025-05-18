@@ -37,7 +37,7 @@ class TripHeaderSection extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(isDesktopView ? 12 : 0),
                 child: Image.network(
-                  'https://corsproxy.io/?${Uri.encodeFull(tripPlan.imageUrl)}',
+                  tripPlan.imageUrl,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(

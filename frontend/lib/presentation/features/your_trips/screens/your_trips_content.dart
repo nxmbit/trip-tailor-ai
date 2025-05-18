@@ -141,7 +141,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
                 Text(tr(context, 'yourTrips.empty')),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () => context.go('/plan-trip'),
+                  onPressed: () => context.go('/trip-planner'),
                   child: Text(tr(context, 'yourTrips.createTrip')),
                 ),
               ],

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-//TODO: current language is stored in secure storage and is cleared along with tokens while logout
 class LanguageProvider extends ChangeNotifier {
   // Default language
   Locale _locale = Locale(

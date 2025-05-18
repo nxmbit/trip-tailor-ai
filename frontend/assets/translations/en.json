@@ -50,7 +50,9 @@
     "recentTripsTitle": "Recently created trips",
     "welcomeTitle": "Welcome to tripTailor.ai",
     "welcomeSubtitle": "Personalized travel experiences designed just for you",
-    "welcomeButton": "Plan a New Trip"
+    "welcomeButton": "Plan a New Trip",
+    "viewAllTrips": "View All Trips",
+    "noTripsYet": "You don't have any trips yet"
   },
   "tripPlanner": {
     "headSectionTitle": "Plan Your Dream Trip",

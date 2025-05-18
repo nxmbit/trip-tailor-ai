@@ -1,108 +1,166 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/presentation/features/home/widgets/recent_trip_card.dart';
-
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/utils/translation_helper.dart';
+import '../../../state/providers/trip_plan_info_provider.dart';
+import '../../../state/providers/language_provider.dart';
+import '../../your_trips/widgets/trip_card.dart';
 
-//TODO: split into state
-class RecentTripSection extends StatelessWidget {
+class RecentTripSection extends StatefulWidget {
   final int crossAxisCount;
 
   const RecentTripSection({Key? key, required this.crossAxisCount})
     : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Demo data
-    final trips = [
-      RecentTripData(
-        username: "john_doe",
-        userImageUrl:
-            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
-        destination: 'Paris, France',
-        imageUrl:
-            'https://images.unsplash.com/photo-1502602898657-3e91760cbb34',
-        startDate: "2023-06-15",
-        endDate: "2023-06-22",
-      ),
-      RecentTripData(
-        username: "Jane",
-        userImageUrl:
-            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-        destination: 'Tokyo, Japan',
-        imageUrl:
-            'https://images.unsplash.com/photo-1513407030348-c983a97b98d8',
-        startDate: "2023-06-15",
-        endDate: "2023-06-22",
-      ),
-      RecentTripData(
-        username: "long_username",
-        userImageUrl:
-            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
-        destination: 'New York, USA',
-        imageUrl:
-            'https://images.unsplash.com/photo-1522083165195-3424ed129620',
-        startDate: "2023-06-15",
-        endDate: "2023-06-22",
-      ),
-      RecentTripData(
-        username: "very_very_very_long_username",
-        userImageUrl:
-            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
-        destination: 'Bali, Indonesia',
-        imageUrl:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4',
-        startDate: "2023-06-15",
-        endDate: "2023-06-22",
-      ),
-    ];
+  State<RecentTripSection> createState() => _RecentTripSectionState();
+}
 
+class _RecentTripSectionState extends State<RecentTripSection> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<TripPlanInfoProvider>(
+        context,
+        listen: false,
+      );
+
+      final language =
+          Provider.of<LanguageProvider>(
+            context,
+            listen: false,
+          ).locale.languageCode;
+
+      // Load just the 4 most recent trips
+      provider.loadTravelPlans(language: language, pageSize: 4);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          tr(context, 'home.recentTripsTitle'),
-          style: Theme.of(context).textTheme.titleLarge,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Text(
+                tr(context, 'home.recentTripsTitle'),
+                style: Theme.of(context).textTheme.titleLarge,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Flexible(
+              child: TextButton(
+                onPressed: () => context.go('/your-trips'),
+                child: Text(
+                  tr(context, 'home.viewAllTrips'),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 16),
-        GridView.builder(
+        _buildTripsList(),
+      ],
+    );
+  }
+
+  Widget _buildTripsList() {
+    return Consumer<TripPlanInfoProvider>(
+      builder: (context, provider, _) {
+        if (provider.isLoading && provider.tripPlansPaging == null) {
+          return _buildLoadingState();
+        }
+
+        if (provider.error != null && provider.tripPlansPaging == null) {
+          return _buildErrorState(provider);
+        }
+
+        final paging = provider.tripPlansPaging;
+        if (paging == null || paging.empty) {
+          return _buildEmptyState();
+        }
+
+        // Show the trips in a grid
+        return GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
+            crossAxisCount: widget.crossAxisCount,
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
             childAspectRatio: 1.5,
           ),
-          itemCount: trips.length,
+          itemCount: paging.travelPlansInfos.length,
           itemBuilder:
-              (context, index) => RecentTripCard(tripData: trips[index]),
-        ),
-      ],
+              (context, index) =>
+                  TripCard(trip: paging.travelPlansInfos[index]),
+        );
+      },
     );
   }
-}
 
-class RecentTripData {
-  final String username;
-  final String userImageUrl;
-  final String imageUrl;
-  final String destination;
-  final String startDate;
-  final String endDate;
+  Widget _buildLoadingState() {
+    return SizedBox(
+      height: 200,
+      child: Center(child: CircularProgressIndicator()),
+    );
+  }
 
-  RecentTripData({
-    required this.username,
-    required this.userImageUrl,
-    required this.imageUrl,
-    required this.destination,
-    required this.startDate,
-    required this.endDate,
-  });
-  int getDays() {
-    DateTime startDate = DateTime.parse(this.startDate);
-    DateTime endDate = DateTime.parse(this.endDate);
-    return endDate.difference(startDate).inDays + 1;
+  Widget _buildErrorState(TripPlanInfoProvider provider) {
+    return SizedBox(
+      height: 200,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              tr(context, 'home.errorLoadingTrips'),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => provider.loadTravelPlans(pageSize: 4),
+              child: Text(tr(context, 'general.retry')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.map_outlined,
+              size: 48,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              tr(context, 'home.noTripsYet'),
+              style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
