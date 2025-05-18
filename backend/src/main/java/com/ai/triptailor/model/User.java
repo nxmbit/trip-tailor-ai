@@ -30,11 +30,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AuthProvider authProvider;
 
-    private String profileImageUrl;
+    private String profileImageFilename;
 
-    // This field is used for OAuth2 providers like Google, Facebook, etc.
-    // It stores the unique identifier provided by the OAuth2 provider.
-    private String providersId;
+    private String defaultProfileImageFilename;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<TravelPlan> travelPlans;
@@ -47,8 +45,8 @@ public class User {
         this.password = password;
         this.enabled = false; // Default to disabled
         this.authProvider = AuthProvider.local; // Default to local authentication
-        this.profileImageUrl = null;
-        this.providersId = null;
+        this.profileImageFilename = null;
+        this.defaultProfileImageFilename = null;
     }
 
     public User() {}
@@ -116,20 +114,12 @@ public class User {
         this.authProvider = authProvider;
     }
 
-    public String getProfileImageUrl() {
-        return profileImageUrl;
+    public String getProfileImageFilename() {
+        return profileImageFilename;
     }
 
-    public void setProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
-    }
-
-    public String getProvidersId() {
-        return providersId;
-    }
-
-    public void setProvidersId(String providersId) {
-        this.providersId = providersId;
+    public void setProfileImageFilename(String profileImageUrl) {
+        this.profileImageFilename = profileImageUrl;
     }
 
     public Boolean getEnabled() {
@@ -146,5 +136,13 @@ public class User {
 
     public void setGenerationsNumber(Long generationsNumber) {
         this.generationsNumber = generationsNumber;
+    }
+
+    public String getDefaultProfileImageFilename() {
+        return defaultProfileImageFilename;
+    }
+
+    public void setDefaultProfileImageFilename(String defaultProfileImageFilename) {
+        this.defaultProfileImageFilename = defaultProfileImageFilename;
     }
 }

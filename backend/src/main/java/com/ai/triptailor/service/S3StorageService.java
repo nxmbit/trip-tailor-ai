@@ -1,5 +1,6 @@
 package com.ai.triptailor.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,6 +170,10 @@ public class S3StorageService {
      */
     public Optional<String> generatePresignedUrl(String key, long expirationSeconds) {
         try {
+            if (StringUtils.isEmpty(key)) {
+                return Optional.empty();
+            }
+
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)

@@ -7,7 +7,8 @@ import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.oauth2.OAuth2UserInfo;
 import com.ai.triptailor.oauth2.OAuth2UserInfoFactory;
 import com.ai.triptailor.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ai.triptailor.util.ImageUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -16,16 +17,21 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.*;
 import java.util.Optional;
 
 @Service
 public class OAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
+    private final S3StorageService s3StorageService;
 
-    @Autowired
-    public OAuth2UserService(UserRepository userRepository) {
+    public OAuth2UserService(UserRepository userRepository, S3StorageService s3StorageService) {
         this.userRepository = userRepository;
+        this.s3StorageService = s3StorageService;
     }
 
     @Override
@@ -75,19 +81,45 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
     private User registerUser(OAuth2UserRequest userRequest, OAuth2UserInfo userInfo) {
         User user = new User();
+        String s3ImageUrl = downloadAndStoreProfileImage(userInfo.getImageUrl()).orElse(null);
 
         user.setAuthProvider(AuthProvider.valueOf(userRequest.getClientRegistration().getRegistrationId().toLowerCase()));
-        user.setProvidersId(userRequest.getClientRegistration().getRegistrationId());
         user.setUsername(userInfo.getName());
         user.setEmail(userInfo.getEmail());
-        user.setProfileImageUrl(userInfo.getImageUrl());
+        user.setProfileImageFilename(s3ImageUrl);
+        user.setDefaultProfileImageFilename(s3ImageUrl);
         user.setEnabled(true);
         return userRepository.save(user);
     }
 
     private User updateUser(User user, OAuth2UserInfo userInfo) {
+        String s3ImageUrl = downloadAndStoreProfileImage(userInfo.getImageUrl()).orElse(null);
         user.setUsername(userInfo.getName());
-        user.setProfileImageUrl(userInfo.getImageUrl());
+        user.setDefaultProfileImageFilename(s3ImageUrl);
         return userRepository.save(user);
+    }
+
+    private Optional<String> downloadAndStoreProfileImage(String imageUrl) {
+        try {
+            URL url = new URI(imageUrl).toURL();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            String contentType = connection.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                return Optional.empty();
+            }
+
+            String extension = ImageUtils.getExtensionFromContentType(contentType)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported image type"));
+
+
+            try (InputStream inputStream = connection.getInputStream()) {
+                return s3StorageService.uploadFile(inputStream.readAllBytes(), contentType, extension);
+            }
+        } catch (Exception e) {
+            // Log error but continue without profile image
+            return Optional.empty();
+        }
     }
 }
