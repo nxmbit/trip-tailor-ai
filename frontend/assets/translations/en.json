@@ -68,7 +68,7 @@
     "days": "days",
     "exampleTripsTitle": "Example Trips - Try us out!",
     "recentTripsTitle": "Recently created trips",
-    "welcomeTitle": "Welcome to tripTailor.ai",
+    "welcomeTitle": "Welcome to TripTailor",
     "welcomeSubtitle": "Personalized travel experiences designed just for you",
     "welcomeButton": "Plan a New Trip",
     "viewAllTrips": "View All Trips",
@@ -95,7 +95,10 @@
     "attractions": "Attractions",
     "localCuisine": "Local Cuisine Recommendations",
     "mapView": "Map View",
-    "hour": "hr"
+    "hour": "hr",
+    "attraction": "Attraction",
+    "day": "Day",
+    "viewOnGoogleMaps": "View on Google Maps"
   },
   "yourTrips": {
     "title": "Your Trips",

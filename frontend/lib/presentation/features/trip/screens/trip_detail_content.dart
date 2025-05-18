@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/presentation/state/providers/trip_plan_provider.dart';
 import '../../../state/providers/language_provider.dart';
+import '../widgets/trip_header_content.dart';
+import '../widgets/trip_header_image.dart';
 import '../widgets/trip_header_section.dart';
 import '../widgets/trip_cuisine_section.dart';
 import '../widgets/trip_itirenary_section.dart';
@@ -83,12 +85,16 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
                 isTabletView: false,
               ),
               const SizedBox(height: 16),
-              TripItinerarySection(tripPlan: tripPlan, isDesktopView: false),
-              const SizedBox(height: 16),
-              TripMapSection(tripPlan: tripPlan),
-              const SizedBox(height: 16),
+              // Cuisine section moved right after header
               TripCuisineSection(
                 recommendations: tripPlan.localCuisineRecommendations,
+              ),
+              const SizedBox(height: 16),
+              TripItinerarySection(tripPlan: tripPlan, isDesktopView: false),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: TripMapSection(tripPlan: tripPlan),
               ),
             ],
           ),
@@ -116,8 +122,12 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
                   isDesktopView: false,
                   isTabletView: true,
                 ),
+                const SizedBox(height: 16),
+                // Cuisine section moved right after header
+                TripCuisineSection(
+                  recommendations: tripPlan.localCuisineRecommendations,
+                ),
                 const SizedBox(height: 24),
-
                 Flexible(
                   flex: 3,
                   fit: FlexFit.loose,
@@ -126,19 +136,16 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
                     isDesktopView: true,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(height: 16),
                 Flexible(
                   flex: 2,
                   fit: FlexFit.loose,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TripMapSection(tripPlan: tripPlan),
-                      const SizedBox(height: 24),
-                      TripCuisineSection(
-                        recommendations: tripPlan.localCuisineRecommendations,
-                      ),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                      vertical: 4.0,
+                    ),
+                    child: TripMapSection(tripPlan: tripPlan),
                   ),
                 ),
               ],
@@ -162,34 +169,60 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
               children: [
                 // Add padding at the top to make space for the back button
                 const SizedBox(height: 48),
-                TripHeaderSection(
+
+                // Top image spanning full width
+                TripHeaderImage(
                   tripPlan: tripPlan,
                   isDesktopView: true,
                   isTabletView: false,
                 ),
-                const SizedBox(height: 32),
 
+                const SizedBox(height: 24),
+
+                // Two column layout below the image
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Column 1: Header content + Itinerary
                     Expanded(
-                      flex: 2,
-                      child: TripItinerarySection(
-                        tripPlan: tripPlan,
-                        isDesktopView: true,
-                      ),
-                    ),
-                    const SizedBox(width: 24),
-
-                    Expanded(
+                      flex: 3,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TripMapSection(tripPlan: tripPlan),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 24.0),
+                            child: TripHeaderContent(
+                              tripPlan: tripPlan,
+                              isDesktopView: true,
+                              isTabletView: false,
+                            ),
+                          ),
                           const SizedBox(height: 24),
+                          TripItinerarySection(
+                            tripPlan: tripPlan,
+                            isDesktopView: true,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Column 2: Cuisine + Map
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           TripCuisineSection(
                             recommendations:
                                 tripPlan.localCuisineRecommendations,
+                          ),
+                          const SizedBox(height: 24),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                              vertical: 4.0,
+                            ),
+                            child: TripMapSection(tripPlan: tripPlan),
                           ),
                         ],
                       ),

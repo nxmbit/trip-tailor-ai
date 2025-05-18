@@ -56,5 +56,30 @@
   </head>
   <body>
     <script src="flutter_bootstrap.js" async></script>
+    <script>
+      // This will be updated from Flutter with the actual key from .env
+      window.googleMapsApiKey = "";
+
+      // Create a function to initialize the map API
+      function loadGoogleMapsApi() {
+        if (window.googleMapsApiKey) {
+          // Get the current language from Flutter or use a default
+          const language = window.mapLanguage || "en";
+
+          const script = document.createElement("script");
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${window.googleMapsApiKey}&language=${language}`;
+          script.async = true;
+          script.defer = true;
+          document.head.appendChild(script);
+        } else {
+          // Wait until Flutter sets the API key
+          setTimeout(loadGoogleMapsApi, 100);
+        }
+      }
+
+      window.addEventListener("load", function () {
+        loadGoogleMapsApi();
+      });
+    </script>
   </body>
 </html>

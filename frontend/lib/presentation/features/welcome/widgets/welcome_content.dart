@@ -29,7 +29,7 @@ class WelcomeContent extends StatelessWidget {
       child: Column(
         children: [
           const WelcomeHeader(isDesktop: false),
-          const WelcomeHeroSection(isDesktop: false),
+          const WelcomeFeaturesSection(isCompact: true),
           const WelcomeCTABanner(),
           const WelcomeFooter(),
         ],

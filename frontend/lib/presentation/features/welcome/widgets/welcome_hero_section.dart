@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/utils/translation_helper.dart';
+import '../../../../presentation/state/providers/language_provider.dart';
 
 class WelcomeHeroSection extends StatelessWidget {
   final bool isDesktop;
@@ -13,6 +15,10 @@ class WelcomeHeroSection extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final isTablet = !isDesktop && MediaQuery.of(context).size.width >= 600;
     final isMobile = MediaQuery.of(context).size.width < 600;
+
+    // Get current language from provider
+    final currentLanguage =
+        Provider.of<LanguageProvider>(context).locale.languageCode;
 
     return Container(
       width: double.infinity,
@@ -55,67 +61,56 @@ class WelcomeHeroSection extends StatelessWidget {
 
           const SizedBox(height: 32),
 
-          // Mobile app preview image
-          if (isMobile)
-            Container(
-              width: double.infinity,
-              height: 200,
-              margin: const EdgeInsets.only(bottom: 24),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceVariant,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  '', // Placeholder for now
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (context, error, stackTrace) => Center(
-                        child: Icon(
-                          Icons.image_outlined,
-                          size: 64,
-                          color: colorScheme.primary,
-                        ),
-                      ),
-                ),
-              ),
-            ),
-          // App preview image for desktop/tablet - unchanged
-          if ((isDesktop || isTablet) && !isMobile) _buildAppPreview(context),
+          // App preview image for desktop/tablet with language-specific image
+          if ((isDesktop || isTablet) && !isMobile)
+            _buildAppPreview(context, currentLanguage),
         ],
       ),
     );
   }
 
-  Widget _buildAppPreview(BuildContext context) {
-    return Container(
-      width: isDesktop ? 800 : 600,
-      height: isDesktop ? 450 : 300,
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+  Widget _buildAppPreview(BuildContext context, String language) {
+    return Column(
+      children: [
+        Container(
+          width:
+              isDesktop
+                  ? 800
+                  : 700, // Increased from 600 to 800/700 depending on screen size
+          height: isDesktop ? 560 : 480, // Increased from 400 to 560/480
+          margin: const EdgeInsets.only(bottom: 32), // Increased margin
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceVariant,
+            borderRadius: BorderRadius.circular(16), // Slightly larger radius
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(
+                  0.15,
+                ), // Slightly stronger shadow
+                blurRadius: 15,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Center(
-        child: Text(
-          tr(context, 'welcome.appPreviewPlaceholder'),
-          style: Theme.of(context).textTheme.bodyLarge,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16), // Match container radius
+            child: Image.asset(
+              // Choose image based on language
+              language == 'pl' ? 'images/pl.png' : 'images/en.png',
+              fit: BoxFit.cover,
+              alignment: Alignment.bottomLeft,
+              errorBuilder:
+                  (context, error, stackTrace) => Center(
+                    child: Icon(
+                      Icons.image_outlined,
+                      size: 80, // Larger icon for error state
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

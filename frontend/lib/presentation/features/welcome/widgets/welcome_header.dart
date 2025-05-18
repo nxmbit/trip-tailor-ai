@@ -9,7 +9,7 @@ class WelcomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = !isDesktop;
+    final isMobile = !isDesktop && MediaQuery.of(context).size.width < 600;
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -29,12 +29,28 @@ class WelcomeHeader extends StatelessWidget {
             ),
           ),
 
-          // Sign in button - simplified for mobile
-          IconButton(
-            icon: const Icon(Icons.login),
-            onPressed: () => context.go('/signin'),
-            tooltip: tr(context, 'auth.signIn'),
-          ),
+          // Auth buttons
+          isMobile
+              ? // Icon button for mobile
+              IconButton(
+                icon: const Icon(Icons.login),
+                onPressed: () => context.go('/signin'),
+                tooltip: tr(context, 'auth.signIn'),
+              )
+              : // Text buttons for tablet and desktop
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: () => context.go('/signin'),
+                    child: Text(tr(context, 'auth.signIn')),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton(
+                    onPressed: () => context.go('/signup'),
+                    child: Text(tr(context, 'auth.signUp')),
+                  ),
+                ],
+              ),
         ],
       ),
     );
