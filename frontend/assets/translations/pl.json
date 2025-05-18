@@ -1,7 +1,27 @@
 {
   "app": {
-    "title": "tripTailor.ai",
+    "title": "TripTailor",
     "subtitle": "Zaplanuj swoją podróż z nami"
+  },
+  "welcome": {
+    "heroTitle": "Twórz niezapomniane plany podróży z TripTailor",
+    "heroSubtitle": "Twój osobisty planer podróży tworzący plany dopasowane do Twoich potrzeb",
+    "appPreviewPlaceholder": "Podgląd aplikacji pojawi się tutaj",
+    "featuresTitle": "Wszystko, czego potrzebujesz do planowania podróży",
+    "feature1Title": "Szybkie generowanie planu podróży",
+    "feature1Description": "Stwórz kompletny plan podróży w kilka chwil dzięki wsparciu AI – bez zbędnych formalności.",
+    "feature2Title": "Lokalne kulinarne rekomendacje",
+    "feature2Description": "Odkrywaj polecane lokalne potrawy dopasowane do Twojego celu podróży.",
+    "feature3Title": "Całkowicie za darmo",
+    "feature3Description": "Korzystaj z TripTailor bez żadnych opłat. Nasze podstawowe funkcje są dostępne dla każdego użytkownika.",
+    "ctaBanner": "Zrezygnuj z ręcznego planowania podróży i rozpocznij korzystanie z TripTailor już dziś, całkowicie za darmo.",
+    "tryNow": "Wypróbuj teraz",
+    "faqsTitle": "Najczęściej zadawane pytania",
+    "faq1Question": "Czym jest TripTailor?",
+    "faq1Answer": "TripTailor to narzędzie do planowania podróży oparte na AI, które tworzy spersonalizowane plany wyjazdów na podstawie Twoich preferencji.",
+    "faq2Question": "Czy mogę używać TripTailor jeżeli pochodzę z Ukrainy?",
+    "faq2Answer": "Nie, TripTailor jest dostępne tylko dla użytkowników z krajów Unii Europejskiej.",
+    "footerRights": "Wszelkie prawa zastrzeżone."
   },
   "auth": {
     "username": "Nazwa użytkownika",

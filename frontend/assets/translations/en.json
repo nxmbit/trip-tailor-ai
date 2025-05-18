@@ -1,7 +1,27 @@
 {
   "app": {
-    "title": "tripTailor.ai",
+    "title": "TripTailor",
     "subtitle": "Plan your trip with us"
+  },
+  "welcome": {
+    "heroTitle": "Create unforgettable travel plans with TripTailor",
+    "heroSubtitle": "Your personal travel planner creating plans tailored to your needs",
+    "appPreviewPlaceholder": "App preview will appear here",
+    "featuresTitle": "Everything you need for travel planning",
+    "feature1Title": "Fast trip plan generation",
+    "feature1Description": "Create a complete trip plan in moments with AI support – no unnecessary hassle.",
+    "feature2Title": "Local culinary recommendations",
+    "feature2Description": "Discover recommended local dishes tailored to your travel destination.",
+    "feature3Title": "Completely free",
+    "feature3Description": "Use TripTailor at no cost. Our core features are available to every user.",
+    "ctaBanner": "Give up manual trip planning and start using TripTailor today, completely free.",
+    "tryNow": "Try now",
+    "faqsTitle": "Frequently Asked Questions",
+    "faq1Question": "What is TripTailor?",
+    "faq1Answer": "TripTailor is an AI-based travel planning tool that creates personalized travel plans based on your preferences.",
+    "faq2Question": "Can I use TripTailor if I am from Ukraine?",
+    "faq2Answer": "No, TripTailor is only available to users from European Union countries.",
+    "footerRights": "All rights reserved."
   },
   "auth": {
     "username": "Username",

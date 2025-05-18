@@ -200,8 +200,10 @@ class _YourTripsContentState extends State<YourTripsContent> {
                 children: [
                   Text(
                     tr(context, 'yourTrips.title'),
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
+
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   if (paging != null && !paging.empty)
@@ -240,8 +242,12 @@ class _YourTripsContentState extends State<YourTripsContent> {
                       children: [
                         Text(
                           tr(context, 'yourTrips.title'),
-                          style: Theme.of(context).textTheme.headlineMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                         ),
                         if (paging != null && !paging.empty)
                           Text(

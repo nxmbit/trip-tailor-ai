@@ -12,12 +12,13 @@ import 'package:frontend/presentation/features/auth/screens/signup_screen.dart';
 import 'package:frontend/presentation/features/auth/screens/splash_screen.dart';
 import 'package:frontend/presentation/features/home/screens/home_content.dart';
 import 'package:frontend/presentation/features/trip_planner/screens/trip_planner_content.dart';
-import 'package:frontend/presentation/features/welcome/screens/welcome_screen.dart';
+import 'package:frontend/presentation/features/welcome/widgets/welcome_content.dart';
 import 'package:frontend/presentation/features/your_trips/screens/your_trips_content.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
 
 import '../domain/services/auth_service.dart';
 import '../presentation/features/trip/screens/trip_detail_content.dart';
+import '../presentation/features/welcome/screens/welcome_screen.dart';
 
 class AppRouter {
   // Constants for route storage
