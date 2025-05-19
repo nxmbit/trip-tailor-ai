@@ -20,7 +20,7 @@ class DestinationField extends StatefulWidget {
 
 class _DestinationFieldState extends State<DestinationField> {
   DestinationFieldState? _state;
-
+  final GlobalKey _fieldKey = GlobalKey();
   @override
   void initState() {
     super.initState();
@@ -91,38 +91,77 @@ class _DestinationFieldState extends State<DestinationField> {
         builder: (context, state, _) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Autocomplete<String>(
-              optionsBuilder: state.destinationOptionsBuilder,
-              onSelected: state.onDestinationSelected,
-              fieldViewBuilder: (
-                BuildContext context,
-                TextEditingController textEditingController,
-                FocusNode focusNode,
-                VoidCallback onFieldSubmitted,
-              ) {
-                // Set initial text if a destination is already selected
-                if (state.selectedDestination != null &&
-                    textEditingController.text.isEmpty) {
-                  textEditingController.text = state.selectedDestination!;
-                }
+            // Add the key to this container to measure its width
+            child: Container(
+              key: _fieldKey,
+              child: Autocomplete<String>(
+                optionsBuilder: state.destinationOptionsBuilder,
+                onSelected: state.onDestinationSelected,
+                optionsViewBuilder: (context, onSelected, options) {
+                  // Get the RenderBox of the field to determine its width
+                  final RenderBox fieldBox =
+                      _fieldKey.currentContext?.findRenderObject() as RenderBox;
+                  final fieldWidth = fieldBox.size.width;
 
-                return TextField(
-                  controller: textEditingController,
-                  focusNode: focusNode,
-                  decoration: InputDecoration(
-                    labelText: tr(context, 'tripPlanner.destination'),
-                    hintText: tr(context, 'tripPlanner.destinationHint'),
-                    prefixIcon: const Icon(Icons.location_on),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                  return Align(
+                    alignment: Alignment.topLeft,
+                    child: Material(
+                      elevation: 4.0,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          // Use the actual width of the field
+                          maxWidth: fieldWidth,
+                          maxHeight:
+                              200, // Limit height to prevent too much vertical space
+                        ),
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          itemCount: options.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final String option = options.elementAt(index);
+                            return ListTile(
+                              title: Text(option),
+                              onTap: () {
+                                onSelected(option);
+                              },
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                  onSubmitted: (String value) {
-                    onFieldSubmitted();
-                  },
-                  onChanged: state.handleDestinationFieldChange,
-                );
-              },
+                  );
+                },
+                fieldViewBuilder: (
+                  BuildContext context,
+                  TextEditingController textEditingController,
+                  FocusNode focusNode,
+                  VoidCallback onFieldSubmitted,
+                ) {
+                  // Set initial text if a destination is already selected
+                  if (state.selectedDestination != null &&
+                      textEditingController.text.isEmpty) {
+                    textEditingController.text = state.selectedDestination!;
+                  }
+
+                  return TextField(
+                    controller: textEditingController,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                      labelText: tr(context, 'tripPlanner.destination'),
+                      hintText: tr(context, 'tripPlanner.destinationHint'),
+                      prefixIcon: const Icon(Icons.location_on),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    onSubmitted: (String value) {
+                      onFieldSubmitted();
+                    },
+                    onChanged: state.handleDestinationFieldChange,
+                  );
+                },
+              ),
             ),
           );
         },

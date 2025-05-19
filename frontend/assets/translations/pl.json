@@ -95,7 +95,8 @@
     "generateButton": "Wygeneruj plan podróży",
     "generatingPlan": "Generowanie planu podróży...",
     "generatingPlanWaitMessage": "To może potrwać kilka chwil. Proszę czekać.",
-    "planGenerated": "Plan podróży został wygenerowany pomyślnie!"
+    "planGenerated": "Plan podróży został wygenerowany pomyślnie!",
+    "error": "Wystąpił błąd podczas generowania planu podróży. Proszę spróbować ponownie."
   },
   "tripDetail": {
     "description": "Opis",

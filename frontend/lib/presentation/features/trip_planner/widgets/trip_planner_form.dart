@@ -9,7 +9,6 @@ import 'date_selection.dart';
 import 'desired_places_field.dart';
 
 //TODO: input deleting during resizing
-//TODO: better error messages for user
 class TripPlannerForm extends StatefulWidget {
   const TripPlannerForm({super.key});
 
@@ -184,19 +183,29 @@ class _TripPlannerFormState extends State<TripPlannerForm> {
         )
         .then((_) {
           // Close loading dialog
+          if (!mounted) return;
           Navigator.of(context, rootNavigator: true).pop();
 
           if (generateTravelProvider.isSuccess) {
+            if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(tr(context, 'planGenerated'))),
             );
 
             // Navigate to trip details page with the ID
-            if (generateTravelProvider.tripId != null) {
+            if (generateTravelProvider.tripId != null && mounted) {
               context.go('/your-trips/${generateTravelProvider.tripId}');
             }
           } else if (generateTravelProvider.error != null) {
-            // Keep existing error handling
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(generateTravelProvider.error!)),
+            );
+          } else {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(tr(context, 'tripPlanner.error'))),
+            );
           }
         });
   }

@@ -22,7 +22,7 @@ class DesiredPlacesField extends StatefulWidget {
 
 class _DesiredPlacesFieldState extends State<DesiredPlacesField> {
   DesiredPlacesFieldState? _state;
-
+  final GlobalKey _fieldKey = GlobalKey();
   @override
   void initState() {
     super.initState();
@@ -91,56 +91,97 @@ class _DesiredPlacesFieldState extends State<DesiredPlacesField> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Autocomplete<String>(
-                  optionsBuilder: state.desiredPlacesOptionsBuilder,
-                  onSelected: (String selection) {
-                    // Use a post-frame callback to avoid setState during build
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      state.onDesiredPlaceSelected(selection);
-                    });
-                  },
-                  fieldViewBuilder: (
-                    BuildContext context,
-                    TextEditingController textEditingController,
-                    FocusNode focusNode,
-                    VoidCallback onFieldSubmitted,
-                  ) {
-                    // Synchronize with state's controller without listeners
-                    if (textEditingController.text !=
-                        state.textController.text) {
-                      textEditingController.text = state.textController.text;
-                    }
+                // Add the key to this container to measure its width
+                Container(
+                  key: _fieldKey,
+                  child: Autocomplete<String>(
+                    optionsBuilder: state.desiredPlacesOptionsBuilder,
+                    onSelected: (String selection) {
+                      // Use a post-frame callback to avoid setState during build
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        state.onDesiredPlaceSelected(selection);
+                      });
+                    },
+                    // Add this optionsViewBuilder to constrain the dropdown width
+                    optionsViewBuilder: (context, onSelected, options) {
+                      // Get the RenderBox of the field to determine its width
+                      final RenderBox fieldBox =
+                          _fieldKey.currentContext?.findRenderObject()
+                              as RenderBox;
+                      final fieldWidth = fieldBox.size.width;
 
-                    return TextField(
-                      controller: textEditingController,
-                      focusNode: focusNode,
-                      enabled: state.isEnabled,
-                      decoration: InputDecoration(
-                        labelText: tr(context, 'tripPlanner.desiredPlaces'),
-                        hintText:
-                            state.isEnabled
-                                ? '${tr(context, 'tripPlanner.desiredPlacesHint')} ${widget.destination}'
-                                : tr(
-                                  context,
-                                  'tripPlanner.selectDestinationFirst',
-                                ),
-                        prefixIcon: const Icon(Icons.add_location),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                      return Align(
+                        alignment: Alignment.topLeft,
+                        child: Material(
+                          elevation: 4.0,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              // Use the actual width of the field
+                              maxWidth: fieldWidth,
+                              maxHeight:
+                                  200, // Limit height to prevent too much vertical space
+                            ),
+                            child: ListView.builder(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              itemCount: options.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final String option = options.elementAt(index);
+                                return ListTile(
+                                  title: Text(option),
+                                  onTap: () {
+                                    onSelected(option);
+                                  },
+                                );
+                              },
+                            ),
+                          ),
                         ),
-                      ),
-                      onSubmitted: (String value) {
-                        if (state.isEnabled && value.isNotEmpty) {
-                          // Use post-frame callback for state changes
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            state.onDesiredPlaceSelected(value);
-                            // Keep focus for convenient multiple entries
-                            FocusScope.of(context).requestFocus(focusNode);
-                          });
-                        }
-                      },
-                    );
-                  },
+                      );
+                    },
+                    fieldViewBuilder: (
+                      BuildContext context,
+                      TextEditingController textEditingController,
+                      FocusNode focusNode,
+                      VoidCallback onFieldSubmitted,
+                    ) {
+                      // Synchronize with state's controller without listeners
+                      if (textEditingController.text !=
+                          state.textController.text) {
+                        textEditingController.text = state.textController.text;
+                      }
+
+                      return TextField(
+                        controller: textEditingController,
+                        focusNode: focusNode,
+                        enabled: state.isEnabled,
+                        decoration: InputDecoration(
+                          labelText: tr(context, 'tripPlanner.desiredPlaces'),
+                          hintText:
+                              state.isEnabled
+                                  ? '${tr(context, 'tripPlanner.desiredPlacesHint')} ${widget.destination}'
+                                  : tr(
+                                    context,
+                                    'tripPlanner.selectDestinationFirst',
+                                  ),
+                          prefixIcon: const Icon(Icons.add_location),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        onSubmitted: (String value) {
+                          if (state.isEnabled && value.isNotEmpty) {
+                            // Use post-frame callback for state changes
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              state.onDesiredPlaceSelected(value);
+                              // Keep focus for convenient multiple entries
+                              FocusScope.of(context).requestFocus(focusNode);
+                            });
+                          }
+                        },
+                      );
+                    },
+                  ),
                 ),
                 if (state.hasPlaces) _buildDesiredPlacesChips(state),
               ],

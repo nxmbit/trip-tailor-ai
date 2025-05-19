@@ -26,7 +26,6 @@ class _SignUpFormState extends State<SignUpForm> {
 
   Future<void> _handleSignUp() async {
     setState(() => _state.setLoading(true));
-    //TODO change way of showing error message
     try {
       final success = await _state.signUp();
 

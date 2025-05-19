@@ -27,7 +27,6 @@ class _SignInFormState extends State<SignInForm> {
 
   Future<void> _handleSignIn() async {
     setState(() => _state.setLoading(true));
-    //TODO change way of showing error message
     try {
       final success = await _state.signIn();
 

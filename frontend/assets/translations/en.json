@@ -95,7 +95,8 @@
     "generateButton": "Generate Trip Plan",
     "generatingPlan": "Generating trip plan...",
     "generatingPlanWaitMessage": "This may take a few moments. Please wait.",
-    "planGenerated": "Trip plan generated successfully!"
+    "planGenerated": "Trip plan generated successfully!",
+    "error": "An error occurred while generating the trip plan. Please try again."
   },
   "tripDetail": {
     "description": "Description",
