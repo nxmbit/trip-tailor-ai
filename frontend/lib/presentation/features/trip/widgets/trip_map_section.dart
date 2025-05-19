@@ -24,41 +24,11 @@ class _TripMapSectionState extends State<TripMapSection> {
   late Map<int, Color> _dayColors;
   CameraPosition? _initialPosition;
   bool _isMapReady = false;
-  String? _currentLocale;
-  Key _mapKey =
-      UniqueKey(); // Key to force map recreation when language changes
 
   @override
   void initState() {
     super.initState();
     _setupMap();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    // Get current locale
-    final newLocale = Localizations.localeOf(context).languageCode;
-
-    // If locale changed and map was already shown, reset map
-    if (_isMapReady && _currentLocale != null && _currentLocale != newLocale) {
-      print(
-        'Language changed from $_currentLocale to $newLocale, rebuilding map',
-      );
-
-      setState(() {
-        _isMapReady = false;
-        _mapKey = UniqueKey(); // Force complete rebuild of map
-      });
-
-      // Short delay to allow UI to update before recreating map
-      Future.delayed(const Duration(milliseconds: 50), () {
-        _setupMap();
-      });
-    }
-
-    _currentLocale = newLocale;
   }
 
   // Define color palette for days
@@ -175,6 +145,7 @@ class _TripMapSectionState extends State<TripMapSection> {
       _dayColors[dayNumber] = _getColorForDay(dayNumber);
 
       // Create a marker for each attraction in this day
+      // Create a marker for each attraction in this day
       for (final attraction in day.attractions) {
         if (attraction.latitude != null && attraction.longitude != null) {
           final position = LatLng(attraction.latitude!, attraction.longitude!);
@@ -280,9 +251,6 @@ class _TripMapSectionState extends State<TripMapSection> {
 
   @override
   Widget build(BuildContext context) {
-    // Capture locale on first build too
-    _currentLocale ??= Localizations.localeOf(context).languageCode;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -306,23 +274,11 @@ class _TripMapSectionState extends State<TripMapSection> {
                   ? ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: GoogleMap(
-                      key: _mapKey, // Key forces rebuild when language changes
                       initialCameraPosition: _initialPosition!,
                       markers: _markers,
                       mapType: MapType.normal,
                       onMapCreated: (GoogleMapController controller) {
                         _controller.complete(controller);
-
-                        // Apply language settings if on web
-                        if (kIsWeb) {
-                          final language =
-                              Localizations.localeOf(context).languageCode;
-                          // Ensure the correct language is set for this new map instance
-                          js.context.callMethod(
-                            'reloadGoogleMapsWithLanguage',
-                            [language],
-                          );
-                        }
                       },
                       myLocationEnabled: false,
                       compassEnabled: true,

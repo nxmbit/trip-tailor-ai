@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/presentation/features/home/widgets/welcome_section.dart';
 import 'package:frontend/presentation/features/home/widgets/recent_trip_section.dart';
-import 'package:frontend/presentation/features/home/widgets/example_trip_section.dart';
 
 class HomeContent extends StatelessWidget {
   const HomeContent({Key? key}) : super(key: key);
@@ -31,8 +30,6 @@ class HomeContent extends StatelessWidget {
             const WelcomeSection(isMobile: true),
             const SizedBox(height: 24),
             const RecentTripSection(crossAxisCount: 1),
-            const SizedBox(height: 24),
-            const ExampleTripSection(),
           ],
         ),
       ),
@@ -49,8 +46,6 @@ class HomeContent extends StatelessWidget {
             const WelcomeSection(isMobile: false),
             const SizedBox(height: 32),
             const RecentTripSection(crossAxisCount: 2),
-            const SizedBox(height: 32),
-            const ExampleTripSection(),
           ],
         ),
       ),
@@ -73,8 +68,6 @@ class HomeContent extends StatelessWidget {
                   flex: 2,
                   child: RecentTripSection(crossAxisCount: 2),
                 ),
-                const SizedBox(width: 32),
-                const Expanded(child: ExampleTripSection()),
               ],
             ),
           ],

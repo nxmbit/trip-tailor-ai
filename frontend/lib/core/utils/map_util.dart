@@ -4,8 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
-/// Initial setup - only called once in main.dart
-void initializeGoogleMapsWeb() {
+/// Initial setup with language parameter
+void initializeGoogleMapsWeb({String initialLanguage = 'en'}) {
   if (kIsWeb) {
     // Register the view factory - this should only happen ONCE
     final mapApiKey = dotenv.env['GOOGLE_PLACES_KEY'] ?? '';
@@ -17,8 +17,8 @@ void initializeGoogleMapsWeb() {
     // Set the API key in the global JS context
     js.context['googleMapsApiKey'] = mapApiKey;
 
-    // Default language
-    js.context['mapLanguage'] = 'en';
+    // Set initial language
+    js.context['mapLanguage'] = initialLanguage;
   }
 }
 

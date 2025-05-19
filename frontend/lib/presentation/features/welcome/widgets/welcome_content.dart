@@ -9,6 +9,9 @@ import 'welcome_hero_section.dart';
 class WelcomeContent extends StatelessWidget {
   const WelcomeContent({Key? key}) : super(key: key);
 
+  // Maximum content width - adjust this as needed
+  static const double maxContentWidth = 1200.0;
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -24,14 +27,37 @@ class WelcomeContent extends StatelessWidget {
     );
   }
 
+  // Helper method to constrain content width
+  Widget _constrainedContent({
+    required Widget child,
+    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 24),
+  }) {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: maxContentWidth),
+        padding: padding,
+        child: child,
+      ),
+    );
+  }
+
   Widget _buildMobileLayout(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          const WelcomeHeader(isDesktop: false),
-          const WelcomeFeaturesSection(isCompact: true),
-          const WelcomeCTABanner(),
-          const WelcomeFooter(),
+          _constrainedContent(
+            child: const WelcomeHeader(isDesktop: false),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+          _constrainedContent(
+            child: const WelcomeFeaturesSection(isCompact: true),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+          _constrainedContent(
+            child: const WelcomeCTABanner(),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+          const WelcomeFooter(), // Footer stays full width
         ],
       ),
     );
@@ -41,12 +67,27 @@ class WelcomeContent extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          const WelcomeHeader(isDesktop: false),
-          const WelcomeHeroSection(isDesktop: false),
-          const WelcomeFeaturesSection(isCompact: true),
-          const WelcomeCTABanner(),
-          const WelcomeFAQSection(),
-          const WelcomeFooter(),
+          _constrainedContent(
+            child: const WelcomeHeader(isDesktop: false),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+          ),
+          _constrainedContent(
+            child: const WelcomeHeroSection(isDesktop: false),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+          ),
+          _constrainedContent(
+            child: const WelcomeFeaturesSection(isCompact: true),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+          ),
+          _constrainedContent(
+            child: const WelcomeCTABanner(),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+          ),
+          _constrainedContent(
+            child: const WelcomeFAQSection(),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+          ),
+          const WelcomeFooter(), // Footer stays full width
         ],
       ),
     );
@@ -56,12 +97,14 @@ class WelcomeContent extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          const WelcomeHeader(isDesktop: true),
-          const WelcomeHeroSection(isDesktop: true),
-          const WelcomeFeaturesSection(isCompact: false),
-          const WelcomeCTABanner(),
-          const WelcomeFAQSection(),
-          const WelcomeFooter(),
+          _constrainedContent(child: const WelcomeHeader(isDesktop: true)),
+          _constrainedContent(child: const WelcomeHeroSection(isDesktop: true)),
+          _constrainedContent(
+            child: const WelcomeFeaturesSection(isCompact: false),
+          ),
+          _constrainedContent(child: const WelcomeCTABanner()),
+          _constrainedContent(child: const WelcomeFAQSection()),
+          const WelcomeFooter(), // Footer stays full width
         ],
       ),
     );

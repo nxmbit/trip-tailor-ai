@@ -72,7 +72,12 @@
     "welcomeSubtitle": "Spersonalizowane doświadczenia podróżnicze stworzone specjalnie dla Ciebie",
     "welcomeButton": "Zaplanuj nową podróż",
     "viewAllTrips": "Zobacz wszystkie podróże",
-    "noTripsYet": "Nie masz jeszcze żadnych podróży"
+    "noTripsYet": "Nie masz jeszcze żadnych podróży",
+    "discoverDestinations": "Odkryj nowe miejsca",
+    "planYourItinerary": "Zaplanuj swoją podróż",
+    "findAttractions": "Znajdź atrakcje",
+    "exploreLocalCuisine": "Odkryj lokalną kuchnię",
+    "travelInspirationTitle": "Inspiracje podróżnicze"
   },
   "tripPlanner": {
     "headSectionTitle": "Zaplanuj swoją wymarzoną podróż",

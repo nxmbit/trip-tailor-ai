@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:frontend/presentation/state/providers/trip_plan_info_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/data/api/api_client.dart';
@@ -10,6 +11,7 @@ import 'package:frontend/presentation/state/providers/theme_provider.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
 import 'package:provider/single_child_widget.dart';
 
+import '../../../core/utils/map_util.dart';
 import '../../../data/repositories/generate_travel_plan_repository.dart';
 import '../../../data/repositories/trip_plan_info_repository.dart';
 import '../../../data/repositories/trip_repository.dart';
@@ -21,6 +23,16 @@ import 'trip_plan_provider.dart';
 
 /// Creates all providers for the app
 List<SingleChildWidget> getProviders() {
+  // Initialize language provider first to get initial language
+  final languageProvider = LanguageProvider()..init();
+
+  // Initialize Google Maps if on web platform
+  if (kIsWeb) {
+    initializeGoogleMapsWeb(
+      initialLanguage: languageProvider.locale.languageCode,
+    );
+  }
+
   // Create services
   final tokenService = TokenService();
   final apiClient = ApiClient(tokenService: tokenService);
@@ -55,7 +67,7 @@ List<SingleChildWidget> getProviders() {
 
     // UI state providers
     ChangeNotifierProvider(create: (_) => ThemeProvider()),
-    ChangeNotifierProvider.value(value: LanguageProvider()..init()),
+    ChangeNotifierProvider.value(value: languageProvider),
     ChangeNotifierProvider(
       create:
           (_) =>
