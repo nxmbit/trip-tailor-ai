@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
-import '../../../../domain/models/trip.dart';
+import '../../../../domain/models/trip_plan.dart';
 import 'trip_day_card.dart';
 
 class TripItinerarySection extends StatelessWidget {

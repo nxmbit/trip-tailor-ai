@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../domain/models/trip.dart';
+import '../../../../domain/models/trip_plan.dart';
 
 class TripHeaderImage extends StatelessWidget {
   final TripPlan tripPlan;
@@ -18,6 +18,9 @@ class TripHeaderImage extends StatelessWidget {
     // Adjust hero image height based on screen size
     final imageHeight = isDesktopView ? 300.0 : (isTabletView ? 250.0 : 200.0);
 
+    // Check if imageUrl is available and not empty
+    final hasImage = tripPlan.imageUrl.isNotEmpty;
+
     return SizedBox(
       height: imageHeight,
       width: double.infinity,
@@ -27,16 +30,16 @@ class TripHeaderImage extends StatelessWidget {
           // Image with better handling
           ClipRRect(
             borderRadius: BorderRadius.circular(isDesktopView ? 12 : 0),
-            child: Image.network(
-              tripPlan.imageUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.image, size: 50),
-                );
-              },
-            ),
+            child:
+                hasImage
+                    ? Image.network(
+                      tripPlan.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _buildPlaceholderImage(context);
+                      },
+                    )
+                    : _buildPlaceholderImage(context),
           ),
           // Gradient overlay with stronger contrast for better text visibility
           Container(
@@ -45,13 +48,8 @@ class TripHeaderImage extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withOpacity(
-                    0.8,
-                  ), // Darker for better readability
-                ],
-                stops: const [0.5, 1.0], // Adjust gradient position
+                colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                stops: const [0.5, 1.0],
               ),
             ),
           ),
@@ -59,16 +57,14 @@ class TripHeaderImage extends StatelessWidget {
           Positioned(
             bottom: 16,
             left: 16,
-            right: 16, // Add right constraint to ensure text wraps properly
+            right: 16,
             child: Text(
               tripPlan.destination,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                // Adjust font size for smaller screens
                 fontSize: isDesktopView ? null : (isTabletView ? 24 : 22),
                 shadows: [
-                  // Add text shadow for better readability
                   Shadow(
                     offset: const Offset(1, 1),
                     blurRadius: 3,
@@ -76,11 +72,20 @@ class TripHeaderImage extends StatelessWidget {
                   ),
                 ],
               ),
-              maxLines: 2, // Allow 2 lines for long destination names
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderImage(BuildContext context) {
+    return Container(
+      color: Theme.of(context).colorScheme.primary,
+      child: const Center(
+        child: Icon(Icons.image, size: 50, color: Colors.white),
       ),
     );
   }

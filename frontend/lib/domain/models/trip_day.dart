@@ -14,14 +14,24 @@ class TripDay {
   });
 
   factory TripDay.fromJson(Map<String, dynamic> json) {
+    // Handle date parsing with fallback
+    DateTime parsedDate;
+    try {
+      parsedDate = DateTime.parse(json['date'] ?? '');
+    } catch (e) {
+      parsedDate = DateTime.now(); // Fallback to current date
+    }
+
     return TripDay(
-      dayNumber: json['dayNumber'],
-      description: json['description'],
-      date: DateTime.parse(json['date']),
+      dayNumber: json['dayNumber'] ?? 0,
+      description: json['description'] ?? 'No description for this day',
+      date: parsedDate,
       attractions:
-          (json['attractions'] as List)
-              .map((attraction) => Attraction.fromJson(attraction))
-              .toList(),
+          json['attractions'] is List
+              ? (json['attractions'] as List)
+                  .map((attraction) => Attraction.fromJson(attraction ?? {}))
+                  .toList()
+              : [],
     );
   }
 }

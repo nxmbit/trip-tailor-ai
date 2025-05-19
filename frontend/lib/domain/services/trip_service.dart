@@ -1,5 +1,5 @@
 import 'package:frontend/data/repositories/trip_repository.dart';
-import '../models/trip.dart';
+import '../models/trip_plan.dart';
 
 class TripService {
   final TripRepository repository;

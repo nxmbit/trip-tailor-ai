@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../domain/models/trip.dart';
+import '../../../../domain/models/trip_plan.dart';
 import 'trip_header_image.dart';
 import 'trip_header_content.dart';
 

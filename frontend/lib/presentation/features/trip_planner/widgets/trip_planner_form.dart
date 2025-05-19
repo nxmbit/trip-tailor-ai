@@ -3,11 +3,11 @@ import 'package:frontend/presentation/features/trip_planner/widgets/destination_
 import 'package:frontend/presentation/features/trip_planner/widgets/submit_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/utils/translation_helper.dart';
 import '../../../state/providers/generate_travel_provider.dart';
 import 'date_selection.dart';
 import 'desired_places_field.dart';
 
-//TODO: PREVENT SENDING REQUEST WHEN USER FILLS IN SPECIAL CHARS f.e: "/"
 //TODO: input deleting during resizing
 //TODO: better error messages for user
 class TripPlannerForm extends StatefulWidget {
@@ -79,14 +79,14 @@ class _TripPlannerFormState extends State<TripPlannerForm> {
   void _submitForm() {
     if (selectedDestination == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a destination')),
+        SnackBar(content: Text(tr(context, 'tripPlanner.selectDestination'))),
       );
       return;
     }
 
     if (startDate == null || endDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select both start and end dates')),
+        SnackBar(content: Text(tr(context, 'tripPlanner.selectDates'))),
       );
       return;
     }
@@ -111,16 +111,63 @@ class _TripPlannerFormState extends State<TripPlannerForm> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        // Get screen width for responsive adjustments
+        final screenWidth = MediaQuery.of(context).size.width;
+
+        // Match your existing responsive breakpoints
+        final isMobile = screenWidth < 600;
+        final isTablet = screenWidth >= 600 && screenWidth < 1200;
+
         return WillPopScope(
           onWillPop: () async => false, // Prevent closing with back button
-          child: AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Generating your travel plan...\nThis may take a minute.'),
-              ],
+          child: Dialog(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            elevation: 8,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(isMobile ? 12 : 16),
+            ),
+            child: Padding(
+              // Match padding with your layout sizes
+              padding: EdgeInsets.all(
+                isMobile
+                    ? 16.0
+                    : isTablet
+                    ? 24.0
+                    : 32.0,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Progress indicator size based on your breakpoints
+                  SizedBox(
+                    height: isMobile ? 45 : 60,
+                    width: isMobile ? 45 : 60,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).colorScheme.primary,
+                      ),
+                      strokeWidth: isMobile ? 3 : 4,
+                    ),
+                  ),
+                  SizedBox(height: isMobile ? 16 : 24),
+                  Text(
+                    tr(context, 'tripPlanner.generatingPlan'),
+                    textAlign: TextAlign.center,
+                    style:
+                        isMobile
+                            ? Theme.of(context).textTheme.titleMedium
+                            : Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    tr(context, 'tripPlanner.generatingPlanWaitMessage'),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -141,9 +188,7 @@ class _TripPlannerFormState extends State<TripPlannerForm> {
 
           if (generateTravelProvider.isSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Travel plan generated successfully!'),
-              ),
+              SnackBar(content: Text(tr(context, 'planGenerated'))),
             );
 
             // Navigate to trip details page with the ID

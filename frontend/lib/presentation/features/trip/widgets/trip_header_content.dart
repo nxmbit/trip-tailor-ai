@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
 import 'package:intl/intl.dart';
-import '../../../../domain/models/trip.dart';
+import '../../../../domain/models/trip_plan.dart';
 
 class TripHeaderContent extends StatelessWidget {
   final TripPlan tripPlan;

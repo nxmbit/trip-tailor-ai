@@ -90,7 +90,12 @@
     "startDate": "Data rozpoczęcia",
     "endDate": "Data zakończenia",
     "selectDate": "Wybierz datę",
-    "generateButton": "Wygeneruj plan podróży"
+    "selectDestination": "Wybierz cel podróży",
+    "selectDates": "Wybierz daty rozpoczęcia i zakończenia",
+    "generateButton": "Wygeneruj plan podróży",
+    "generatingPlan": "Generowanie planu podróży...",
+    "generatingPlanWaitMessage": "To może potrwać kilka chwil. Proszę czekać.",
+    "planGenerated": "Plan podróży został wygenerowany pomyślnie!"
   },
   "tripDetail": {
     "description": "Opis",

@@ -1,6 +1,6 @@
 import 'package:frontend/data/api/api_client.dart';
 
-import '../../domain/models/trip.dart';
+import '../../domain/models/trip_plan.dart';
 
 class TripRepository {
   final ApiClient apiClient;

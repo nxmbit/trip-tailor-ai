@@ -27,13 +27,13 @@ class TripCard extends StatelessWidget {
                         fit: BoxFit.cover,
                         errorBuilder:
                             (context, error, stackTrace) => Container(
-                              color: Colors.grey[300],
+                              color: Theme.of(context).colorScheme.primary,
                               child: const Center(child: Icon(Icons.error)),
                             ),
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
                           return Container(
-                            color: Colors.grey[300],
+                            color: Theme.of(context).colorScheme.primary,
                             child: const Center(
                               child: CircularProgressIndicator(),
                             ),
@@ -41,7 +41,7 @@ class TripCard extends StatelessWidget {
                         },
                       )
                       : Container(
-                        color: Colors.grey[300],
+                        color: Theme.of(context).colorScheme.primary,
                         child: const Center(child: Icon(Icons.image, size: 40)),
                       ),
             ),

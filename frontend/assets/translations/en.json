@@ -90,7 +90,12 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "selectDate": "Select date",
-    "generateButton": "Generate Trip Plan"
+    "selectDestination": "Please select a destination",
+    "selectDates": "Please select both start and end dates",
+    "generateButton": "Generate Trip Plan",
+    "generatingPlan": "Generating trip plan...",
+    "generatingPlanWaitMessage": "This may take a few moments. Please wait.",
+    "planGenerated": "Trip plan generated successfully!"
   },
   "tripDetail": {
     "description": "Description",

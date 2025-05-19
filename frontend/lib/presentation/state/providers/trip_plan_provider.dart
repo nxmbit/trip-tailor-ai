@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../domain/models/trip.dart';
+import '../../../domain/models/trip_plan.dart';
 import '../../../domain/services/trip_service.dart';
 
 class TripPlanProvider extends ChangeNotifier {
@@ -30,7 +30,7 @@ class TripPlanProvider extends ChangeNotifier {
       _tripPlan = trip;
     } catch (e) {
       debugPrint('Error loading trip plan: $e');
-      _error = 'Error getting tripplan: $e';
+      _error = 'Failed to load trip plan. Please try again later.';
     } finally {
       _isLoading = false;
       notifyListeners();

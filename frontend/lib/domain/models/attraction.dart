@@ -25,16 +25,18 @@ class Attraction {
 
   factory Attraction.fromJson(Map<String, dynamic> json) {
     return Attraction(
-      visitOrder: json['visitOrder'],
-      name: json['name'],
-      description: json['description'],
+      visitOrder: json['visitOrder'] ?? 0,
+      name: json['name'] ?? 'Unnamed Attraction',
+      description: json['description'] ?? 'No description available',
       imageUrl: json['imageUrl'] ?? '',
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      visitDuration: json['visitDuration'],
+      latitude: json['latitude'] is num ? json['latitude'].toDouble() : null,
+      longitude: json['longitude'] is num ? json['longitude'].toDouble() : null,
+      visitDuration:
+          json['visitDuration'] is int ? json['visitDuration'] : null,
       googlePlacesId: json['googlePlacesId'] ?? '',
-      numberOfUserRatings: json['numberOfUserRatings'],
-      averageRating: json['averageRating'],
+      numberOfUserRatings: json['numberOfUserRatings'] ?? 0,
+      averageRating:
+          json['averageRating'] is num ? json['averageRating'].toDouble() : 0.0,
     );
   }
 }

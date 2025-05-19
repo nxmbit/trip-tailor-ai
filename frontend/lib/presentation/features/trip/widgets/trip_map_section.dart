@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../../../domain/models/trip.dart';
+import '../../../../domain/models/trip_plan.dart';
 import 'dart:js' as js;
 
 class TripMapSection extends StatefulWidget {
