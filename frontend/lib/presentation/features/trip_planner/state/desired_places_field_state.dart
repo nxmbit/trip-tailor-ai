@@ -46,9 +46,20 @@ class DesiredPlacesFieldState extends ChangeNotifier {
         );
   }
 
-  // API interaction methods
+  String _sanitizeQuery(String query) {
+    // Keep only alphanumeric chars, spaces and simple punctuation
+    final sanitized = query.replaceAll(RegExp(r'[^\w\s.,\-]'), '');
+    return sanitized.trim();
+  }
+
   Future<Iterable<String>?> _searchDesiredPlaces(String query) async {
-    _currentDesiredPlaceQuery = query;
+    if (query.isEmpty) return const Iterable<String>.empty();
+
+    // Sanitize the query
+    final sanitizedQuery = _sanitizeQuery(query);
+    if (sanitizedQuery.isEmpty) return const Iterable<String>.empty();
+
+    _currentDesiredPlaceQuery = sanitizedQuery;
 
     try {
       if (_currentDestination == null) {
@@ -65,7 +76,7 @@ class DesiredPlacesFieldState extends ChangeNotifier {
         dio: dio,
         apiUrl: 'https://maps.googleapis.com/maps/api/place/autocomplete/json',
         queryParams: {
-          'input': '$query in $_currentDestination',
+          'input': '$sanitizedQuery in $_currentDestination',
           'types': 'establishment',
           'language': language,
           'key': apiKey,
@@ -73,7 +84,7 @@ class DesiredPlacesFieldState extends ChangeNotifier {
       );
 
       // If another search happened after this one, discard these results
-      if (_currentDesiredPlaceQuery != query) {
+      if (_currentDesiredPlaceQuery != sanitizedQuery) {
         return null;
       }
       _currentDesiredPlaceQuery = null;
