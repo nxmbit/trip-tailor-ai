@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/presentation/features/trip_planner/widgets/trip_planner_form.dart';
 import '../widgets/head_section.dart';
 
-//TODO: autocompletion tiles are stretched to infinity
-
 class TripPlannerContent extends StatelessWidget {
   const TripPlannerContent({Key? key}) : super(key: key);
 

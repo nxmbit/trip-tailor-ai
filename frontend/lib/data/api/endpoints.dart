@@ -13,7 +13,7 @@ class Endpoints {
 
   // User endpoints
   static const String currentUserEndpoint = 'api/users/profile';
-
+  static const String userEndpoint = '/api/users';
   // Travel plan endpoints
   static const String generateTravelPlanEndpoint = "api/travel-plans/generate";
 }

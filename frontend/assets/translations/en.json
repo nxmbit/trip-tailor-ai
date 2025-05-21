@@ -134,5 +134,14 @@
       "page": "Page",
       "of": "of"
     }
+  },
+  "profileImage": {
+    "title": "Profile",
+    "selectNew": "Select new image",
+    "reset": "Reset image",
+    "save": "Save",
+    "pickError": "Error selecting image",
+    "uploadError": "Error uploading image",
+    "resetError": "Error resetting image"
   }
 }

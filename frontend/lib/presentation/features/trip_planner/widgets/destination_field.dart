@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
 import 'package:provider/provider.dart';
+import '../../../../data/api/api_client.dart';
 import '../../../state/providers/language_provider.dart';
 import '../state/destination_field_state.dart';
 
@@ -30,10 +31,14 @@ class _DestinationFieldState extends State<DestinationField> {
     });
   }
 
+  // In the _initializeState method:
   void _initializeState() {
+    final apiClient = Provider.of<ApiClient>(context, listen: false);
+
     setState(() {
       _state = DestinationFieldState(
         getCurrentLanguage: _getCurrentLanguage,
+        apiClient: apiClient,
         onDestinationChanged: widget.onDestinationChanged,
       );
 
@@ -57,8 +62,10 @@ class _DestinationFieldState extends State<DestinationField> {
     // Update callback if it changes
     if (_state != null &&
         widget.onDestinationChanged != oldWidget.onDestinationChanged) {
+      final apiClient = Provider.of<ApiClient>(context, listen: false);
       _state = DestinationFieldState(
         getCurrentLanguage: _getCurrentLanguage,
+        apiClient: apiClient,
         onDestinationChanged: widget.onDestinationChanged,
       );
 

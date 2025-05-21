@@ -189,7 +189,7 @@ class _TripPlannerFormState extends State<TripPlannerForm> {
           if (generateTravelProvider.isSuccess) {
             if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(tr(context, 'planGenerated'))),
+              SnackBar(content: Text(tr(context, 'tripPlanner.planGenerated'))),
             );
 
             // Navigate to trip details page with the ID

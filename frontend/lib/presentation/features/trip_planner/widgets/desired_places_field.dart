@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
 import 'package:provider/provider.dart';
+import '../../../../data/api/api_client.dart';
 import '../../../state/providers/language_provider.dart';
 import '../state/desired_places_field_state.dart';
 
@@ -32,10 +33,14 @@ class _DesiredPlacesFieldState extends State<DesiredPlacesField> {
     });
   }
 
+  // In the _initializeState method:
   void _initializeState() {
+    final apiClient = Provider.of<ApiClient>(context, listen: false);
+
     setState(() {
       _state = DesiredPlacesFieldState(
         getCurrentLanguage: _getCurrentLanguage,
+        apiClient: apiClient,
         onPlacesChanged: widget.onPlacesChanged,
         initialDestination: widget.destination,
         initialPlaces: widget.initialPlaces,

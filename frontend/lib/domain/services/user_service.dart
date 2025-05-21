@@ -1,6 +1,7 @@
 import 'package:frontend/data/repositories/user_repository.dart';
 import 'package:frontend/domain/models/user.dart';
 import 'package:frontend/domain/services/auth_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserService {
   final UserRepository _userRepository;
@@ -31,5 +32,23 @@ class UserService {
   Future<void> logoutUser() async {
     _currentUser = null;
     await _authService.logout();
+  }
+
+  // Update profile image
+  Future<User?> updateProfileImage(XFile imageFile) async {
+    final updatedUser = await _userRepository.updateProfileImage(imageFile);
+    if (updatedUser != null) {
+      _currentUser = updatedUser;
+    }
+    return _currentUser;
+  }
+
+  // Reset profile image to default
+  Future<User?> resetProfileImage() async {
+    final updatedUser = await _userRepository.resetProfileImage();
+    if (updatedUser != null) {
+      _currentUser = updatedUser;
+    }
+    return _currentUser;
   }
 }

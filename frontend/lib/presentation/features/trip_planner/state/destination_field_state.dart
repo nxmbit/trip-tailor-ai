@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../../../core/utils/debouncer.dart';
+import '../../../../data/api/api_client.dart';
 
 class DestinationFieldState extends ChangeNotifier {
   // State variables
@@ -10,6 +10,9 @@ class DestinationFieldState extends ChangeNotifier {
   Iterable<String> _lastDestinationOptions = const <String>[];
   late final Debounceable<Iterable<String>?, String>
   _debouncedDestinationSearch;
+
+  // ApiClient instance
+  final ApiClient apiClient;
 
   // Getters
   String? get selectedDestination => _selectedDestination;
@@ -24,6 +27,7 @@ class DestinationFieldState extends ChangeNotifier {
   // Constructor
   DestinationFieldState({
     required this.getCurrentLanguage,
+    required this.apiClient,
     this.onDestinationChanged,
   }) {
     _debouncedDestinationSearch = Debouncer.debounce<Iterable<String>?, String>(
@@ -49,22 +53,20 @@ class DestinationFieldState extends ChangeNotifier {
     _currentDestinationQuery = sanitizedQuery;
 
     try {
-      final apiKey = dotenv.env['GOOGLE_PLACES_KEY'] ?? "";
-      final dio = Dio();
-      dio.options.validateStatus = (status) => true;
-
       // Get the current language from the provider
       final language = getCurrentLanguage();
 
-      final response = await _makeApiRequest(
-        dio: dio,
-        apiUrl: 'https://maps.googleapis.com/maps/api/place/autocomplete/json',
-        queryParams: {
-          'input': sanitizedQuery,
-          'types': '(cities)',
-          'language': language,
-          'key': apiKey,
-        },
+      // Use apiClient.dio directly with the full URL and query parameters
+      final url = 'api/autocomplete/proxy';
+      final queryParams = {
+        'input': sanitizedQuery,
+        'types': '(cities)',
+        'language': language,
+      };
+
+      final response = await apiClient.dio.get(
+        url,
+        queryParameters: queryParams,
       );
 
       // If another search happened after this one, discard these results
@@ -78,22 +80,6 @@ class DestinationFieldState extends ChangeNotifier {
       debugPrint('Error searching places: $error');
       return const Iterable<String>.empty();
     }
-  }
-
-  // The rest of the methods remain the same
-  Future<Response> _makeApiRequest({
-    required Dio dio,
-    required String apiUrl,
-    required Map<String, String> queryParams,
-  }) async {
-    final encodedApiUrl = Uri.encodeComponent(
-      '$apiUrl?${_buildQueryString(queryParams)}',
-    );
-    final proxyUrl = 'https://corsproxy.io/?';
-    final fullUrl = '$proxyUrl$encodedApiUrl';
-
-    debugPrint('Requesting: $fullUrl');
-    return await dio.get(fullUrl);
   }
 
   Iterable<String> _processApiResponse(Response response) {
@@ -115,15 +101,6 @@ class DestinationFieldState extends ChangeNotifier {
       debugPrint('No predictions in response: ${response.data}');
       return const Iterable<String>.empty();
     }
-  }
-
-  String _buildQueryString(Map<String, String> params) {
-    return params.entries
-        .map(
-          (e) =>
-              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
-        )
-        .join('&');
   }
 
   // Public methods

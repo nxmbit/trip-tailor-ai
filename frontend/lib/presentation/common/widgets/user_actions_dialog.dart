@@ -7,9 +7,13 @@ import 'package:frontend/core/utils/translation_helper.dart';
 
 class UserActionsDialog extends StatelessWidget {
   final VoidCallback onSettingsPressed;
+  final VoidCallback onProfileImagePressed;
 
-  const UserActionsDialog({Key? key, required this.onSettingsPressed})
-    : super(key: key);
+  const UserActionsDialog({
+    Key? key, 
+    required this.onSettingsPressed,
+    required this.onProfileImagePressed,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +96,15 @@ class UserActionsDialog extends StatelessWidget {
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         children: [
+                          ActionItem(
+                            icon: Icons.account_circle,
+                            text: tr(context, 'profileImage.title'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              onProfileImagePressed();
+                            },
+                          ),
+                          const SizedBox(height: 16),
                           ActionItem(
                             icon: Icons.settings,
                             text: tr(context, 'settings.title'),

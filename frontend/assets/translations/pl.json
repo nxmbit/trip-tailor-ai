@@ -134,5 +134,14 @@
       "page": "Strona",
       "of": "z"
     }
+  },
+  "profileImage": {
+    "title": "Profil",
+    "selectNew": "Wybierz nowe zdjęcie",
+    "reset": "Resetuj zdjęcie",
+    "save": "Zapisz",
+    "pickError": "Błąd podczas wybierania zdjęcia",
+    "uploadError": "Błąd podczas przesyłania zdjęcia",
+    "resetError": "Błąd podczas resetowania zdjęcia"
   }
 }

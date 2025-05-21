@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../../../core/utils/debouncer.dart';
+import '../../../../data/api/api_client.dart';
 
+//TODO: currently user can add desired places from all over the world (
+// it should depend on the selected destination)
 class DesiredPlacesFieldState extends ChangeNotifier {
   // State variables
   final List<String> _desiredPlaces = [];
@@ -11,9 +13,12 @@ class DesiredPlacesFieldState extends ChangeNotifier {
   late final Debounceable<Iterable<String>?, String>
   _debouncedDesiredPlacesSearch;
   final TextEditingController textController = TextEditingController();
-
+  static const int _minSearchLength = 3;
   // Destination dependency
   String? _currentDestination;
+
+  // ApiClient instance
+  final ApiClient apiClient;
 
   // Getters
   List<String> get desiredPlaces => List.unmodifiable(_desiredPlaces);
@@ -29,6 +34,7 @@ class DesiredPlacesFieldState extends ChangeNotifier {
   // Constructor
   DesiredPlacesFieldState({
     required this.getCurrentLanguage,
+    required this.apiClient,
     this.onPlacesChanged,
     String? initialDestination,
     List<String>? initialPlaces,
@@ -58,29 +64,25 @@ class DesiredPlacesFieldState extends ChangeNotifier {
     // Sanitize the query
     final sanitizedQuery = _sanitizeQuery(query);
     if (sanitizedQuery.isEmpty) return const Iterable<String>.empty();
-
+    if (sanitizedQuery.length < _minSearchLength) {
+      return const Iterable<String>.empty();
+    }
     _currentDesiredPlaceQuery = sanitizedQuery;
 
     try {
-      if (_currentDestination == null) {
-        return const <String>["Please select a destination first"];
-      }
-
-      final apiKey = dotenv.env['GOOGLE_PLACES_KEY'] ?? "";
-      final dio = Dio();
-      dio.options.validateStatus = (status) => true;
-
       final language = getCurrentLanguage();
 
-      final response = await _makeApiRequest(
-        dio: dio,
-        apiUrl: 'https://maps.googleapis.com/maps/api/place/autocomplete/json',
-        queryParams: {
-          'input': '$sanitizedQuery in $_currentDestination',
-          'types': 'establishment',
-          'language': language,
-          'key': apiKey,
-        },
+      // Use apiClient.dio directly with the full URL and query parameters
+      final url = 'api/autocomplete/proxy';
+      final queryParams = {
+        'input': '$sanitizedQuery in $_currentDestination',
+        'types': 'establishment',
+        'language': language,
+      };
+
+      final response = await apiClient.dio.get(
+        url,
+        queryParameters: queryParams,
       );
 
       // If another search happened after this one, discard these results
@@ -94,21 +96,6 @@ class DesiredPlacesFieldState extends ChangeNotifier {
       debugPrint('Error searching desired places: $error');
       return const Iterable<String>.empty();
     }
-  }
-
-  Future<Response> _makeApiRequest({
-    required Dio dio,
-    required String apiUrl,
-    required Map<String, String> queryParams,
-  }) async {
-    final encodedApiUrl = Uri.encodeComponent(
-      '$apiUrl?${_buildQueryString(queryParams)}',
-    );
-    final proxyUrl = 'https://corsproxy.io/?';
-    final fullUrl = '$proxyUrl$encodedApiUrl';
-
-    debugPrint('Requesting: $fullUrl');
-    return await dio.get(fullUrl);
   }
 
   Iterable<String> _processApiResponse(Response response) {
@@ -130,15 +117,6 @@ class DesiredPlacesFieldState extends ChangeNotifier {
       debugPrint('No predictions in response: ${response.data}');
       return const Iterable<String>.empty();
     }
-  }
-
-  String _buildQueryString(Map<String, String> params) {
-    return params.entries
-        .map(
-          (e) =>
-              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
-        )
-        .join('&');
   }
 
   // Public methods
