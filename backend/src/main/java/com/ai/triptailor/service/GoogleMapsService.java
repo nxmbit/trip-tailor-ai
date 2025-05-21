@@ -4,15 +4,13 @@ import com.ai.triptailor.exception.GoogleMapsServiceException;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.errors.ApiException;
-import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class GoogleMapsService {
@@ -112,6 +110,4 @@ public class GoogleMapsService {
         }
         return Optional.empty();
     }
-
-
 }
