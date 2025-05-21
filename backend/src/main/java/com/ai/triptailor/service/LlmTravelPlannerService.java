@@ -227,7 +227,7 @@ public class LlmTravelPlannerService {
         try {
             return chatClient.prompt()
                     .system(SYSTEM_PROMPT)
-                    .user("Generate a description about the travel destination " + destination)
+                    .user("Generate a description about the travel destination: " + destination + ". The response must be in English.")
                     .call()
                     .entity(DestinationDescriptionSchema.class);
         } catch (Exception e) {
@@ -257,6 +257,7 @@ public class LlmTravelPlannerService {
                 promptBuilder.append(". Make sure to also include the following attractions that the user specifically wants to see: ");
                 promptBuilder.append(String.join(", ", desiredAttractions));
                 promptBuilder.append("Also suggest other must-see attractions, local experiences, and hidden gems beyond what the user requested.");
+                promptBuilder.append("The response must be in english.");
             }
 
             return chatClient.prompt()
