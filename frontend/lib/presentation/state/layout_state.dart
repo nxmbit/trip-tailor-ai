@@ -134,6 +134,7 @@ class LayoutState {
     final languages = [
       {'code': 'en', 'name': 'English', 'flag': '🇺🇸'},
       {'code': 'pl', 'name': 'Polski', 'flag': '🇵🇱'},
+      {'code': 'de', 'name': 'Deutsch', 'flag': '🇩🇪'},
     ];
 
     showModalBottomSheet(
@@ -295,7 +296,9 @@ class LayoutState {
                 final currentLanguage =
                     languageProvider.locale.languageCode == 'pl'
                         ? 'Polski'
-                        : 'English';
+                        : (languageProvider.locale.languageCode == 'de'
+                            ? 'Deutsch'
+                            : 'English');
                 return ListTile(
                   title: Text(tr(context, 'settings.language')),
                   subtitle: Text(
