@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/utils/form_validators.dart';
 import '../../../../core/utils/translation_helper.dart';
 import '../state/signup_state.dart';
@@ -25,14 +26,13 @@ class _SignUpFormState extends State<SignUpForm> {
 
   Future<void> _handleSignUp() async {
     setState(() => _state.setLoading(true));
-    //TODO change way of showing error message
     try {
       final success = await _state.signUp();
 
       if (!mounted) return;
 
       if (success) {
-        Navigator.of(context).pushReplacementNamed('/signin');
+        context.go('/signin');
       } else {
         _showErrorMessage(tr(context, 'auth.signUpError'));
       }

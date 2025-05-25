@@ -1,7 +1,27 @@
 {
   "app": {
-    "title": "tripTailor.ai",
+    "title": "TripTailor",
     "subtitle": "Zaplanuj swoją podróż z nami"
+  },
+  "welcome": {
+    "heroTitle": "Twórz niezapomniane plany podróży z TripTailor",
+    "heroSubtitle": "Twój osobisty planer podróży tworzący plany dopasowane do Twoich potrzeb",
+    "appPreviewPlaceholder": "Podgląd aplikacji pojawi się tutaj",
+    "featuresTitle": "Wszystko, czego potrzebujesz do planowania podróży",
+    "feature1Title": "Szybkie generowanie planu podróży",
+    "feature1Description": "Stwórz kompletny plan podróży w kilka chwil dzięki wsparciu AI – bez zbędnych formalności.",
+    "feature2Title": "Lokalne kulinarne rekomendacje",
+    "feature2Description": "Odkrywaj polecane lokalne potrawy dopasowane do Twojego celu podróży.",
+    "feature3Title": "Całkowicie za darmo",
+    "feature3Description": "Korzystaj z TripTailor bez żadnych opłat. Nasze podstawowe funkcje są dostępne dla każdego użytkownika.",
+    "ctaBanner": "Zrezygnuj z ręcznego planowania podróży i rozpocznij korzystanie z TripTailor już dziś, całkowicie za darmo.",
+    "tryNow": "Wypróbuj teraz",
+    "faqsTitle": "Najczęściej zadawane pytania",
+    "faq1Question": "Czym jest TripTailor?",
+    "faq1Answer": "TripTailor to narzędzie do planowania podróży oparte na AI, które tworzy spersonalizowane plany wyjazdów na podstawie Twoich preferencji.",
+    "faq2Question": "Czy mogę używać TripTailor jeżeli pochodzę z Ukrainy?",
+    "faq2Answer": "Nie, TripTailor jest dostępne tylko dla użytkowników z krajów Unii Europejskiej.",
+    "footerRights": "Wszelkie prawa zastrzeżone."
   },
   "auth": {
     "username": "Nazwa użytkownika",
@@ -48,8 +68,80 @@
     "days": "dni",
     "exampleTripsTitle": "Przykładowe podróże - Wypróbuj nas!",
     "recentTripsTitle": "Ostatnio utworzone podróże",
-    "welcomeTitle": "Witaj w tripTailor.ai",
+    "welcomeTitle": "Witaj w TripTailor",
     "welcomeSubtitle": "Spersonalizowane doświadczenia podróżnicze stworzone specjalnie dla Ciebie",
-    "welcomeButton": "Zaplanuj nową podróż"
+    "welcomeButton": "Zaplanuj nową podróż",
+    "viewAllTrips": "Zobacz wszystkie podróże",
+    "noTripsYet": "Nie masz jeszcze żadnych podróży",
+    "discoverDestinations": "Odkryj nowe miejsca",
+    "planYourItinerary": "Zaplanuj swoją podróż",
+    "findAttractions": "Znajdź atrakcje",
+    "exploreLocalCuisine": "Odkryj lokalną kuchnię",
+    "travelInspirationTitle": "Inspiracje podróżnicze"
+  },
+  "tripPlanner": {
+    "headSectionTitle": "Zaplanuj swoją wymarzoną podróż",
+    "headSectionSubtitle": "Stwórz spersonalizowany plan podróży za pomocą AI",
+    "destination": "Cel podróży",
+    "destinationHint": "Wprowadź lokalizację",
+    "desiredPlaces": "Dodaj wymarzone miejsca",
+    "desiredPlacesHint": "Dodaj atrakcje w",
+    "selectDestinationFirst": "Najpierw wybierz cel podróży",
+    "startDate": "Data rozpoczęcia",
+    "endDate": "Data zakończenia",
+    "selectDate": "Wybierz datę",
+    "selectDestination": "Wybierz cel podróży",
+    "selectDates": "Wybierz daty rozpoczęcia i zakończenia",
+    "generateButton": "Wygeneruj plan podróży",
+    "generatingPlan": "Generowanie planu podróży...",
+    "generatingPlanWaitMessage": "To może potrwać kilka chwil. Proszę czekać.",
+    "planGenerated": "Plan podróży został wygenerowany pomyślnie!",
+    "error": "Wystąpił błąd podczas generowania planu podróży. Proszę spróbować ponownie."
+  },
+  "tripDetail": {
+    "description": "Opis",
+    "bestTimeToVisit": "Najlepszy czas na wizytę",
+    "destinationHistory": "Historia miejsca",
+    "itinerary": "Plan podróży",
+    "attractions": "Atrakcje",
+    "localCuisine": "Polecane lokalne potrawy",
+    "mapView": "Widok mapy",
+    "hour": "godz.",
+    "attraction": "Atrakcja",
+    "day": "Dzień",
+    "viewOnGoogleMaps": "Zobacz w Mapach Google"
+  },
+  "yourTrips": {
+    "title": "Twoje podróże",
+    "subtitle": "Przeglądaj swoje plany podróży",
+    "empty": "Nie masz jeszcze żadnych podróży",
+    "createTrip": "Utwórz podróż",
+    "numberOfYourTrips": "Liczba Twoich podróży:",
+    "retry": "Spróbuj ponownie",
+    "sort": "Sortuj",
+    "sortOptions": {
+      "creationDate": "Data utworzenia",
+      "creationDateOldest": "Data utworzenia (najstarsze)",
+      "startDate": "Data rozpoczęcia",
+      "startDateLatest": "Data rozpoczęcia (najnowsze)",
+      "tripLength": "Długość podróży",
+      "destinationAZ": "Cel podróży (A-Z)",
+      "destinationZA": "Cel podróży (Z-A)"
+    },
+    "pagination": {
+      "previous": "Poprzednia",
+      "next": "Następna",
+      "page": "Strona",
+      "of": "z"
+    }
+  },
+  "profileImage": {
+    "title": "Profil",
+    "selectNew": "Wybierz nowe zdjęcie",
+    "reset": "Resetuj zdjęcie",
+    "save": "Zapisz",
+    "pickError": "Błąd podczas wybierania zdjęcia",
+    "uploadError": "Błąd podczas przesyłania zdjęcia",
+    "resetError": "Błąd podczas resetowania zdjęcia"
   }
 }

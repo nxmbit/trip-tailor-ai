@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/utils/translation_helper.dart';
 import '../../../../domain/services/auth_service.dart';
+import '../../../../app/router.dart';
+import '../../../state/providers/user_provider.dart';
 
-//TODO: possibly make it be shown only when the app is loading
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -21,17 +23,36 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkAuthentication() async {
     final authService = Provider.of<AuthService>(context, listen: false);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
     // Give the splash screen time to be visible
     await Future.delayed(const Duration(seconds: 1));
 
     // Check if user is authenticated
     final isAuthenticated = await authService.isAuthenticated();
 
+    // Update the UserProvider with the correct auth state
+    if (userProvider.isAuthenticated != isAuthenticated) {
+      userProvider.updateAuthState(isAuthenticated);
+    }
+
+    // If authenticated, also load the user data
+    if (isAuthenticated) {
+      await userProvider.initializeUser();
+    }
+
     if (mounted) {
+      debugPrint('Authentication status: $isAuthenticated');
+
       if (isAuthenticated) {
-        Navigator.of(context).pushReplacementNamed('/home');
+        // Get the last route if available, otherwise go to home
+        final lastRoute = await AppRouter.getLastRoute();
+        final targetRoute = lastRoute ?? '/home';
+        debugPrint('Navigating to last route: $targetRoute');
+        context.go(targetRoute);
       } else {
-        Navigator.of(context).pushReplacementNamed('/welcome');
+        // If not authenticated, go to welcome screen
+        context.go('/welcome');
       }
     }
   }

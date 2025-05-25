@@ -7,9 +7,13 @@ import 'package:frontend/core/utils/translation_helper.dart';
 
 class UserActionsDialog extends StatelessWidget {
   final VoidCallback onSettingsPressed;
+  final VoidCallback onProfileImagePressed;
 
-  const UserActionsDialog({Key? key, required this.onSettingsPressed})
-    : super(key: key);
+  const UserActionsDialog({
+    Key? key, 
+    required this.onSettingsPressed,
+    required this.onProfileImagePressed,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +97,15 @@ class UserActionsDialog extends StatelessWidget {
                       child: Column(
                         children: [
                           ActionItem(
+                            icon: Icons.account_circle,
+                            text: tr(context, 'profileImage.title'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              onProfileImagePressed();
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          ActionItem(
                             icon: Icons.settings,
                             text: tr(context, 'settings.title'),
                             onTap: () {
@@ -107,17 +120,10 @@ class UserActionsDialog extends StatelessWidget {
                             color: Colors.red,
                             onTap: () async {
                               Navigator.pop(context);
-
-                              // Use userProvider to access user service for logout
-                              //perform logout
-                              userProvider.userService.logoutUser();
-
-                              if (context.mounted) {
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                                  '/signin',
-                                  (route) => false,
-                                );
-                              }
+                              await Provider.of<UserProvider>(
+                                context,
+                                listen: false,
+                              ).logoutUser();
                             },
                           ),
                         ],

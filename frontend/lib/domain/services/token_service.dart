@@ -27,14 +27,14 @@ class TokenService {
     }
 
     final jwtExpirationDateStr =
-    DateTime.fromMillisecondsSinceEpoch(
-      jwtExpirationTimestamp,
-    ).toIso8601String();
+        DateTime.fromMillisecondsSinceEpoch(
+          jwtExpirationTimestamp,
+        ).toIso8601String();
 
     final refreshExpirationDateStr =
-    DateTime.fromMillisecondsSinceEpoch(
-      refreshExpirationTimestamp,
-    ).toIso8601String();
+        DateTime.fromMillisecondsSinceEpoch(
+          refreshExpirationTimestamp,
+        ).toIso8601String();
 
     if (kIsWeb) {
       // Use localStorage for web
@@ -131,7 +131,7 @@ class TokenService {
       }
 
       final response = await _dio.post(
-        APIConstants.refreshTokenEndpoint,
+        Endpoints.refreshTokenEndpoint,
         data: {'refreshToken': refreshToken},
       );
 
@@ -140,7 +140,8 @@ class TokenService {
           jwtToken: response.data['jwtToken'],
           jwtExpirationTimestamp: response.data['jwtExpirationDate'],
           refreshToken: response.data['refreshToken'],
-          refreshExpirationTimestamp: response.data['refreshTokenExpirationDate'],
+          refreshExpirationTimestamp:
+              response.data['refreshTokenExpirationDate'],
         );
         return true;
       }

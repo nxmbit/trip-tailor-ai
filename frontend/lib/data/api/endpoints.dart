@@ -1,7 +1,7 @@
 import 'package:frontend/core/config/environment_config.dart';
 
 // This file contains the API constants used in the application.
-class APIConstants {
+class Endpoints {
   static final String baseUrl = EnvironmentConfig.baseUrl;
 
   // Authentication endpoints
@@ -15,4 +15,7 @@ class APIConstants {
 
   // User endpoints
   static const String currentUserEndpoint = '/api/users/profile';
+  static const String userEndpoint = '/api/users';
+  // Travel plan endpoints
+  static const String generateTravelPlanEndpoint = "/api/travel-plans/generate";
 }

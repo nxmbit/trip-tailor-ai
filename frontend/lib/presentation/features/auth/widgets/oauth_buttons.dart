@@ -23,11 +23,6 @@ class SocialAuthButtons extends StatelessWidget {
           onPressed: () => _handleSocialAuth(context, 'github', authService),
           style: const AuthButtonStyle(buttonType: AuthButtonType.icon),
         ),
-        const SizedBox(width: 16.0),
-        FacebookAuthButton(
-          onPressed: () => _handleSocialAuth(context, 'facebook', authService),
-          style: const AuthButtonStyle(buttonType: AuthButtonType.icon),
-        ),
       ],
     );
   }

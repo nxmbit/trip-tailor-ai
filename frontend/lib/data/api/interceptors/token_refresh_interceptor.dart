@@ -31,7 +31,7 @@ class TokenRefreshInterceptor extends Interceptor {
 
       // Try to refresh the token
       final refreshResponse = await Dio().post(
-        '${APIConstants.baseUrl}${APIConstants.refreshTokenEndpoint}',
+        '${Endpoints.baseUrl}${Endpoints.refreshTokenEndpoint}',
         data: {'refreshToken': refreshToken},
       );
 
