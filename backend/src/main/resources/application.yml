@@ -68,6 +68,10 @@ logging:
   level:
     root: ${LOGGING_LEVEL}
 
+# Client Configuration (web or mobile)
+client:
+  type: ${CLIENT_TYPE} # WEB or MOBILE
+
 # JWT Configuration
 security:
   jwt:

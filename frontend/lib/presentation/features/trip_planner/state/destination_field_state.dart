@@ -57,7 +57,7 @@ class DestinationFieldState extends ChangeNotifier {
       final language = getCurrentLanguage();
 
       // Use apiClient.dio directly with the full URL and query parameters
-      final url = 'api/autocomplete/proxy';
+      final url = '/api/autocomplete/proxy';
       final queryParams = {
         'input': sanitizedQuery,
         'types': '(cities)',
