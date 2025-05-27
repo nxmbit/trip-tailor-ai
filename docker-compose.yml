@@ -39,6 +39,7 @@ services:
       - LOGGING_LEVEL=${LOGGING_LEVEL}
       - WEB_FRONTEND_URL=${WEB_FRONTEND_URL}
       - API_BASE_URL=${API_BASE_URL}
+      - CLIENT_TYPE=${CLIENT_TYPE}
     ports:
       - "8080:8080"
 
@@ -46,6 +47,7 @@ services:
     image: ghcr.io/nxmbit/trip-tailor-ai/frontend:latest
     environment:
       - API_BASE_URL=${API_BASE_URL}
+      - GOOGLE_MAPS_FRONTEND_API_KEY=${GOOGLE_MAPS_FRONTEND_API_KEY}
     ports:
       - "3000:80"
     depends_on:

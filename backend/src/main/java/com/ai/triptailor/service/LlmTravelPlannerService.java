@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,8 @@ public class LlmTravelPlannerService {
     private final UserProfileService userProfileService;
     private final TravelPlanRepository travelPlanRepository;
 
+    private final ObjectMapper objectMapper;
+
     private final String SYSTEM_PROMPT = "You are a travel planner.";
 
     @Autowired
@@ -51,7 +54,8 @@ public class LlmTravelPlannerService {
             GoogleMapsService googleMapsService,
             ChatClient.Builder chatClientBuilder,
             UserProfileService userProfileService,
-            TravelPlanRepository travelPlanRepository
+            TravelPlanRepository travelPlanRepository,
+            ObjectMapper objectMapper
     ) {
         this.s3StorageService = s3StorageService;
         this.googleTimeSpentService = googleTimeSpentService;
@@ -59,6 +63,7 @@ public class LlmTravelPlannerService {
         this.chatClient = chatClientBuilder.build();
         this.userProfileService = userProfileService;
         this.travelPlanRepository = travelPlanRepository;
+        this.objectMapper = objectMapper;
     }
 
     @Transactional
@@ -229,7 +234,7 @@ public class LlmTravelPlannerService {
                     .system(SYSTEM_PROMPT)
                     .user("Generate a description about the travel destination: " + destination + ". The response must be in English.")
                     .call()
-                    .entity(DestinationDescriptionSchema.class);
+                    .entity(new BeanOutputConverter<>(DestinationDescriptionSchema.class, objectMapper));
         } catch (Exception e) {
             if (e instanceof org.springframework.ai.retry.NonTransientAiException) {
                 throw e;
@@ -264,7 +269,7 @@ public class LlmTravelPlannerService {
                     .system(SYSTEM_PROMPT)
                     .user(promptBuilder.toString())
                     .call()
-                    .entity(TravelPlanSchema.class);
+                    .entity(new BeanOutputConverter<>(TravelPlanSchema.class, objectMapper));
         } catch (Exception e) {
             if (e instanceof org.springframework.ai.retry.NonTransientAiException) {
                 throw e;
@@ -302,7 +307,7 @@ public class LlmTravelPlannerService {
                                 .user("Translate this travel itinerary from English to " + languageName +
                                         ". Keep the exact same structure and maintain all dates and numbers:\n" + safeJson)
                                 .call()
-                                .entity(TravelPlanSchema.class);
+                                .entity(new BeanOutputConverter<>(TravelPlanSchema.class, objectMapper));
 
                         synchronized (travelPlan) {
                             setTravelPlanSchemaInTravelPlan(travelPlan, translatedPlan, language);
@@ -334,7 +339,7 @@ public class LlmTravelPlannerService {
                                 .user("Translate this travel plan description from English to " +
                                         languageName + ":\n" + safeJson)
                                 .call()
-                                .entity(DestinationDescriptionSchema.class);
+                                .entity(new BeanOutputConverter<>(DestinationDescriptionSchema.class, objectMapper));
 
                         synchronized (travelPlan) {
                             setDestinationDescriptionSchemaInTravelPlan(travelPlan, translatedDesc, language);
@@ -358,10 +363,6 @@ public class LlmTravelPlannerService {
     }
 
     private Optional<String> convertToJson(Object object) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
-        objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
         try {
             return Optional.of(objectMapper.writeValueAsString(object));
         } catch (JsonProcessingException e) {

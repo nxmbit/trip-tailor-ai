@@ -2,13 +2,13 @@ class GenerateTravelPlan {
   final String destination;
   final DateTime? startDate;
   final DateTime? endDate;
-  final List<String>? desiredPlaces;
+  final List<String>? desiredAttractions;
 
   const GenerateTravelPlan({
     required this.destination,
     this.startDate,
     this.endDate,
-    this.desiredPlaces,
+    this.desiredAttractions,
   });
 
   Map<String, dynamic> toJson() {
@@ -16,10 +16,10 @@ class GenerateTravelPlan {
       'destination': destination,
       if (startDate != null) 'startDate': startDate!.toIso8601String(),
       if (endDate != null) 'endDate': endDate!.toIso8601String(),
-      if (desiredPlaces != null && desiredPlaces!.isNotEmpty)
-        'desiredPlaces': desiredPlaces,
+      if (desiredAttractions != null && desiredAttractions!.isNotEmpty)
+        'desiredAttractions': desiredAttractions,
     };
   }
 
-  List<Object?> get props => [destination, startDate, endDate, desiredPlaces];
+  List<Object?> get props => [destination, startDate, endDate, desiredAttractions];
 }

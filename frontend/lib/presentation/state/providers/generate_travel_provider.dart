@@ -30,7 +30,7 @@ class GenerateTravelProvider extends ChangeNotifier {
         destination: destination,
         startDate: startDate,
         endDate: endDate,
-        desiredPlaces: desiredPlaces,
+        desiredAttractions: desiredPlaces,
       );
       _isSuccess = true;
     } catch (e) {

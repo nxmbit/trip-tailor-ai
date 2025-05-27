@@ -10,13 +10,13 @@ class GenerateTravelPlanService {
     required String destination,
     DateTime? startDate,
     DateTime? endDate,
-    List<String>? desiredPlaces,
+    List<String>? desiredAttractions,
   }) async {
     final generateTravelPlan = GenerateTravelPlan(
       destination: destination,
       startDate: startDate,
       endDate: endDate,
-      desiredPlaces: desiredPlaces,
+      desiredAttractions: desiredAttractions,
     );
 
     return await repository.generateTravelPlan(generateTravelPlan);

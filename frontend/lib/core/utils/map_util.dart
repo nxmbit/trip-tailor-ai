@@ -8,7 +8,7 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 void initializeGoogleMapsWeb({String initialLanguage = 'en'}) {
   if (kIsWeb) {
     // Register the view factory - this should only happen ONCE
-    final mapApiKey = dotenv.env['GOOGLE_PLACES_KEY'] ?? '';
+    final mapApiKey = dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
 
     // This registers the Google Maps view factory
     final registrar = webPluginRegistrar;
