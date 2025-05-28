@@ -1,0 +1,147 @@
+{
+  "app": {
+    "title": "TripTailor",
+    "subtitle": "Plane deine Reise mit uns"
+  },
+  "welcome": {
+    "heroTitle": "Erstelle unvergessliche Reisepläne mit TripTailor",
+    "heroSubtitle": "Dein persönlicher Reiseplaner erstellt Pläne, die auf deine Bedürfnisse zugeschnitten sind",
+    "appPreviewPlaceholder": "App-Vorschau erscheint hier",
+    "featuresTitle": "Alles, was du für die Reiseplanung brauchst",
+    "feature1Title": "Schnelle Reiseplan-Erstellung",
+    "feature1Description": "Erstelle mit KI-Unterstützung in wenigen Augenblicken einen vollständigen Reiseplan – ganz ohne Aufwand.",
+    "feature2Title": "Lokale kulinarische Empfehlungen",
+    "feature2Description": "Entdecke empfohlene lokale Gerichte, die auf dein Reiseziel zugeschnitten sind.",
+    "feature3Title": "Komplett kostenlos",
+    "feature3Description": "Nutze TripTailor kostenlos. Unsere Kernfunktionen stehen jedem Nutzer zur Verfügung.",
+    "ctaBanner": "Verzichte auf manuelle Reiseplanung und nutze TripTailor noch heute – komplett kostenlos.",
+    "tryNow": "Jetzt ausprobieren",
+    "faqsTitle": "Häufig gestellte Fragen",
+    "faq1Question": "Was ist TripTailor?",
+    "faq1Answer": "TripTailor ist ein KI-basierter Reiseplaner, der personalisierte Reisepläne nach deinen Vorlieben erstellt.",
+    "faq2Question": "Kann ich TripTailor nutzen, wenn ich aus der Ukraine komme?",
+    "faq2Answer": "Nein, TripTailor ist nur für Nutzer aus Ländern der Europäischen Union verfügbar.",
+    "footerRights": "Alle Rechte vorbehalten."
+  },
+  "auth": {
+    "username": "Benutzername",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "providerSignIn": "Oder anmelden mit",
+    "backToWelcome": "Zurück zur Startseite",
+    "errorMessage": "Ein Fehler ist aufgetreten: ",
+    "signUpError": "Registrierung fehlgeschlagen. Bitte versuche es erneut.",
+    "signInError": "Ungültige Anmeldedaten. Bitte versuche es erneut.",
+    "missingUsername": "Bitte gib deinen Benutzernamen ein",
+    "missingEmail": "Bitte gib deine E-Mail-Adresse ein",
+    "invalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein",
+    "missingPassword": "Bitte gib ein Passwort ein",
+    "invalidPassword": "Das Passwort muss mindestens 6 Zeichen lang sein",
+    "missingConfirmPassword": "Bitte bestätige dein Passwort",
+    "invalidConfirmPassword": "Passwörter stimmen nicht überein"
+  },
+  "oauth": {
+    "processMessage": "Authentifizierung wird verarbeitet...",
+    "successMessage": "Authentifizierung erfolgreich! Weiterleitung...",
+    "failedMessage": "Authentifizierung fehlgeschlagen. Bitte versuche es erneut.",
+    "errorMessage": "Fehler bei der Authentifizierung:",
+    "returnToLogin": "Zurück zum Login"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Sprache",
+    "mobileDarkMode": "Dunkelmodus",
+    "theme": "Design",
+    "darkTheme": "Dunkel",
+    "lightTheme": "Hell",
+    "logout": "Abmelden"
+  },
+  "navigation": {
+    "home": "Startseite",
+    "tripPlanner": "Reiseplaner",
+    "yourTrips": "Deine Reisen"
+  },
+  "home": {
+    "days": "Tage",
+    "exampleTripsTitle": "Beispielreisen – Probiere uns aus!",
+    "recentTripsTitle": "Kürzlich erstellte Reisen",
+    "welcomeTitle": "Willkommen bei TripTailor",
+    "welcomeSubtitle": "Personalisierte Reiseerlebnisse, nur für dich gestaltet",
+    "welcomeButton": "Neue Reise planen",
+    "viewAllTrips": "Alle Reisen anzeigen",
+    "noTripsYet": "Du hast noch keine Reisen",
+    "discoverDestinations": "Neue Orte entdecken",
+    "planYourItinerary": "Deine Reiseroute planen",
+    "findAttractions": "Sehenswürdigkeiten finden",
+    "exploreLocalCuisine": "Lokale Küche entdecken",
+    "travelInspirationTitle": "Reiseinspirationen"
+  },
+  "tripPlanner": {
+    "headSectionTitle": "Plane deine Traumreise",
+    "headSectionSubtitle": "Erstelle mit KI eine personalisierte Reiseroute",
+    "destination": "Reiseziel",
+    "destinationHint": "Ort eingeben",
+    "desiredPlaces": "Gewünschte Orte hinzufügen",
+    "desiredPlacesHint": "Sehenswürdigkeiten in",
+    "selectDestinationFirst": "Bitte zuerst ein Reiseziel auswählen",
+    "startDate": "Startdatum",
+    "endDate": "Enddatum",
+    "selectDate": "Datum auswählen",
+    "selectDestination": "Bitte wähle ein Reiseziel",
+    "selectDates": "Bitte wähle sowohl Start- als auch Enddatum",
+    "generateButton": "Reiseplan erstellen",
+    "generatingPlan": "Reiseplan wird erstellt...",
+    "generatingPlanWaitMessage": "Dies kann einen Moment dauern. Bitte warte.",
+    "planGenerated": "Reiseplan erfolgreich erstellt!",
+    "error": "Beim Erstellen des Reiseplans ist ein Fehler aufgetreten. Bitte versuche es erneut."
+  },
+  "tripDetail": {
+    "description": "Beschreibung",
+    "bestTimeToVisit": "Beste Reisezeit",
+    "destinationHistory": "Geschichte des Reiseziels",
+    "itinerary": "Reiseroute",
+    "attractions": "Sehenswürdigkeiten",
+    "localCuisine": "Empfehlungen zur lokalen Küche",
+    "mapView": "Kartenansicht",
+    "hour": "Std.",
+    "attraction": "Sehenswürdigkeit",
+    "day": "Tag",
+    "viewOnGoogleMaps": "Auf Google Maps ansehen"
+  },
+  "yourTrips": {
+    "title": "Deine Reisen",
+    "subtitle": "Durchsuche deine Reisepläne",
+    "empty": "Du hast noch keine Reisen",
+    "createTrip": "Reise erstellen",
+    "numberOfYourTrips": "Anzahl deiner Reisen:",
+    "retry": "Erneut versuchen",
+    "sort": "Sortieren",
+    "sortOptions": {
+      "creationDate": "Erstellungsdatum",
+      "creationDateOldest": "Erstellungsdatum (älteste)",
+      "startDate": "Startdatum",
+      "startDateLatest": "Startdatum (neueste)",
+      "tripLength": "Reisedauer",
+      "destinationAZ": "Reiseziel (A-Z)",
+      "destinationZA": "Reiseziel (Z-A)"
+    },
+    "pagination": {
+      "previous": "Zurück",
+      "next": "Weiter",
+      "page": "Seite",
+      "of": "von"
+    }
+  },
+  "profileImage": {
+    "title": "Profil",
+    "selectNew": "Neues Bild auswählen",
+    "reset": "Bild zurücksetzen",
+    "save": "Speichern",
+    "pickError": "Fehler beim Auswählen des Bildes",
+    "uploadError": "Fehler beim Hochladen des Bildes",
+    "resetError": "Fehler beim Zurücksetzen des Bildes"
+  }
+}

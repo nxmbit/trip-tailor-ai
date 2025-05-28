@@ -1,5 +1,6 @@
 package com.ai.triptailor.oauth2;
 
+import com.ai.triptailor.config.ClientProperties;
 import com.ai.triptailor.model.RefreshToken;
 import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.service.JwtService;
@@ -17,19 +18,22 @@ import java.io.IOException;
 
 @Component
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    @Value("${security.oauth2.redirectUri}")
+    @Value("${security.oauth2.webRedirectUri}")
     private String redirectUri;
 
-    private final JwtService jwtService;
+    @Value("${security.oauth2.mobileRedirectUri:}")
+    private String mobileRedirectUri;
+
     private final RefreshTokenService refreshTokenService;
+    private final ClientProperties clientProperties;
 
     @Autowired
     public OAuth2LoginSuccessHandler(
-            JwtService jwtService,
-            RefreshTokenService refreshTokenService
+            RefreshTokenService refreshTokenService,
+            ClientProperties clientProperties
     ) {
-        this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
+        this.clientProperties = clientProperties;
     }
 
     @Override
@@ -48,15 +52,23 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         refreshTokenService.deleteByUserId(userPrincipal.getId());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrincipal.getId());
 
-        // Set the refresh token as HttpOnly cookie
-        // it is only meant for token transfer to the client
-        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken.getToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(false);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(300); // 5 min
-        response.addCookie(refreshTokenCookie);
+        if (ClientProperties.ClientType.MOBILE == clientProperties.getType()) {
+            String redirectUri = this.mobileRedirectUri + "?refresh_token=" + refreshToken.getToken();
 
-        getRedirectStrategy().sendRedirect(request, response, redirectUri);
+            getRedirectStrategy().sendRedirect(request, response, redirectUri);
+        } else {
+            // Set the refresh token as HttpOnly cookie for web clients
+            // it is only meant for token transfer to the client
+            Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken.getToken());
+            refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setSecure(false);
+            refreshTokenCookie.setPath("/");
+            refreshTokenCookie.setMaxAge(300); // 5 min
+            response.addCookie(refreshTokenCookie);
+
+            getRedirectStrategy().sendRedirect(request, response, redirectUri);
+        }
+
+
     }
 }

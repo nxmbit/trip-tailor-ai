@@ -82,9 +82,10 @@ security:
     refresh-token:
       token-expiration: 604800000
   cors:
-    allowedOrigins: ${WEB_FRONTEND_URL}
+    webAllowedOrigins: ${WEB_FRONTEND_URL:http://localhost:3000}
   oauth2:
-    redirectUri: ${WEB_FRONTEND_URL}/#/oauth2/redirect
+    webRedirectUri: ${WEB_FRONTEND_URL:http://localhost:3000}/#/oauth2/redirect
+    mobileRedirectUri: ${MOBILE_REDIRECT_URI:}
 
 # AWS S3 Configuration
 aws:

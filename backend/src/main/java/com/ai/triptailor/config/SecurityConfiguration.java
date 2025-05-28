@@ -26,11 +26,9 @@ public class SecurityConfiguration {
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2UserService oAuth2UserService;
+    private final ClientProperties clientProperties;
 
-    @Value("${client.type}")
-    private String clientType;
-
-    @Value("${security.cors.allowedOrigins}")
+    @Value("${security.cors.webAllowedOrigins}")
     private String[] authorizedRedirectUris;
 
     @Autowired
@@ -38,12 +36,14 @@ public class SecurityConfiguration {
             JwtAuthenticationFilter jwtAuthenticationFilter,
             RestAuthenticationEntryPoint restAuthenticationEntryPoint,
             OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler,
-            OAuth2UserService oAuth2UserService
+            OAuth2UserService oAuth2UserService,
+            ClientProperties clientProperties
     ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
         this.oAuth2LoginSuccessHandler = oAuth2LoginSuccessHandler;
         this.oAuth2UserService = oAuth2UserService;
+        this.clientProperties = clientProperties;
     }
 
     @Bean
@@ -74,26 +74,27 @@ public class SecurityConfiguration {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        if (clientType.equals("MOBILE")) {
-            configuration.setAllowedOrigins(List.of("*"));
-            configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-            configuration.setAllowedHeaders(List.of("*"));
-            configuration.setAllowCredentials(false);
-            configuration.setMaxAge(3600L);
-            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-            source.registerCorsConfiguration("/**", configuration);
-            return source;
-        } else if (clientType.equals("WEB")) {
-            configuration.setAllowedOrigins(List.of(authorizedRedirectUris));
-            configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-            configuration.setAllowedHeaders(List.of("*"));
-            configuration.setAllowCredentials(true);
-            configuration.setMaxAge(3600L);
-            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-            source.registerCorsConfiguration("/**", configuration);
-            return source;
-        } else {
-            throw new IllegalArgumentException("Invalid client type: " + clientType);
+
+        switch (clientProperties.getType()) {
+            case MOBILE:
+                configuration.setAllowedOrigins(List.of("*"));
+                configuration.setAllowCredentials(false);
+                break;
+
+            case WEB:
+                configuration.setAllowedOrigins(List.of(authorizedRedirectUris));
+                configuration.setAllowCredentials(true);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Invalid client type: " + clientProperties.getType());
         }
+
+        configuration.setMaxAge(3600L);
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
