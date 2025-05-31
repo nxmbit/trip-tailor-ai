@@ -72,10 +72,10 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
                   const SizedBox(height: 16),
                   TripItinerarySection(tripPlan: tripPlan),
                   const SizedBox(height: 16),
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  //   child: TripMapSection(tripPlan: tripPlan),
-                  // ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: TripMapSection(tripPlan: tripPlan),
+                  ),
                 ],
               ),
             ),
