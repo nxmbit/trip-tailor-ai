@@ -1,5 +1,6 @@
 package com.ai.triptailor.controller;
 
+import com.ai.triptailor.request.FcmTokenRequest;
 import com.ai.triptailor.request.LoginRequest;
 import com.ai.triptailor.request.RefreshTokenRequest;
 import com.ai.triptailor.request.RegisterRequest;
@@ -89,12 +90,12 @@ public class AuthController {
     }
 
     @PostMapping("/fcm-token")
-    public ResponseEntity<?> saveFcmToken(@RequestBody String token) {
+    public ResponseEntity<?> saveFcmToken(@RequestBody FcmTokenRequest request) {
         UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long userId = userPrincipal.getId();
 
         try {
-            fcmTokenService.saveToken(token, userId);
+            fcmTokenService.saveToken(request.getToken(), userId);
             return ResponseEntity.ok(Map.of("message", "FCM token saved successfully"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
