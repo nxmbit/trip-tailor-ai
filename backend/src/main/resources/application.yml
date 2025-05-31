@@ -101,3 +101,8 @@ google:
   maps:
     api:
       key: ${GOOGLE_MAPS_API_KEY}
+
+firebase:
+  credentials:
+    path: ${FIREBASE_CREDENTIALS_PATH:}
+  enabled: ${FIREBASE_ENABLED:false}

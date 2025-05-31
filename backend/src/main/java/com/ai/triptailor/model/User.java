@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -36,6 +37,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<TravelPlan> travelPlans;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<FcmToken> fcmTokens;
 
     private Long generationsNumber;
 
@@ -144,5 +148,28 @@ public class User {
 
     public void setDefaultProfileImageFilename(String defaultProfileImageFilename) {
         this.defaultProfileImageFilename = defaultProfileImageFilename;
+    }
+
+    public List<FcmToken> getFcmTokens() {
+        return fcmTokens;
+    }
+
+    public void setFcmTokens(List<FcmToken> fcmTokens) {
+        this.fcmTokens = fcmTokens;
+    }
+
+    public void addFcmToken(FcmToken fcmToken) {
+        if (this.fcmTokens == null) {
+            this.fcmTokens = new java.util.ArrayList<>();
+        }
+        this.fcmTokens.add(fcmToken);
+        fcmToken.setUser(this);
+    }
+
+    public void removeFcmToken(FcmToken fcmToken) {
+        if (this.fcmTokens != null) {
+            this.fcmTokens.remove(fcmToken);
+            fcmToken.setUser(null);
+        }
     }
 }

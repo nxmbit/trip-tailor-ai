@@ -7,6 +7,7 @@ import com.ai.triptailor.model.User;
 import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.response.LoginResponse;
 import com.ai.triptailor.service.AuthService;
+import com.ai.triptailor.service.FcmTokenService;
 import com.ai.triptailor.service.JwtService;
 import com.ai.triptailor.service.RefreshTokenService;
 import jakarta.servlet.http.Cookie;
@@ -27,12 +28,15 @@ public class AuthController {
     private final JwtService jwtService;
     private final AuthService authService;
     private final RefreshTokenService refreshTokenService;
+    private final FcmTokenService fcmTokenService;
 
     @Autowired
-    public AuthController(JwtService jwtService, AuthService authService, RefreshTokenService refreshTokenService) {
+    public AuthController(JwtService jwtService, AuthService authService,
+                          RefreshTokenService refreshTokenService, FcmTokenService fcmTokenService) {
         this.jwtService = jwtService;
         this.authService = authService;
         this.refreshTokenService = refreshTokenService;
+        this.fcmTokenService = fcmTokenService;
     }
 
     @PostMapping("/register")
@@ -82,6 +86,20 @@ public class AuthController {
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @PostMapping("/fcm-token")
+    public ResponseEntity<?> saveFcmToken(@RequestBody String token) {
+        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = userPrincipal.getId();
+
+        try {
+            fcmTokenService.saveToken(token, userId);
+            return ResponseEntity.ok(Map.of("message", "FCM token saved successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to save FCM token: " + e.getMessage()));
+        }
     }
 
 }
