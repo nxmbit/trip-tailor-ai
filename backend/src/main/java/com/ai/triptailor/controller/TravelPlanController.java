@@ -1,10 +1,13 @@
 package com.ai.triptailor.controller;
 
 import com.ai.triptailor.request.GenerateTravelPlanRequest;
+import com.ai.triptailor.request.NearbyPlacesSummaryRequest;
+import com.ai.triptailor.response.NearbyPlacesSummaryResponse;
 import com.ai.triptailor.response.TravelPlanIdResponse;
 import com.ai.triptailor.response.TravelPlanInfoPagingResponse;
 import com.ai.triptailor.response.TravelPlanResponse;
 import com.ai.triptailor.service.LlmTravelPlannerService;
+import com.ai.triptailor.service.NearbyPlacesSummaryService;
 import com.ai.triptailor.service.TravelPlanService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +24,15 @@ import java.util.UUID;
 @RequestMapping("/api/travel-plans")
 public class TravelPlanController {
     private final LlmTravelPlannerService llmTravelPlannerService;
+    private final NearbyPlacesSummaryService nearbyPlacesSummaryService;
     private final TravelPlanService travelPlanService;
 
     @Autowired
-    public TravelPlanController(LlmTravelPlannerService llmTravelPlannerService, TravelPlanService travelPlanService) {
+    public TravelPlanController(LlmTravelPlannerService llmTravelPlannerService, TravelPlanService travelPlanService,
+                                NearbyPlacesSummaryService nearbyPlacesSummaryService) {
         this.llmTravelPlannerService = llmTravelPlannerService;
         this.travelPlanService = travelPlanService;
+        this.nearbyPlacesSummaryService = nearbyPlacesSummaryService;
     }
 
     @PostMapping("/generate")
@@ -76,6 +82,24 @@ public class TravelPlanController {
                 language
         );
 
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/nearby-summary")
+    public ResponseEntity<NearbyPlacesSummaryResponse> getNearbyPlacesSummary(
+            @Valid @RequestBody NearbyPlacesSummaryRequest request) {
+
+        if (request.getRadiusMeters() <= 0) {
+            request.setRadiusMeters(1000); // Default 1km
+        }
+        if (request.getMaxAttractions() <= 0) {
+            request.setMaxAttractions(10); // Default 10 attractions
+        }
+        if (request.getLanguage() == null || request.getLanguage().isEmpty()) {
+            request.setLanguage("en");
+        }
+
+        NearbyPlacesSummaryResponse response = nearbyPlacesSummaryService.getNearbyPlacesSummary(request);
         return ResponseEntity.ok(response);
     }
 }

@@ -38,7 +38,7 @@ public class GoogleMapsService {
     private Optional<byte[]> getImageBytesFromReference(String photoReference) {
         try {
             return Optional.of(PlacesApi.photo(geoApiContext, photoReference)
-                    .maxWidth(4096)
+                    .maxWidth(8000)
                     .await()
                     .imageData
             );

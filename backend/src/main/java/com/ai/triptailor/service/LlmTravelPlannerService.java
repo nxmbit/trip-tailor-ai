@@ -92,10 +92,9 @@ public class LlmTravelPlannerService {
             CompletableFuture.runAsync(() -> {
                 try {
                     googleMapsService.getRandomImageFromTopNPhotos(place, 5)
-                            .ifPresent(imageBytes -> {
-                                s3StorageService.uploadFile(imageBytes, "image/jpeg", "jpg")
-                                        .ifPresent(travelPlan::setImageFileName);
-                            });
+                            .flatMap(imageBytes ->
+                                    s3StorageService.uploadFile(imageBytes, "image/jpeg", "jpg"))
+                            .ifPresent(travelPlan::setImageFileName);
                 } catch (Exception e) {
                     logger.warn("Failed to retrieve or upload destination image", e);
                     // continue without image
@@ -153,10 +152,9 @@ public class LlmTravelPlannerService {
 
                                                 // Get and store a photo
                                                 googleMapsService.getRandomImageFromTopNPhotos(placeResult, 3)
-                                                        .ifPresent(imageBytes -> {
-                                                            s3StorageService.uploadFile(imageBytes, "image/jpeg", "jpg")
-                                                                    .ifPresent(attraction::setImageFileName);
-                                                        });
+                                                        .flatMap(imageBytes ->
+                                                                s3StorageService.uploadFile(imageBytes, "image/jpeg", "jpg"))
+                                                        .ifPresent(attraction::setImageFileName);
 
                                                 // Get average time spent
                                                 googleTimeSpentService.getTimeSpent(
@@ -261,6 +259,9 @@ public class LlmTravelPlannerService {
             if (desiredAttractions != null && !desiredAttractions.isEmpty()) {
                 promptBuilder.append(". Make sure to also include the following attractions that the user specifically wants to see: ");
                 promptBuilder.append(String.join(", ", desiredAttractions));
+                promptBuilder.append("Provide engaging descriptions of the attractions, detailing what makes the specific " +
+                                "place special, any historical significance, and why travelers should visit. " +
+                                "The descriptions should be concise but informative");
                 promptBuilder.append("Also suggest other must-see attractions, local experiences, and hidden gems beyond what the user requested.");
                 promptBuilder.append("The response must be in english.");
             }
