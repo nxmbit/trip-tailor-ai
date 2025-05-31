@@ -67,11 +67,11 @@
   "home": {
     "days": "days",
     "exampleTripsTitle": "Example Trips - Try us out!",
-    "recentTripsTitle": "Recently created trips",
+    "recentTripsTitle": "Recent trips",
     "welcomeTitle": "Welcome to TripTailor",
     "welcomeSubtitle": "Personalized travel experiences designed just for you",
     "welcomeButton": "Plan a New Trip",
-    "viewAllTrips": "View All Trips",
+    "viewAllTrips": "All Trips",
     "noTripsYet": "You don't have any trips yet",
     "discoverDestinations": "Discover new places",
     "planYourItinerary": "Plan your itinerary",

@@ -5,14 +5,10 @@ import '../../../../domain/models/trip_plan.dart';
 
 class TripHeaderContent extends StatelessWidget {
   final TripPlan tripPlan;
-  final bool isDesktopView;
-  final bool isTabletView;
 
   const TripHeaderContent({
     Key? key,
     required this.tripPlan,
-    this.isDesktopView = false,
-    this.isTabletView = false,
   }) : super(key: key);
 
   @override

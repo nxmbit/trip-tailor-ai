@@ -6,9 +6,8 @@ import 'attraction_item.dart';
 
 class TripDayCard extends StatelessWidget {
   final TripDay day;
-  final bool isDesktopView;
 
-  const TripDayCard({Key? key, required this.day, this.isDesktopView = false})
+  const TripDayCard({Key? key, required this.day})
     : super(key: key);
 
   @override
@@ -85,7 +84,6 @@ class TripDayCard extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 12.0),
                 child: AttractionItem(
                   attraction: attraction,
-                  isDesktopView: isDesktopView,
                 ),
               ),
             ),

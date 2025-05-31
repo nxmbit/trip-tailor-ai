@@ -3,20 +3,16 @@ import '../../../../domain/models/trip_plan.dart';
 
 class TripHeaderImage extends StatelessWidget {
   final TripPlan tripPlan;
-  final bool isDesktopView;
-  final bool isTabletView;
 
   const TripHeaderImage({
     Key? key,
     required this.tripPlan,
-    this.isDesktopView = false,
-    this.isTabletView = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Adjust hero image height based on screen size
-    final imageHeight = isDesktopView ? 300.0 : (isTabletView ? 250.0 : 200.0);
+    final imageHeight = 200.0;
 
     // Check if imageUrl is available and not empty
     final hasImage = tripPlan.imageUrl.isNotEmpty;
@@ -29,7 +25,7 @@ class TripHeaderImage extends StatelessWidget {
         children: [
           // Image with better handling
           ClipRRect(
-            borderRadius: BorderRadius.circular(isDesktopView ? 12 : 0),
+            borderRadius: BorderRadius.circular( 0),
             child:
                 hasImage
                     ? Image.network(
@@ -44,7 +40,7 @@ class TripHeaderImage extends StatelessWidget {
           // Gradient overlay with stronger contrast for better text visibility
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(isDesktopView ? 12 : 0),
+              borderRadius: BorderRadius.circular(0),
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -63,7 +59,7 @@ class TripHeaderImage extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: isDesktopView ? null : (isTabletView ? 24 : 22),
+                fontSize: 22,
                 shadows: [
                   Shadow(
                     offset: const Offset(1, 1),

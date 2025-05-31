@@ -5,12 +5,10 @@ import 'trip_day_card.dart';
 
 class TripItinerarySection extends StatelessWidget {
   final TripPlan tripPlan;
-  final bool isDesktopView;
 
   const TripItinerarySection({
     Key? key,
     required this.tripPlan,
-    this.isDesktopView = false,
   }) : super(key: key);
 
   @override
@@ -30,7 +28,7 @@ class TripItinerarySection extends StatelessWidget {
           ...tripPlan.itinerary.map(
             (day) => Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
-              child: TripDayCard(day: day, isDesktopView: isDesktopView),
+              child: TripDayCard(day: day),
             ),
           ),
         ],

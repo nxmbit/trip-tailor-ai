@@ -56,8 +56,7 @@ class _MobileScaffoldState extends State<MobileScaffold> {
             child: UserSection(
               onTap:
                   () =>
-                      _scaffoldState.showActionsDialog(context, isMobile: true),
-              displayMode: UserSectionDisplayMode.mobile,
+                      _scaffoldState.showActionsDialog(context),
             ),
           ),
         ],

@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:frontend/presentation/common/layouts/desktop_scaffold.dart';
 import 'package:frontend/presentation/common/layouts/mobile_scaffold.dart';
-import 'package:frontend/presentation/common/layouts/tablet_scaffold.dart';
-import 'package:frontend/presentation/common/layouts/responsive_layout.dart';
 import 'package:frontend/presentation/features/auth/screens/oauth_redirect_handler.dart';
 import 'package:frontend/presentation/features/auth/screens/signin_screen.dart';
 import 'package:frontend/presentation/features/auth/screens/signup_screen.dart';
@@ -120,92 +117,44 @@ class AppRouter {
         return null;
       },
       routes: [
-        // Splash screen route - handles initial routing logic
+        // Splash screen and auth routes remain the same
         GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
+        GoRoute(path: '/welcome', builder: (context, state) => const WelcomeScreen()),
+        GoRoute(path: '/signin', builder: (context, state) => const SignInScreen()),
+        GoRoute(path: '/signup', builder: (context, state) => const SignUpScreen()),
+        GoRoute(path: '/oauth2/redirect', builder: (context, state) => const OAuthRedirectHandler()),
 
-        // Auth routes
-        GoRoute(
-          path: '/welcome',
-          builder: (context, state) => const WelcomeScreen(),
-        ),
-        GoRoute(
-          path: '/signin',
-          builder: (context, state) => const SignInScreen(),
-        ),
-        GoRoute(
-          path: '/signup',
-          builder: (context, state) => const SignUpScreen(),
-        ),
-
-        // OAuth redirect
-        GoRoute(
-          path: '/oauth2/redirect',
-          builder: (context, state) => const OAuthRedirectHandler(),
-        ),
-
-        // Protected routes under a ShellRoute with AuthShell
+        // Protected routes with persistent scaffold
         ShellRoute(
           builder: (context, state, child) {
-            return AuthShell(child: child);
+            return MobileScaffold(child: child);
           },
           routes: [
             GoRoute(
               path: '/home',
-              builder:
-                  (context, state) => ResponsiveLayout(
-                    mobileScaffold: MobileScaffold(child: const HomeContent()),
-                    tabletScaffold: TabletScaffold(child: const HomeContent()),
-                    desktopScaffold: DesktopScaffold(
-                      child: const HomeContent(),
-                    ),
-                  ),
+              pageBuilder: (context, state) => NoTransitionPage(
+                child: const HomeContent(),
+              ),
             ),
             GoRoute(
               path: '/trip-planner',
-              builder:
-                  (context, state) => ResponsiveLayout(
-                    mobileScaffold: MobileScaffold(
-                      child: const TripPlannerContent(),
-                    ),
-                    tabletScaffold: TabletScaffold(
-                      child: const TripPlannerContent(),
-                    ),
-                    desktopScaffold: DesktopScaffold(
-                      child: const TripPlannerContent(),
-                    ),
-                  ),
+              pageBuilder: (context, state) => NoTransitionPage(
+                child: const TripPlannerContent(),
+              ),
             ),
             GoRoute(
               path: '/your-trips',
-              builder:
-                  (context, state) => ResponsiveLayout(
-                    mobileScaffold: MobileScaffold(
-                      child: const YourTripsContent(),
-                    ),
-                    tabletScaffold: TabletScaffold(
-                      child: const YourTripsContent(),
-                    ),
-                    desktopScaffold: DesktopScaffold(
-                      child: const YourTripsContent(),
-                    ),
-                  ),
+              pageBuilder: (context, state) => NoTransitionPage(
+                child: const YourTripsContent(),
+              ),
             ),
             GoRoute(
               path: '/your-trips/:id',
-              builder: (context, state) {
-                final tripId = state.pathParameters['id']!;
-                return ResponsiveLayout(
-                  mobileScaffold: MobileScaffold(
-                    child: TripPlanDetailContent(tripId: tripId),
-                  ),
-                  tabletScaffold: TabletScaffold(
-                    child: TripPlanDetailContent(tripId: tripId),
-                  ),
-                  desktopScaffold: DesktopScaffold(
-                    child: TripPlanDetailContent(tripId: tripId),
-                  ),
-                );
-              },
+              pageBuilder: (context, state) => NoTransitionPage(
+                child: TripPlanDetailContent(
+                  tripId: state.pathParameters['id']!,
+                ),
+              ),
             ),
           ],
         ),

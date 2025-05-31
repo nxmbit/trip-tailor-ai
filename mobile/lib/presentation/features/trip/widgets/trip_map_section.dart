@@ -1,13 +1,12 @@
 // import 'dart:async';
 // import 'dart:typed_data';
 // import 'dart:ui' as ui;
-// import 'package:flutter/foundation.dart' show kIsWeb;
 // import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart';
+// import 'package:flutter/services.dart';
 // import 'package:frontend/core/utils/translation_helper.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import '../../../../domain/models/trip_plan.dart';
-// import 'dart:js' as js;
+// import 'package:url_launcher/url_launcher.dart';
 //
 // class TripMapSection extends StatefulWidget {
 //   final TripPlan tripPlan;
@@ -20,18 +19,34 @@
 //
 // class _TripMapSectionState extends State<TripMapSection> {
 //   final Completer<GoogleMapController> _controller = Completer();
-//   late Set<Marker> _markers;
-//   late Map<int, Color> _dayColors;
+//   Set<Marker> _markers = {};
+//   Map<int, Color> _dayColors = {};
 //   CameraPosition? _initialPosition;
 //   bool _isMapReady = false;
+//   bool _isError = false;
+//   String _errorMessage = "";
+//   bool _isDisposed = false;
 //
 //   @override
 //   void initState() {
 //     super.initState();
-//     _setupMap();
+//     // Delay map initialization to ensure context is available
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       if (!_isDisposed) {
+//         _setupMap();
+//       }
+//     });
 //   }
 //
-//   // Define color palette for days
+//   @override
+//   void dispose() {
+//     _isDisposed = true;
+//     if (_controller.isCompleted) {
+//       _controller.future.then((controller) => controller.dispose());
+//     }
+//     super.dispose();
+//   }
+//
 //   Color _getColorForDay(int dayNumber) {
 //     List<Color> colors = [
 //       Colors.red,
@@ -48,182 +63,132 @@
 //     return colors[(dayNumber - 1) % colors.length];
 //   }
 //
-//   Future<BitmapDescriptor> _createCustomMarkerBitmap(
-//     Color color,
-//     int visitOrder,
-//   ) async {
-//     // Create a PictureRecorder to record drawing operations
-//     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
-//     final Canvas canvas = Canvas(pictureRecorder);
-//     final Paint paint = Paint()..color = color;
-//     final TextPainter textPainter = TextPainter(
-//       text: TextSpan(
-//         text: visitOrder.toString(),
-//         style: const TextStyle(
-//           color: Colors.white,
-//           fontSize: 20, // Smaller font size (was 30)
-//           fontWeight: FontWeight.bold,
-//         ),
-//       ),
-//       textDirection: TextDirection.ltr,
-//     );
-//
-//     // Measure the text
-//     textPainter.layout();
-//
-//     // Size for the marker
-//     const double size = 35; // Smaller overall size (was 80)
-//     const double circleRadius = size / 2;
-//
-//     // Draw a circle
-//     canvas.drawCircle(
-//       const Offset(circleRadius, circleRadius),
-//       circleRadius,
-//       paint,
-//     );
-//
-//     // Draw border
-//     const double borderWidth = 2.0; // Slightly thinner border (was 2.5)
-//     canvas.drawCircle(
-//       const Offset(circleRadius, circleRadius),
-//       circleRadius - borderWidth / 2,
-//       Paint()
-//         ..color = Colors.white
-//         ..style = PaintingStyle.stroke
-//         ..strokeWidth = borderWidth,
-//     );
-//
-//     // Position the text in the center
-//     final double textX = (size - textPainter.width) / 2;
-//     final double textY = (size - textPainter.height) / 2;
-//     textPainter.paint(canvas, Offset(textX, textY));
-//
-//     // Rest of method unchanged
-//     final ui.Image image = await pictureRecorder.endRecording().toImage(
-//       size.toInt(),
-//       size.toInt(),
-//     );
-//     final ByteData? byteData = await image.toByteData(
-//       format: ui.ImageByteFormat.png,
-//     );
-//
-//     if (byteData == null) {
-//       throw Exception('Failed to generate marker image');
-//     }
-//
-//     return BitmapDescriptor.fromBytes(byteData.buffer.asUint8List());
+//   // Create a default marker using BitmapDescriptor.defaultMarker
+//   BitmapDescriptor _getDefaultMarker(Color color) {
+//     // Convert color to a hue value (0-360)
+//     final hue = HSVColor.fromColor(color).hue;
+//     return BitmapDescriptor.defaultMarkerWithHue(hue);
 //   }
 //
-//   void _openInGoogleMaps(String placeId) {
+//   void _openInGoogleMaps(String placeId) async {
 //     final url = 'https://www.google.com/maps/place/?q=place_id:$placeId';
 //
-//     // If running on the web, use js.context to open in a new tab
-//     if (kIsWeb) {
-//       js.context.callMethod('open', [url, '_blank']);
-//     } else {
-//       // For mobile, you would use url_launcher package
-//       // launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+//     try {
+//       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+//     } catch (e) {
+//       if (mounted) {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text(tr(context, 'common.cannotOpenUrl'))),
+//         );
+//       }
 //     }
 //   }
 //
 //   void _setupMap() async {
-//     // Initialize collections
-//     _markers = {};
-//     _dayColors = {};
-//     List<LatLng> validPositions = [];
-//     LatLng? firstAttractionPosition;
+//     if (_isDisposed || !mounted) return;
 //
-//     // Create cache of custom markers for better performance
-//     Map<String, BitmapDescriptor> customMarkerCache = {};
+//     try {
+//       _markers = {};
+//       _dayColors = {};
+//       LatLng? firstAttractionPosition;
 //
-//     // Process each day in the itinerary
-//     for (int i = 0; i < widget.tripPlan.itinerary.length; i++) {
-//       final day = widget.tripPlan.itinerary[i];
-//       final dayNumber = day.dayNumber;
+//       // Set a default position (centered on Europe as a fallback)
+//       _initialPosition = const CameraPosition(
+//         target: LatLng(48.8566, 2.3522), // Paris coordinates as default
+//         zoom: 5,
+//       );
 //
-//       // Assign a color for this day
-//       _dayColors[dayNumber] = _getColorForDay(dayNumber);
+//       for (int i = 0; i < widget.tripPlan.itinerary.length; i++) {
+//         if (_isDisposed || !mounted) return;
 //
-//       // Create a marker for each attraction in this day
-//       // Create a marker for each attraction in this day
-//       for (final attraction in day.attractions) {
-//         if (attraction.latitude != null && attraction.longitude != null) {
-//           final position = LatLng(attraction.latitude!, attraction.longitude!);
-//           validPositions.add(position);
+//         final day = widget.tripPlan.itinerary[i];
+//         final dayNumber = day.dayNumber;
 //
-//           // Save position of first valid attraction
-//           firstAttractionPosition ??= position;
+//         _dayColors[dayNumber] = _getColorForDay(dayNumber);
 //
-//           // Cache key for the custom marker
-//           final cacheKey = '${dayNumber}_${attraction.visitOrder}';
+//         for (final attraction in day.attractions) {
+//           if (_isDisposed || !mounted) return;
 //
-//           // Create the custom marker if not already in cache
-//           if (!customMarkerCache.containsKey(cacheKey)) {
-//             final customMarker = await _createCustomMarkerBitmap(
-//               _dayColors[dayNumber]!,
-//               attraction.visitOrder,
+//           if (attraction.latitude != null && attraction.longitude != null) {
+//             final position = LatLng(
+//               attraction.latitude!,
+//               attraction.longitude!,
 //             );
-//             customMarkerCache[cacheKey] = customMarker;
-//           }
 //
-//           // Prepare info window content
-//           final String infoTitle = attraction.name;
-//           String infoSnippet = '';
+//             // Set first found attraction position
+//             firstAttractionPosition ??= position;
 //
-//           // Add "View on Google Maps" link if place has a Google Places ID
-//           if (attraction.googlePlacesId != null &&
-//               attraction.googlePlacesId!.isNotEmpty) {
-//             infoSnippet += tr(context, 'tripDetail.viewOnGoogleMaps');
+//             // Use default markers instead of custom ones
+//             final markerIcon = _getDefaultMarker(_dayColors[dayNumber]!);
 //
-//             _markers.add(
-//               Marker(
-//                 markerId: MarkerId(
-//                   '${dayNumber}_${attraction.visitOrder}_${attraction.name}',
+//             final String infoTitle = attraction.name;
+//             String infoSnippet = '';
+//
+//             if (attraction.googlePlacesId != null &&
+//                 attraction.googlePlacesId!.isNotEmpty) {
+//               infoSnippet +=
+//                   mounted ? tr(context, 'tripDetail.viewOnGoogleMaps') : '';
+//
+//               _markers.add(
+//                 Marker(
+//                   markerId: MarkerId(
+//                     '${dayNumber}_${attraction.visitOrder}_${attraction.name}',
+//                   ),
+//                   position: position,
+//                   infoWindow: InfoWindow(
+//                     title: infoTitle,
+//                     snippet: infoSnippet,
+//                     onTap: () {
+//                       if (attraction.googlePlacesId != null) {
+//                         _openInGoogleMaps(attraction.googlePlacesId!);
+//                       }
+//                     },
+//                   ),
+//                   icon: markerIcon,
 //                 ),
-//                 position: position,
-//                 infoWindow: InfoWindow(
-//                   title: infoTitle,
-//                   snippet: infoSnippet,
-//                   onTap: () {
-//                     _openInGoogleMaps(attraction.googlePlacesId!);
-//                   },
+//               );
+//             } else {
+//               _markers.add(
+//                 Marker(
+//                   markerId: MarkerId(
+//                     '${dayNumber}_${attraction.visitOrder}_${attraction.name}',
+//                   ),
+//                   position: position,
+//                   infoWindow: InfoWindow(title: infoTitle),
+//                   icon: markerIcon,
 //                 ),
-//                 icon: customMarkerCache[cacheKey]!,
-//               ),
-//             );
-//           } else {
-//             // No Google Places ID, just show regular info window
-//             _markers.add(
-//               Marker(
-//                 markerId: MarkerId(
-//                   '${dayNumber}_${attraction.visitOrder}_${attraction.name}',
-//                 ),
-//                 position: position,
-//                 infoWindow: InfoWindow(title: infoTitle, snippet: infoSnippet),
-//                 icon: customMarkerCache[cacheKey]!,
-//               ),
-//             );
+//               );
+//             }
 //           }
 //         }
 //       }
-//     }
 //
-//     // Set initial camera position
-//     if (firstAttractionPosition != null) {
-//       _initialPosition = CameraPosition(
-//         target: firstAttractionPosition,
-//         zoom: 14,
-//       );
-//     } else {
-//       _initialPosition = CameraPosition(target: const LatLng(0, 0), zoom: 10);
-//     }
+//       if (firstAttractionPosition != null) {
+//         _initialPosition = CameraPosition(
+//           target: firstAttractionPosition,
+//           zoom: 13,
+//         );
+//       }
 //
-//     setState(() {
-//       _isMapReady = true;
-//     });
+//       if (!_isDisposed && mounted) {
+//         setState(() {
+//           _isMapReady = true;
+//         });
+//       }
+//     } catch (e) {
+//       if (!_isDisposed && mounted) {
+//         setState(() {
+//           _isMapReady = true;
+//           _isError = true;
+//           _errorMessage = e.toString();
+//         });
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text("Error setting up map: ${e.toString()}")),
+//         );
+//       }
+//     }
 //   }
 //
-//   // Build a legend to explain marker colors
 //   Widget _buildMapLegend() {
 //     return Wrap(
 //       spacing: 16,
@@ -237,7 +202,7 @@
 //                   width: 16,
 //                   height: 16,
 //                   decoration: BoxDecoration(
-//                     color: _dayColors[day.dayNumber],
+//                     color: _dayColors[day.dayNumber] ?? Colors.grey,
 //                     shape: BoxShape.circle,
 //                   ),
 //                 ),
@@ -269,30 +234,115 @@
 //               color: Theme.of(context).colorScheme.outlineVariant,
 //             ),
 //           ),
-//           child:
-//               _isMapReady
-//                   ? ClipRRect(
-//                     borderRadius: BorderRadius.circular(12),
-//                     child: GoogleMap(
-//                       initialCameraPosition: _initialPosition!,
-//                       markers: _markers,
-//                       mapType: MapType.normal,
-//                       onMapCreated: (GoogleMapController controller) {
-//                         _controller.complete(controller);
-//                       },
-//                       myLocationEnabled: false,
-//                       compassEnabled: true,
-//                       zoomControlsEnabled: true,
-//                     ),
-//                   )
-//                   : const Center(child: CircularProgressIndicator()),
+//           child: _buildMapContent(),
 //         ),
-//         if (_isMapReady && widget.tripPlan.itinerary.isNotEmpty)
+//         if (_isMapReady &&
+//             !_isError &&
+//             widget.tripPlan.itinerary.isNotEmpty &&
+//             _dayColors.isNotEmpty)
 //           Padding(
 //             padding: const EdgeInsets.only(top: 12),
 //             child: _buildMapLegend(),
 //           ),
 //       ],
 //     );
+//   }
+//
+//   Widget _buildMapContent() {
+//     if (!_isMapReady || _initialPosition == null) {
+//       return const Center(
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             CircularProgressIndicator(),
+//             SizedBox(height: 16),
+//             Text("Loading map..."),
+//           ],
+//         ),
+//       );
+//     }
+//
+//     if (_isError) {
+//       return Center(
+//         child: Padding(
+//           padding: const EdgeInsets.all(16.0),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               Icon(
+//                 Icons.error_outline,
+//                 color: Theme.of(context).colorScheme.error,
+//                 size: 48,
+//               ),
+//               const SizedBox(height: 16),
+//               Text(
+//                 "Could not load the map. Please try again later.",
+//                 textAlign: TextAlign.center,
+//                 style: TextStyle(color: Theme.of(context).colorScheme.error),
+//               ),
+//               const SizedBox(height: 8),
+//               ElevatedButton(
+//                 onPressed: () {
+//                   setState(() {
+//                     _isMapReady = false;
+//                     _isError = false;
+//                   });
+//                   _setupMap();
+//                 },
+//                 child: const Text("Retry"),
+//               ),
+//             ],
+//           ),
+//         ),
+//       );
+//     }
+//
+//     // Use the simpler GoogleMap implementation
+//     return ClipRRect(
+//       borderRadius: BorderRadius.circular(12),
+//       child: GoogleMap(
+//         initialCameraPosition: _initialPosition!,
+//         markers: _markers,
+//         mapType: MapType.normal,
+//         onMapCreated: (GoogleMapController controller) {
+//           if (!_controller.isCompleted) {
+//             _controller.complete(controller);
+//           }
+//
+//           // Apply custom map style to avoid gray tiles issue
+//           _setMapStyle(controller);
+//         },
+//         myLocationEnabled: false,
+//         compassEnabled: true,
+//         zoomControlsEnabled: true,
+//         mapToolbarEnabled: false,
+//         // Enable lite mode to improve performance
+//         liteModeEnabled: false,
+//         // Improve responsiveness
+//         cameraTargetBounds: CameraTargetBounds.unbounded,
+//       ),
+//     );
+//   }
+//
+//   // Add map style to ensure tiles load correctly
+//   Future<void> _setMapStyle(GoogleMapController controller) async {
+//     try {
+//       String style = '''
+//       [
+//         {
+//           "featureType": "all",
+//           "elementType": "all",
+//           "stylers": [
+//             {
+//               "visibility": "on"
+//             }
+//           ]
+//         }
+//       ]
+//       ''';
+//       await controller.setMapStyle(style);
+//     } catch (e) {
+//       print("Error setting map style: $e");
+//     }
 //   }
 // }

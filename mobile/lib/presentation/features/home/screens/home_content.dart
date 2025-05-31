@@ -7,69 +7,15 @@ class HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (MediaQuery.of(context).size.width < 600) {
-          return _buildMobileLayout(context);
-        } else if (MediaQuery.of(context).size.width < 1200) {
-          return _buildTabletLayout(context);
-        } else {
-          return _buildDesktopLayout(context);
-        }
-      },
-    );
-  }
-
-  Widget _buildMobileLayout(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const WelcomeSection(isMobile: true),
+            const WelcomeSection(),
             const SizedBox(height: 24),
             const RecentTripSection(crossAxisCount: 1),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTabletLayout(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const WelcomeSection(isMobile: false),
-            const SizedBox(height: 32),
-            const RecentTripSection(crossAxisCount: 2),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDesktopLayout(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const WelcomeSection(isMobile: false),
-            const SizedBox(height: 40),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Expanded(
-                  flex: 2,
-                  child: RecentTripSection(crossAxisCount: 2),
-                ),
-              ],
-            ),
           ],
         ),
       ),

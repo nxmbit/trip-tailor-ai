@@ -3,8 +3,7 @@ import 'package:frontend/core/utils/translation_helper.dart';
 import 'package:go_router/go_router.dart';
 
 class WelcomeSection extends StatelessWidget {
-  final bool isMobile;
-  const WelcomeSection({super.key, required this.isMobile});
+  const WelcomeSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +38,9 @@ class WelcomeSection extends StatelessWidget {
         const SizedBox(height: 16),
         Flexible(
           child: SizedBox(
-            width:
-                isMobile
-                    ? double.infinity
-                    : null, // Full width container on mobile
+            width: double.infinity,
+                // Full width container on mobile
             child: ElevatedButton(
-              //TODO: possibly fix overflow
               onPressed: () => context.go('/trip-planner'),
               child: Row(
                 mainAxisSize: MainAxisSize.min, // Always use min for the Row
