@@ -19,16 +19,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
   String _sortDirection = 'desc';
 
   // Define page sizes for different screen widths
-  int getPageSize(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width < 600) {
-      return 4; // Mobile: 4 trips per page
-    } else if (width < 1200) {
-      return 6; // Tablet: 6 trips per page
-    } else {
-      return 12; // Desktop: 12 trips per page
-    }
-  }
+  int pageSize = 4;
 
   @override
   void initState() {
@@ -52,9 +43,6 @@ class _YourTripsContentState extends State<YourTripsContent> {
             listen: false,
           ).locale.languageCode;
 
-      // Use dynamic page size based on screen width
-      final pageSize = getPageSize(context);
-
       // Load travel plans with the provider's current sort settings
       provider.loadTravelPlans(language: language, pageSize: pageSize);
     });
@@ -62,42 +50,10 @@ class _YourTripsContentState extends State<YourTripsContent> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (MediaQuery.of(context).size.width < 600) {
-          return _buildMobileLayout(context);
-        } else if (MediaQuery.of(context).size.width < 1200) {
-          return _buildTabletLayout(context);
-        } else {
-          return _buildDesktopLayout(context);
-        }
-      },
-    );
-  }
-
-  Widget _buildMobileLayout(BuildContext context) {
     return _buildCommonLayout(
       context,
       padding: const EdgeInsets.all(16.0),
       crossAxisCount: 1,
-      childAspectRatio: 1.3,
-    );
-  }
-
-  Widget _buildTabletLayout(BuildContext context) {
-    return _buildCommonLayout(
-      context,
-      padding: const EdgeInsets.all(24.0),
-      crossAxisCount: 2,
-      childAspectRatio: 1.3,
-    );
-  }
-
-  Widget _buildDesktopLayout(BuildContext context) {
-    return _buildCommonLayout(
-      context,
-      padding: const EdgeInsets.all(32.0),
-      crossAxisCount: 4,
       childAspectRatio: 1.3,
     );
   }
@@ -108,8 +64,6 @@ class _YourTripsContentState extends State<YourTripsContent> {
     required int crossAxisCount,
     required double childAspectRatio,
   }) {
-    final pageSize = getPageSize(context);
-
     return Consumer<TripPlanInfoProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading && provider.tripPlansPaging == null) {
@@ -280,8 +234,6 @@ class _YourTripsContentState extends State<YourTripsContent> {
   }
 
   Widget _buildSortButton(BuildContext context, TripPlanInfoProvider provider) {
-    final pageSize = getPageSize(context);
-
     return PopupMenuButton<Map<String, String>>(
       icon: Row(
         mainAxisSize: MainAxisSize.min,
@@ -370,32 +322,19 @@ class _YourTripsContentState extends State<YourTripsContent> {
     TripPlanInfoPaging paging,
     TripPlanInfoProvider provider,
   ) {
-    // Check if we need to use a compact layout
-    final isSmallScreen = MediaQuery.of(context).size.width < 600;
-    final pageSize = getPageSize(context);
-
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Previous button - icon-only on small screens
-          isSmallScreen
-              ? IconButton(
-                icon: const Icon(Icons.chevron_left),
-                onPressed:
-                    paging.page > 0
-                        ? () => provider.changePage(paging.page - 1, pageSize)
-                        : null,
-              )
-              : OutlinedButton.icon(
-                icon: const Icon(Icons.chevron_left),
-                label: Text(tr(context, 'yourTrips.pagination.previous')),
-                onPressed:
-                    paging.page > 0
-                        ? () => provider.changePage(paging.page - 1, pageSize)
-                        : null,
-              ),
+          IconButton(
+            icon: const Icon(Icons.chevron_left),
+            onPressed:
+                paging.page > 0
+                    ? () => provider.changePage(paging.page - 1, pageSize)
+                    : null,
+          ),
 
           const SizedBox(width: 8),
 
@@ -407,13 +346,11 @@ class _YourTripsContentState extends State<YourTripsContent> {
               color: Theme.of(context).colorScheme.primaryContainer,
             ),
             child: Text(
-              isSmallScreen
-                  ? '${paging.page + 1}/${paging.totalPages}'
-                  : '${tr(context, 'yourTrips.pagination.page')} ${paging.page + 1} ${tr(context, 'yourTrips.pagination.of')} ${paging.totalPages}',
+              '${paging.page + 1}/${paging.totalPages}',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimaryContainer,
                 fontWeight: FontWeight.bold,
-                fontSize: isSmallScreen ? 12 : 14,
+                fontSize: 12,
               ),
             ),
           ),
@@ -421,22 +358,13 @@ class _YourTripsContentState extends State<YourTripsContent> {
           const SizedBox(width: 8),
 
           // Next button - icon-only on small screens
-          isSmallScreen
-              ? IconButton(
-                icon: const Icon(Icons.chevron_right),
-                onPressed:
-                    paging.page < paging.totalPages - 1
-                        ? () => provider.changePage(paging.page + 1, pageSize)
-                        : null,
-              )
-              : OutlinedButton.icon(
-                icon: const Icon(Icons.chevron_right),
-                label: Text(tr(context, 'yourTrips.pagination.next')),
-                onPressed:
-                    paging.page < paging.totalPages - 1
-                        ? () => provider.changePage(paging.page + 1, pageSize)
-                        : null,
-              ),
+          IconButton(
+            icon: const Icon(Icons.chevron_right),
+            onPressed:
+                paging.page < paging.totalPages - 1
+                    ? () => provider.changePage(paging.page + 1, pageSize)
+                    : null,
+          ),
         ],
       ),
     );

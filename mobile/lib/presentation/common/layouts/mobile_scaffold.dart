@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/domain/services/shake_service.dart';
 import 'package:frontend/presentation/common/widgets/mobile_navigation.dart';
 import 'package:frontend/presentation/common/widgets/user_section.dart';
 
@@ -8,6 +9,7 @@ import '../../state/layout_state.dart';
 class MobileScaffold extends StatefulWidget {
   final Widget child;
 
+
   const MobileScaffold({Key? key, required this.child}) : super(key: key);
 
   @override
@@ -16,13 +18,14 @@ class MobileScaffold extends StatefulWidget {
 
 class _MobileScaffoldState extends State<MobileScaffold> {
   final _scaffoldState = LayoutState();
-
+  late ShakeService _shakeService;
   @override
   void initState() {
     super.initState();
     // Set the selected index based on the current route
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scaffoldState.updateSelectedIndexFromRoute(context);
+      _shakeService = ShakeService.initialize();
     });
   }
 
@@ -56,8 +59,7 @@ class _MobileScaffoldState extends State<MobileScaffold> {
             child: UserSection(
               onTap:
                   () =>
-                      _scaffoldState.showActionsDialog(context, isMobile: true),
-              displayMode: UserSectionDisplayMode.mobile,
+                      _scaffoldState.showActionsDialog(context),
             ),
           ),
         ],

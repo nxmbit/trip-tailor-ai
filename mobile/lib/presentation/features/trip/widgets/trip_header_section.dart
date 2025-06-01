@@ -5,14 +5,10 @@ import 'trip_header_content.dart';
 
 class TripHeaderSection extends StatelessWidget {
   final TripPlan tripPlan;
-  final bool isDesktopView;
-  final bool isTabletView;
 
   const TripHeaderSection({
     Key? key,
     required this.tripPlan,
-    this.isDesktopView = false,
-    this.isTabletView = false,
   }) : super(key: key);
 
   @override
@@ -23,18 +19,11 @@ class TripHeaderSection extends StatelessWidget {
         // Image section
         TripHeaderImage(
           tripPlan: tripPlan,
-          isDesktopView: isDesktopView,
-          isTabletView: isTabletView,
         ),
-
-        // Content section (only for non-desktop views)
-        if (!isDesktopView)
           Padding(
-            padding: EdgeInsets.all(isDesktopView ? 24.0 : 16.0),
+            padding: EdgeInsets.all(16.0),
             child: TripHeaderContent(
               tripPlan: tripPlan,
-              isDesktopView: isDesktopView,
-              isTabletView: isTabletView,
             ),
           ),
       ],

@@ -67,11 +67,11 @@
   "home": {
     "days": "days",
     "exampleTripsTitle": "Example Trips - Try us out!",
-    "recentTripsTitle": "Recently created trips",
+    "recentTripsTitle": "Recent trips",
     "welcomeTitle": "Welcome to TripTailor",
     "welcomeSubtitle": "Personalized travel experiences designed just for you",
     "welcomeButton": "Plan a New Trip",
-    "viewAllTrips": "View All Trips",
+    "viewAllTrips": "All Trips",
     "noTripsYet": "You don't have any trips yet",
     "discoverDestinations": "Discover new places",
     "planYourItinerary": "Plan your itinerary",
@@ -143,5 +143,18 @@
     "pickError": "Error selecting image",
     "uploadError": "Error uploading image",
     "resetError": "Error resetting image"
+  },
+  "nearbyPlaces": {
+    "title": "Nearby Places in",
+    "loading": "Loading nearby places...",
+    "error": "Error loading nearby places",
+    "retry": "Retry",
+    "noPlacesFound": "No nearby places found",
+    "rating": "Rating",
+    "currentLocation": "Current Location",
+    "noDescription": "No description available",
+    "permissionDenied": "Permission to access location denied",
+    "permissionPermanentlyDenied": "Permission to access location permanently denied. Please enable it in settings.",
+    "backButton": "Back"
   }
 }

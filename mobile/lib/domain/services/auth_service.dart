@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:frontend/data/api/api_client.dart';
 import 'package:frontend/data/api/endpoints.dart';
+import 'package:frontend/domain/services/notification_service.dart';
 import 'package:frontend/domain/services/token_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -48,6 +49,10 @@ class AuthService {
           refreshExpirationTimestamp:
               response.data['refreshTokenExpirationDate'],
         );
+
+        // Send FCM token after successful login
+        await sendFcmToken();
+
         return true;
       }
       return false;
@@ -118,33 +123,6 @@ class AuthService {
     }
   }
 
-  // Process the callback from social auth providers
-  Future<bool> processSocialAuthCallback() async {
-    try {
-      Dio tempDio = Dio();
-      // Call endpoint to exchange cookies for tokens
-      final response = await tempDio.get(
-        '${Endpoints.baseUrl}${Endpoints.tokensEndpoint}',
-        options: Options(extra: {'withCredentials': true}),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        // Use tokenService to save the tokens
-        await _tokenService.saveTokens(
-          jwtToken: response.data['jwtToken'],
-          jwtExpirationTimestamp: response.data['jwtExpirationDate'],
-          refreshToken: response.data['refreshToken'],
-          refreshExpirationTimestamp:
-              response.data['refreshTokenExpirationDate'],
-        );
-        return true;
-      }
-      return false;
-    } catch (e) {
-      debugPrint('Social auth callback error: $e');
-      return false;
-    }
-  }
 
   Future<bool> handleOAuthRefreshToken(String refreshToken) async {
     try {
@@ -162,11 +140,36 @@ class AuthService {
           refreshToken: response.data['refreshToken'],
           refreshExpirationTimestamp: response.data['refreshTokenExpirationDate'],
         );
+        await sendFcmToken();
         return true;
       }
       return false;
     } catch (e) {
       debugPrint('OAuth refresh token exchange error: $e');
+      return false;
+    }
+  }
+
+  // Send FCM token to the backend
+  Future<bool> sendFcmToken() async {
+    try {
+      // Get the FCM token from NotificationService using public method
+      final fcmToken = await NotificationService.instance.getFcmToken();
+
+      if (fcmToken == null) {
+        debugPrint('FCM token is null');
+        return false;
+      }
+
+      // Send the FCM token to the backend as a string (not JSON object)
+      final response = await _apiClient.dio.post(
+        Endpoints.firebaseTokenEndpoint,
+        data: {'token': fcmToken},
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('Failed to send FCM token: $e');
       return false;
     }
   }

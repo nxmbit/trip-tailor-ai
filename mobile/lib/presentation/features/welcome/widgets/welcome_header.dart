@@ -31,12 +31,22 @@ class WelcomeHeader extends StatelessWidget {
 
           // Auth buttons
           isMobile
-              ? // Icon button for mobile
-              IconButton(
-                icon: const Icon(Icons.login),
-                onPressed: () => context.go('/signin'),
-                tooltip: tr(context, 'auth.signIn'),
-              )
+              ? // Mobile auth options
+              Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.login),
+                      onPressed: () => context.go('/signin'),
+                      tooltip: tr(context, 'auth.signIn'),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.person_add),
+                      onPressed: () => context.go('/signup'),
+                      tooltip: tr(context, 'auth.signUp'),
+                    ),
+                  ],
+                )
               : // Text buttons for tablet and desktop
               Row(
                 children: [

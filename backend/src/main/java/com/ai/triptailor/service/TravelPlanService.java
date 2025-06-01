@@ -2,6 +2,7 @@ package com.ai.triptailor.service;
 
 import com.ai.triptailor.llm.enums.Language;
 import com.ai.triptailor.model.TravelPlan;
+import com.ai.triptailor.model.User;
 import com.ai.triptailor.model.UserPrincipal;
 import com.ai.triptailor.repository.TravelPlanRepository;
 import com.ai.triptailor.response.*;
@@ -18,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
