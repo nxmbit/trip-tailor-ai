@@ -103,4 +103,17 @@ public class AuthController {
         }
     }
 
+    @DeleteMapping("/fcm-token")
+    public ResponseEntity<?> deleteFcmToken(@RequestBody FcmTokenRequest request) {
+        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = userPrincipal.getId();
+
+        try {
+            fcmTokenService.deleteTokenForUser(request.getToken(), userId);
+            return ResponseEntity.ok(Map.of("message", "FCM token deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to delete FCM token: " + e.getMessage()));
+        }
+    }
 }
