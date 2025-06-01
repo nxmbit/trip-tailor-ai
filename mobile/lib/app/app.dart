@@ -55,13 +55,14 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final router = AppRouter.getRouter(context);
+
     return Consumer2<ThemeProvider, LanguageProvider>(
       builder: (context, themeProvider, languageProvider, child) {
         if (!languageProvider.isLoaded) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final router = AppRouter.getRouter(context);
 
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
@@ -75,7 +76,7 @@ class _MyAppState extends State<MyApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [Locale('en', 'US'), Locale('pl', 'PL')],
+          supportedLocales: const [Locale('en', 'US'), Locale('pl', 'PL'), Locale('de', 'DE')],
           routerConfig: router,
         );
       },

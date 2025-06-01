@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/domain/models/attraction.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '../../../../core/utils/translation_helper.dart';
 
@@ -79,18 +80,17 @@ class AttractionItem extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: GestureDetector(
-                      onTap:
-                          () => _showEnlargedImage(context, attraction.imageUrl),
+                      onTap: () => _showEnlargedImage(context, attraction.imageUrl),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          attraction.imageUrl.isNotEmpty
-                              ? attraction.imageUrl
-                              : '',
+                        child: FadeInImage.memoryNetwork(
+                          placeholder: kTransparentImage,
+                          image: attraction.imageUrl,
                           height: 150,
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
+                          fadeInDuration: const Duration(milliseconds: 300),
+                          imageErrorBuilder: (context, error, stackTrace) {
                             return Container(
                               height: 150,
                               color: Colors.grey[300],
@@ -117,44 +117,45 @@ class AttractionItem extends StatelessWidget {
   void _showEnlargedImage(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
-      builder:
-          (context) => Dialog(
-            insetPadding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Close button
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    icon: Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ),
-                // Enlarged image
-                Container(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.7,
-                    maxWidth: MediaQuery.of(context).size.width * 0.9,
-                  ),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 300,
-                        color: Colors.grey[300],
-                        child: const Center(
-                          child: Icon(Icons.broken_image, size: 64),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
+      builder: (context) => Dialog(
+        insetPadding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Close button
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
             ),
-          ),
+            // Enlarged image - z ulepszonym ładowaniem
+            Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.7,
+                maxWidth: MediaQuery.of(context).size.width * 0.9,
+              ),
+              child: FadeInImage.memoryNetwork(
+                placeholder: kTransparentImage,
+                image: imageUrl,
+                fit: BoxFit.contain,
+                fadeInDuration: const Duration(milliseconds: 300),
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 300,
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Icon(Icons.broken_image, size: 64),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
     );
   }
 }

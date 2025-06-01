@@ -69,7 +69,7 @@
     "exampleTripsTitle": "Przykładowe podróże - Wypróbuj nas!",
     "recentTripsTitle": "Ostatnie podróże",
     "welcomeTitle": "Witaj w TripTailor",
-    "welcomeSubtitle": "Spersonalizowane doświadczenia podróżnicze stworzone specjalnie dla Ciebie",
+    "welcomeSubtitle": "Spersonalizowane plany podróży stworzone specjalnie dla Ciebie",
     "welcomeButton": "Zaplanuj nową podróż",
     "viewAllTrips": "Wszystkie podróże",
     "noTripsYet": "Nie masz jeszcze żadnych podróży",
@@ -156,5 +156,14 @@
     "permissionDenied": "Odmowa dostępu do lokalizacji",
     "permissionPermanentlyDenied": "Trwała odmowa dostępu do lokalizacji. Proszę włączyć ją w ustawieniach.",
     "backButton": "Wstecz"
+  },
+  "trip": {
+    "deleteConfirmationTitle": "Usunąć podróż?",
+    "deleteConfirmationMessage": "Czy na pewno chcesz usunąć tę podróż? Tej operacji nie można cofnąć.",
+    "deleteSuccess": "Podróż została usunięta",
+    "deleteFailed": "Nie udało się usunąć podróży",
+    "deleting": "Usuwanie podróży...",
+    "cancel": "Anuluj",
+    "delete": "Usuń"
   }
 }

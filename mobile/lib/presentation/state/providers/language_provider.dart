@@ -14,11 +14,6 @@ class LanguageProvider extends ChangeNotifier {
 
   Locale get locale => _locale;
   bool get isLoaded => _isLoaded;
-  void updateMapLanguage() {
-    if (kIsWeb) {
-      //updateGoogleMapsLanguage(_locale.languageCode);
-    }
-  }
 
   // Initialize from saved preferences
   Future<void> init() async {
@@ -44,7 +39,6 @@ class LanguageProvider extends ChangeNotifier {
         }
       }
       // Initialize Google Maps for Flutter Web
-      updateMapLanguage();
     } catch (e) {
       print('Error initializing language: $e');
       // Fallback to English on error
@@ -86,7 +80,6 @@ class LanguageProvider extends ChangeNotifier {
     // Save preference
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('language', languageCode);
-    updateMapLanguage();
     notifyListeners();
   }
 }

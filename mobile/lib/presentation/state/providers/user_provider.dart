@@ -51,7 +51,6 @@ class UserProvider with ChangeNotifier {
     try {
       // Clear FCM token first before logout
       await NotificationService.instance.clearFcmTokenOnLogout();
-      print('FCM token cleared before logout');
 
       // Then update auth state
       _isAuthenticated = false;

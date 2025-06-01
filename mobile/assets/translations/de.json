@@ -156,5 +156,14 @@
     "permissionDenied": "Zugriff auf den Standort verweigert",
     "permissionPermanentlyDenied": "Zugriff auf den Standort dauerhaft verweigert. Bitte in den Einstellungen aktivieren.",
     "backButton": "Zurück"
-  }
+  },
+"trip": {
+  "deleteConfirmationTitle": "Reise löschen?",
+  "deleteConfirmationMessage": "Bist du sicher, dass du diese Reise löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+  "deleteSuccess": "Reise wurde gelöscht",
+  "deleteFailed": "Reise konnte nicht gelöscht werden",
+  "deleting": "Reise wird gelöscht...",
+  "cancel": "Abbrechen",
+  "delete": "Löschen"
+}
 }
