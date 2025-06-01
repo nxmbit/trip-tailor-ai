@@ -131,7 +131,7 @@ class TokenService {
       }
 
       final response = await _dio.post(
-        Endpoints.refreshTokenEndpoint,
+        Endpoints.baseUrl+Endpoints.refreshTokenEndpoint,
         data: {'refreshToken': refreshToken},
       );
 
