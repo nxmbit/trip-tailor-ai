@@ -18,4 +18,5 @@ class Endpoints {
   static const String userEndpoint = '/api/users';
   // Travel plan endpoints
   static const String generateTravelPlanEndpoint = "/api/travel-plans/generate";
+  static const String nearbySummaryEndpoint = "/api/travel-plans/nearby-summary";
 }

@@ -143,5 +143,18 @@
     "pickError": "Error selecting image",
     "uploadError": "Error uploading image",
     "resetError": "Error resetting image"
+  },
+  "nearbyPlaces": {
+    "title": "Nearby Places in",
+    "loading": "Loading nearby places...",
+    "error": "Error loading nearby places",
+    "retry": "Retry",
+    "noPlacesFound": "No nearby places found",
+    "rating": "Rating",
+    "currentLocation": "Current Location",
+    "noDescription": "No description available",
+    "permissionDenied": "Permission to access location denied",
+    "permissionPermanentlyDenied": "Permission to access location permanently denied. Please enable it in settings.",
+    "backButton": "Back"
   }
 }

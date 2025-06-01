@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../core/utils/map_util.dart';
-
 class LanguageProvider extends ChangeNotifier {
   // Default language
   Locale _locale = Locale(

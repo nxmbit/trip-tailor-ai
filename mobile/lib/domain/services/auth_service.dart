@@ -51,7 +51,7 @@ class AuthService {
         );
 
         // Send FCM token after successful login
-        await sendFcmToken();
+        // await sendFcmToken();
 
         return true;
       }
@@ -140,7 +140,7 @@ class AuthService {
           refreshToken: response.data['refreshToken'],
           refreshExpirationTimestamp: response.data['refreshTokenExpirationDate'],
         );
-        await sendFcmToken();
+        // await sendFcmToken();
         return true;
       }
       return false;

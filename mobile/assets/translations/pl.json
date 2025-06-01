@@ -143,5 +143,18 @@
     "pickError": "Błąd podczas wybierania zdjęcia",
     "uploadError": "Błąd podczas przesyłania zdjęcia",
     "resetError": "Błąd podczas resetowania zdjęcia"
+  },
+  "nearbyPlaces": {
+    "title": "Miejsca w pobliżu w",
+    "loading": "Ładowanie miejsc w pobliżu...",
+    "error": "Błąd podczas ładowania miejsc w pobliżu",
+    "retry": "Spróbuj ponownie",
+    "noPlacesFound": "Nie znaleziono miejsc w pobliżu",
+    "rating": "Ocena",
+    "currentLocation": "Aktualna lokalizacja",
+    "noDescription": "Brak opisu",
+    "permissionDenied": "Odmowa dostępu do lokalizacji",
+    "permissionPermanentlyDenied": "Trwała odmowa dostępu do lokalizacji. Proszę włączyć ją w ustawieniach.",
+    "backButton": "Wstecz"
   }
 }

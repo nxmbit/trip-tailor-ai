@@ -143,5 +143,18 @@
     "pickError": "Fehler beim Auswählen des Bildes",
     "uploadError": "Fehler beim Hochladen des Bildes",
     "resetError": "Fehler beim Zurücksetzen des Bildes"
+  },
+  "nearbyPlaces": {
+    "title": "Orte in der Nähe von",
+    "loading": "Lade Orte in der Nähe...",
+    "error": "Fehler beim Laden der Orte in der Nähe",
+    "retry": "Erneut versuchen",
+    "noPlacesFound": "Keine Orte in der Nähe gefunden",
+    "rating": "Bewertung",
+    "currentLocation": "Aktueller Standort",
+    "noDescription": "Keine Beschreibung verfügbar",
+    "permissionDenied": "Zugriff auf den Standort verweigert",
+    "permissionPermanentlyDenied": "Zugriff auf den Standort dauerhaft verweigert. Bitte in den Einstellungen aktivieren.",
+    "backButton": "Zurück"
   }
 }

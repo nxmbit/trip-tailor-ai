@@ -13,6 +13,7 @@ import 'package:frontend/presentation/features/your_trips/screens/your_trips_con
 import 'package:frontend/presentation/state/providers/user_provider.dart';
 
 import '../domain/services/auth_service.dart';
+import '../presentation/features/nearby_places/screen/nearby_places_content.dart';
 import '../presentation/features/trip/screens/trip_detail_content.dart';
 import '../presentation/features/welcome/screens/welcome_screen.dart';
 
@@ -27,6 +28,7 @@ class AppRouter {
     '/home',
     '/trip-planner',
     '/your-trips',
+    '/nearby-places',
   ];
 
   // List of public routes that don't require authentication
@@ -154,6 +156,12 @@ class AppRouter {
                 child: TripPlanDetailContent(
                   tripId: state.pathParameters['id']!,
                 ),
+              ),
+            ),
+            GoRoute(
+              path: '/nearby-places',
+              pageBuilder: (context, state) => NoTransitionPage(
+                child: const NearbyPlacesContent(),
               ),
             ),
           ],
