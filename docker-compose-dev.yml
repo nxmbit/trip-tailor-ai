@@ -43,8 +43,12 @@ services:
       - API_BASE_URL=${API_BASE_URL}
       - CLIENT_TYPE=${CLIENT_TYPE}
       - MOBILE_REDIRECT_URI=${MOBILE_REDIRECT_URI:-}
+      - FIREBASE_ENABLED=${FIREBASE_ENABLED:-false}
+      - FIREBASE_CREDENTIALS_PATH=/app/firebase/credentials.json
     ports:
       - "8080:8080"
+    volumes:
+      - ${FIREBASE_ENABLED:+./firebase:/app/firebase}
 
   frontend:
     build:

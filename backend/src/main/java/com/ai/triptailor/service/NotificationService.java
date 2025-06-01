@@ -13,6 +13,7 @@ import com.google.firebase.messaging.Notification;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 @Service
+@ConditionalOnBooleanProperty(name = "firebase.enabled")
 public class NotificationService {
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
