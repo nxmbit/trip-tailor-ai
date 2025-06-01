@@ -121,4 +121,10 @@ class NotificationService {
       // open chat screen
     }
   }
+
+  // Expose method to get FCM token
+  Future<String?> getFcmToken() async {
+    return await _messaging.getToken();
+  }
 }
+

@@ -12,7 +12,7 @@ class Endpoints {
   static const String tokensEndpoint = '/auth/tokens';
   static const String testEndpoint = '/test';
   static const String oauth2Endpoint = '/oauth2/authorization/';
-
+  static const String firebaseTokenEndpoint = '/auth/fcm-token';
   // User endpoints
   static const String currentUserEndpoint = '/api/users/profile';
   static const String userEndpoint = '/api/users';
