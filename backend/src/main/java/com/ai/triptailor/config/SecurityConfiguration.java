@@ -56,6 +56,7 @@ public class SecurityConfiguration {
                         .authenticationEntryPoint(restAuthenticationEntryPoint))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/logout").authenticated()
+                        .requestMatchers("/auth/fcm-token").authenticated()
                         .requestMatchers("/auth/**", "/oauth2/**", "/test").permitAll()
                         .anyRequest().authenticated()
                 )
