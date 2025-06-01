@@ -11,5 +11,5 @@ void main() async {
   await Firebase.initializeApp();
   await NotificationService.instance.initialize();
   await dotenv.load(fileName: ".env");
-  runApp(MultiProvider(providers: getProviders(), child: MyApp()));
+  runApp(MultiProvider(providers: getProviders(), child: const MyApp()));
 }

@@ -48,7 +48,7 @@ class AppRouter {
       initialLocation: '/',
       debugLogDiagnostics: true,
       refreshListenable: userProvider,
-        navigatorKey: navigatorKey,
+      navigatorKey: navigatorKey,
       redirect: (context, state) async {
         // Important: For page refreshes, we need to rely on the token check
         // instead of the in-memory userProvider state
@@ -121,10 +121,22 @@ class AppRouter {
       routes: [
         // Splash screen and auth routes remain the same
         GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
-        GoRoute(path: '/welcome', builder: (context, state) => const WelcomeScreen()),
-        GoRoute(path: '/signin', builder: (context, state) => const SignInScreen()),
-        GoRoute(path: '/signup', builder: (context, state) => const SignUpScreen()),
-        GoRoute(path: '/oauth2/redirect', builder: (context, state) => const OAuthRedirectHandler()),
+        GoRoute(
+          path: '/welcome',
+          builder: (context, state) => const WelcomeScreen(),
+        ),
+        GoRoute(
+          path: '/signin',
+          builder: (context, state) => const SignInScreen(),
+        ),
+        GoRoute(
+          path: '/signup',
+          builder: (context, state) => const SignUpScreen(),
+        ),
+        GoRoute(
+          path: '/oauth2/redirect',
+          builder: (context, state) => const OAuthRedirectHandler(),
+        ),
 
         // Protected routes with persistent scaffold
         ShellRoute(
@@ -134,35 +146,36 @@ class AppRouter {
           routes: [
             GoRoute(
               path: '/home',
-              pageBuilder: (context, state) => NoTransitionPage(
-                child: const HomeContent(),
-              ),
+              pageBuilder:
+                  (context, state) =>
+                      NoTransitionPage(child: const HomeContent()),
             ),
             GoRoute(
               path: '/trip-planner',
-              pageBuilder: (context, state) => NoTransitionPage(
-                child: const TripPlannerContent(),
-              ),
+              pageBuilder:
+                  (context, state) =>
+                      NoTransitionPage(child: const TripPlannerContent()),
             ),
             GoRoute(
               path: '/your-trips',
-              pageBuilder: (context, state) => NoTransitionPage(
-                child: const YourTripsContent(),
-              ),
+              pageBuilder:
+                  (context, state) =>
+                      NoTransitionPage(child: const YourTripsContent()),
             ),
             GoRoute(
               path: '/your-trips/:id',
-              pageBuilder: (context, state) => NoTransitionPage(
-                child: TripPlanDetailContent(
-                  tripId: state.pathParameters['id']!,
-                ),
-              ),
+              pageBuilder:
+                  (context, state) => NoTransitionPage(
+                    child: TripPlanDetailContent(
+                      tripId: state.pathParameters['id']!,
+                    ),
+                  ),
             ),
             GoRoute(
               path: '/nearby-places',
-              pageBuilder: (context, state) => NoTransitionPage(
-                child: const NearbyPlacesContent(),
-              ),
+              pageBuilder:
+                  (context, state) =>
+                      NoTransitionPage(child: const NearbyPlacesContent()),
             ),
           ],
         ),
@@ -215,35 +228,5 @@ class AppRouter {
     } catch (e) {
       debugPrint('Error resetting last route: $e');
     }
-  }
-}
-
-/// AuthShell is responsible for ensuring user data is loaded
-/// for all authenticated routes
-class AuthShell extends StatefulWidget {
-  final Widget child;
-
-  const AuthShell({super.key, required this.child});
-
-  @override
-  State<AuthShell> createState() => _AuthShellState();
-}
-
-class _AuthShellState extends State<AuthShell> {
-  @override
-  void initState() {
-    super.initState();
-    // Initialize user data when this shell mounts
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      if (userProvider.user == null && !userProvider.isLoading) {
-        userProvider.initializeUser();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
   }
 }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utils/translation_helper.dart';
-import '../../../state/providers/trip_plan_info_provider.dart';
 import '../../../state/providers/language_provider.dart';
+import '../../../state/providers/trip_plan_provider.dart';
 import '../../your_trips/widgets/trip_card.dart';
 
 class RecentTripSection extends StatefulWidget {
@@ -21,7 +21,7 @@ class _RecentTripSectionState extends State<RecentTripSection> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<TripPlanInfoProvider>(
+      final provider = Provider.of<TripPlanProvider>(
         context,
         listen: false,
       );
@@ -33,7 +33,7 @@ class _RecentTripSectionState extends State<RecentTripSection> {
           ).locale.languageCode;
 
       // Load just the 4 most recent trips
-      provider.loadTravelPlans(language: language, pageSize: 4);
+      provider.loadRecentTripPlans(language: language, pageSize: 4);
     });
   }
 
@@ -73,7 +73,7 @@ class _RecentTripSectionState extends State<RecentTripSection> {
   }
 
   Widget _buildTripsList() {
-    return Consumer<TripPlanInfoProvider>(
+    return Consumer<TripPlanProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading && provider.tripPlansPaging == null) {
           return _buildLoadingState();
@@ -101,7 +101,20 @@ class _RecentTripSectionState extends State<RecentTripSection> {
           itemCount: paging.travelPlansInfos.length,
           itemBuilder:
               (context, index) =>
-                  TripCard(trip: paging.travelPlansInfos[index]),
+                  TripCard(
+                    trip: paging.travelPlansInfos[index],
+                    onDeleted: () {
+                      // Tutaj przeładuj dane
+                      final provider = Provider.of<TripPlanProvider>(context, listen: false);
+                      final language = Provider.of<LanguageProvider>(context, listen: false).locale.languageCode;
+
+                      // Usuń istniejące dane i pokaż wskaźnik ładowania
+                      provider.resetTripsList();
+
+                      // Przeładuj dane
+                      provider.loadTripPlans(language: language, pageSize: 4);
+                    },
+                  ),
         );
       },
     );
@@ -114,7 +127,12 @@ class _RecentTripSectionState extends State<RecentTripSection> {
     );
   }
 
-  Widget _buildErrorState(TripPlanInfoProvider provider) {
+  Widget _buildErrorState(TripPlanProvider provider) {
+    final language =
+        Provider.of<LanguageProvider>(
+          context,
+          listen: false,
+        ).locale.languageCode;
     return SizedBox(
       height: 200,
       child: Center(
@@ -127,7 +145,8 @@ class _RecentTripSectionState extends State<RecentTripSection> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => provider.loadTravelPlans(pageSize: 4),
+              onPressed: () => provider.loadRecentTripPlans(language: language,
+                  pageSize: 4),
               child: Text(tr(context, 'general.retry')),
             ),
           ],

@@ -3,7 +3,6 @@ import 'package:frontend/presentation/state/providers/language_provider.dart';
 import 'package:frontend/presentation/common/widgets/language_selection_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../common/widgets/language_selection_dialog.dart';
 import '../common/widgets/mobile_actions_dialog.dart';
 import '../common/widgets/mobile_settings.dart';

@@ -156,5 +156,14 @@
     "permissionDenied": "Odmowa dostępu do lokalizacji",
     "permissionPermanentlyDenied": "Trwała odmowa dostępu do lokalizacji. Proszę włączyć ją w ustawieniach.",
     "backButton": "Wstecz"
+  },
+  "trip": {
+    "deleteConfirmationTitle": "Usunąć podróż?",
+    "deleteConfirmationMessage": "Czy na pewno chcesz usunąć tę podróż? Tej operacji nie można cofnąć.",
+    "deleteSuccess": "Podróż została usunięta",
+    "deleteFailed": "Nie udało się usunąć podróży",
+    "deleting": "Usuwanie podróży...",
+    "cancel": "Anuluj",
+    "delete": "Usuń"
   }
 }

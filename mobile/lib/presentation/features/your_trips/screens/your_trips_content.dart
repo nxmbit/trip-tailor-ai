@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../domain/models/trip_plan_info.dart';
-import '../../../state/providers/trip_plan_info_provider.dart';
 import '../../../state/providers/language_provider.dart';
+import '../../../state/providers/trip_plan_provider.dart';
 import '../widgets/trip_card.dart';
 import '../../../../core/utils/translation_helper.dart';
 
@@ -26,15 +26,15 @@ class _YourTripsContentState extends State<YourTripsContent> {
     super.initState();
     // Load trips when the screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<TripPlanInfoProvider>(
+      final provider = Provider.of<TripPlanProvider>(
         context,
         listen: false,
       );
 
       // Sync local state with provider state
       setState(() {
-        _sortBy = provider.sortBy;
-        _sortDirection = provider.sortDirection;
+        _sortBy = "createdAt";
+        _sortDirection = "desc";
       });
 
       final language =
@@ -44,7 +44,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
           ).locale.languageCode;
 
       // Load travel plans with the provider's current sort settings
-      provider.loadTravelPlans(language: language, pageSize: pageSize);
+      provider.loadTripPlans(language: language, pageSize: pageSize);
     });
   }
 
@@ -64,7 +64,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
     required int crossAxisCount,
     required double childAspectRatio,
   }) {
-    return Consumer<TripPlanInfoProvider>(
+    return Consumer<TripPlanProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading && provider.tripPlansPaging == null) {
           return const Center(child: CircularProgressIndicator());
@@ -78,7 +78,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
                 Text('Error: ${provider.error}'),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () => provider.loadTravelPlans(pageSize: pageSize),
+                  onPressed: () => provider.loadTripPlans(pageSize: pageSize),
                   child: Text(tr(context, 'yourTrips.retry')),
                 ),
               ],
@@ -123,7 +123,20 @@ class _YourTripsContentState extends State<YourTripsContent> {
                   ),
                   itemCount: paging.travelPlansInfos.length,
                   itemBuilder: (context, index) {
-                    return TripCard(trip: paging.travelPlansInfos[index]);
+                    return TripCard(
+                      trip: paging.travelPlansInfos[index],
+                      onDeleted: () {
+                        // Tutaj przeładuj dane
+                        final provider = Provider.of<TripPlanProvider>(context, listen: false);
+                        final language = Provider.of<LanguageProvider>(context, listen: false).locale.languageCode;
+
+                        // Usuń istniejące dane i pokaż wskaźnik ładowania
+                        provider.resetTripsList();
+
+                        // Przeładuj dane
+                        provider.loadTripPlans(language: language, pageSize: pageSize);
+                      },
+                    );
                   },
                 ),
               ),
@@ -139,12 +152,10 @@ class _YourTripsContentState extends State<YourTripsContent> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Consumer<TripPlanInfoProvider>(
+    return Consumer<TripPlanProvider>(
       builder: (context, provider, _) {
         final paging = provider.tripPlansPaging;
-        final isSmallScreen = MediaQuery.of(context).size.width < 600;
 
-        if (isSmallScreen) {
           // More compact layout for small screens
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,58 +193,12 @@ class _YourTripsContentState extends State<YourTripsContent> {
               ],
             ],
           );
-        } else {
-          // Regular layout for larger screens
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          tr(context, 'yourTrips.title'),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                        if (paging != null && !paging.empty)
-                          Text(
-                            tr(context, 'yourTrips.subtitle'),
-                            style: Theme.of(context).textTheme.bodyLarge
-                                ?.copyWith(color: Colors.grey.shade600),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                      ],
-                    ),
-                  ),
-                  if (paging != null && !paging.empty)
-                    _buildSortButton(context, provider),
-                ],
-              ),
-              if (paging != null && !paging.empty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    '${tr(context, 'yourTrips.numberOfYourTrips')} ${paging.totalItems} ',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-            ],
-          );
-        }
+
       },
     );
   }
 
-  Widget _buildSortButton(BuildContext context, TripPlanInfoProvider provider) {
+  Widget _buildSortButton(BuildContext context, TripPlanProvider provider) {
     return PopupMenuButton<Map<String, String>>(
       icon: Row(
         mainAxisSize: MainAxisSize.min,
@@ -320,7 +285,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
   Widget _buildPaginationControls(
     BuildContext context,
     TripPlanInfoPaging paging,
-    TripPlanInfoProvider provider,
+    TripPlanProvider provider,
   ) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),

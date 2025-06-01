@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
 import 'package:frontend/presentation/state/layout_state.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class MobileActionsDialog extends StatelessWidget {
@@ -63,7 +64,7 @@ class MobileActionsDialog extends StatelessWidget {
               style: const TextStyle(color: Colors.red),
             ),
             onTap: () async {
-              Navigator.pop(context);
+              context.go('/');
               await Provider.of<UserProvider>(
                 context,
                 listen: false,
