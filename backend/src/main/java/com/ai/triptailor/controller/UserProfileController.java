@@ -1,6 +1,8 @@
 package com.ai.triptailor.controller;
 
 import com.ai.triptailor.model.UserPrincipal;
+import com.ai.triptailor.request.PasswordChangeRequest;
+import com.ai.triptailor.request.UsernameChangeRequest;
 import com.ai.triptailor.response.UserProfileResponse;
 import com.ai.triptailor.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +41,23 @@ public class UserProfileController {
             @AuthenticationPrincipal UserPrincipal currentUser) {
         UserProfileResponse updatedProfile = userProfileService.restoreDefaultProfileImage(currentUser.getId());
         return ResponseEntity.ok(updatedProfile);
+    }
+
+    @PostMapping("/profile/password")
+    public ResponseEntity<Void> changePassword(
+            @AuthenticationPrincipal UserPrincipal currentUser,
+            @RequestBody PasswordChangeRequest passwordChangeRequest) {
+        userProfileService.changePassword(currentUser.getId(),
+                passwordChangeRequest.getCurrentPassword(),
+                passwordChangeRequest.getNewPassword());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/profile/username")
+    public ResponseEntity<Void> changeUsername(
+            @AuthenticationPrincipal UserPrincipal currentUser,
+            @RequestBody UsernameChangeRequest usernameChangeRequest) {
+        userProfileService.changeUsername(currentUser.getId(), usernameChangeRequest.getUsername());
+        return ResponseEntity.ok().build();
     }
 }

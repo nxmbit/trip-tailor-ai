@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,11 +21,13 @@ public class UserProfileService {
 
     private final UserRepository userRepository;
     private final S3StorageService s3StorageService;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserProfileService(UserRepository userRepository, S3StorageService s3StorageService) {
+    public UserProfileService(UserRepository userRepository, S3StorageService s3StorageService,
+                              PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.s3StorageService = s3StorageService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserProfileResponse getUserProfile(Long userId) {
@@ -104,5 +107,33 @@ public class UserProfileService {
                         .orElse(null),
                 user.getAuthProvider()
         );
+    }
+
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Current password is incorrect");
+        }
+
+        if (newPassword.length() < 8) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must be at least 8 characters");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    public void changeUsername(Long userId, String newUsername) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (newUsername.length() < 3) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username must be at least 3 characters");
+        }
+
+        user.setUsername(newUsername);
+        userRepository.save(user);
     }
 }
