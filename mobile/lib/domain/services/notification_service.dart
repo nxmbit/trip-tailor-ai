@@ -1,7 +1,8 @@
 import 'dart:async';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:frontend/data/api/api_client.dart';
+import '../../data/api/endpoints.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -12,20 +13,20 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class NotificationService {
   NotificationService._();
   static final NotificationService instance = NotificationService._();
-
   final _messaging = FirebaseMessaging.instance;
   final _localNotifications = FlutterLocalNotificationsPlugin();
   bool _isFlutterLocalNotificationsInitialized = false;
+  ApiClient? _apiClient;
+
+  void setApiClient(ApiClient apiClient) {
+    _apiClient = apiClient;
+  }
 
   Future<void> initialize() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     await _requestPermission();
     await _setupMessageHandlers();
-
-    // Get FCM token
-    final token = await _messaging.getToken();
-    print('FCM Token: $token');
   }
 
   Future<void> _requestPermission() async {
@@ -61,10 +62,10 @@ class NotificationService {
         ?.createNotificationChannel(channel);
 
     const initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('notification_icon');
 
     final initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid
+        android: initializationSettingsAndroid
     );
 
     // flutter notification setup
@@ -85,15 +86,15 @@ class NotificationService {
         notification.title,
         notification.body,
         NotificationDetails(
-          android: AndroidNotificationDetails(
-            'high_importance_channel',
-            'High Importance Notifications',
-            channelDescription:
-            'This channel is used for important notifications.',
-            importance: Importance.high,
-            priority: Priority.high,
-            icon: '@mipmap/ic_launcher',
-          )
+            android: AndroidNotificationDetails(
+              'high_importance_channel',
+              'High Importance Notifications',
+              channelDescription:
+              'This channel is used for important notifications.',
+              importance: Importance.high,
+              priority: Priority.high,
+              icon: 'notification_icon',
+            )
         ),
         payload: message.data.toString(),
       );
@@ -126,5 +127,25 @@ class NotificationService {
   Future<String?> getFcmToken() async {
     return await _messaging.getToken();
   }
-}
 
+  Future<void> clearFcmTokenOnLogout() async {
+    try {
+      final String? token = await _messaging.getToken();
+
+      if (token != null && _apiClient != null) {
+        try {
+          await _apiClient!.dio.delete(
+              Endpoints.firebaseTokenEndpoint,
+              data: {'token': token}
+          );
+        } catch (e) {
+          print('Error removing token from backend: $e');
+        }
+      }
+
+      await _messaging.deleteToken();
+    } catch (e) {
+      print('Error clearing FCM token: $e');
+    }
+  }
+}

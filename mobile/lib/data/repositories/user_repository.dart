@@ -28,45 +28,21 @@ class UserRepository {
   /// Updates the user's profile image
   Future<User?> updateProfileImage(XFile imageFile) async {
     try {
-      // Create form data
       FormData formData = FormData();
+      final String mimeType = getMimeType(imageFile.name);
+      final bytes = await imageFile.readAsBytes();
 
-      if (kIsWeb) {
-        // For web, we need to use blob data
-        final bytes = await imageFile.readAsBytes();
-        final mime =
-            imageFile.name.endsWith('.png')
-                ? 'image/png'
-                : imageFile.name.endsWith('.gif')
-                ? 'image/gif'
-                : imageFile.name.endsWith('.webp')
-                ? 'image/webp'
-                : 'image/jpeg';
-
-        formData.files.add(
-          MapEntry(
-            'profileImage',
-            MultipartFile.fromBytes(
-              bytes,
-              filename: imageFile.name,
-              contentType: DioMediaType.parse(mime),
-            ),
+      formData.files.add(
+        MapEntry(
+          'profileImage',
+          MultipartFile.fromBytes(
+            bytes,
+            filename: imageFile.name,
+            contentType: DioMediaType.parse(mimeType),
           ),
-        );
-      } else {
-        // For mobile
-        formData.files.add(
-          MapEntry(
-            'profileImage',
-            await MultipartFile.fromFile(
-              imageFile.path,
-              filename: imageFile.name,
-            ),
-          ),
-        );
-      }
+        ),
+      );
 
-      // Make API request
       final response = await _apiClient.dio.post(
         '${Endpoints.userEndpoint}/profile/image',
         data: formData,
@@ -80,6 +56,26 @@ class UserRepository {
     } catch (e) {
       print('Error updating profile image: $e');
       rethrow; // Rethrow to handle in the UI
+    }
+  }
+
+  String getMimeType(String filename) {
+    final extension = filename.split('.').last.toLowerCase();
+
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'webp':
+        return 'image/webp';
+      case 'heic':
+        return 'image/heic';
+      default:
+        return 'image/jpeg';
     }
   }
 

@@ -3,6 +3,8 @@ import 'package:frontend/domain/models/user.dart';
 import 'package:frontend/domain/services/user_service.dart';
 import 'package:frontend/domain/services/auth_service.dart';
 
+import '../../../domain/services/notification_service.dart';
+
 class UserProvider with ChangeNotifier {
   final UserService userService;
   final AuthService authService; // Add AuthService directly
@@ -41,20 +43,24 @@ class UserProvider with ChangeNotifier {
   }
 
   // Logout user - improved version
+  // In user_provider.dart
   Future<void> logoutUser() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      // First, set auth state to false and clear user to trigger router
+      // Clear FCM token first before logout
+      await NotificationService.instance.clearFcmTokenOnLogout();
+      print('FCM token cleared before logout');
 
+      // Then update auth state
       _isAuthenticated = false;
-      userService.clearUser(); // You'll need to add this method
+      userService.clearUser();
 
-      // Notify listeners BEFORE token clearing to ensure router responds
+      // Notify listeners
       notifyListeners();
 
-      // Then perform actual logout with token clearing
+      // Finally perform actual logout
       await authService.logout();
 
       _isLoading = false;

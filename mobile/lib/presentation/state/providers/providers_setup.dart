@@ -16,6 +16,7 @@ import '../../../data/repositories/trip_plan_info_repository.dart';
 import '../../../data/repositories/trip_repository.dart';
 import '../../../domain/services/generate_travel_plan_service.dart';
 import '../../../domain/services/nearby_places_service.dart';
+import '../../../domain/services/notification_service.dart';
 import '../../../domain/services/trip_plan_info_service.dart';
 import '../../../domain/services/trip_service.dart';
 import 'generate_travel_provider.dart';
@@ -31,6 +32,7 @@ List<SingleChildWidget> getProviders() {
   final tokenService = TokenService();
   final apiClient = ApiClient(tokenService: tokenService);
   final authService = AuthService(apiClient, tokenService);
+  NotificationService.instance.setApiClient(apiClient);
 
   // Complete API client setup
   apiClient.setAuthService(authService);
