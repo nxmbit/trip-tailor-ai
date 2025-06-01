@@ -11,6 +11,7 @@ import 'package:frontend/presentation/state/providers/user_provider.dart';
 import 'package:provider/single_child_widget.dart';
 import '../../../data/repositories/trip_repository.dart';
 import '../../../domain/services/nearby_places_service.dart';
+import '../../../domain/services/notification_service.dart';
 import '../../../domain/services/trip_service.dart';
 import 'nearby_places_provider.dart';
 import 'trip_plan_provider.dart';
@@ -27,6 +28,7 @@ List<SingleChildWidget> getProviders() {
 
   // Complete API client setup
   apiClient.setAuthService(authService);
+  NotificationService.instance.setApiClient(apiClient);
 
   // Create repositories
   final userRepository = UserRepository(apiClient);

@@ -27,7 +27,7 @@ class _OAuthRedirectHandlerState extends State<OAuthRedirectHandler> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         setState(() {
-          _message = tr(context, 'oauth.processingMessage');
+          _message = tr(context, 'oauth.processMessage');
         });
         _processOAuthRedirect();
       }
