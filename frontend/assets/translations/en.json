@@ -135,14 +135,48 @@
       "of": "of"
     }
   },
-  "profileImage": {
-    "title": "Profile",
-    "selectNew": "Select new image",
-    "reset": "Reset image",
-    "save": "Save",
-    "pickError": "Error selecting image",
-    "uploadError": "Error uploading image",
-    "resetError": "Error resetting image"
+  "profileSettings": {
+    "profile": "Profile",
+    "title": "Manage Profile",
+    "photoTab": "Photo",
+    "usernameTab": "Username",
+    "passwordTab": "Password",
+
+    "image": {
+      "selectNew": "Select new image",
+      "reset": "Reset to default",
+      "save": "Save image",
+      "pickError": "Failed to pick image",
+      "updateSuccess": "Profile image updated successfully",
+      "resetSuccess": "Profile image reset to default"
+    },
+
+    "username": {
+      "title": "Change Username",
+      "description": "Choose a unique username to identify your account",
+      "label": "Username",
+      "required": "Username is required",
+      "tooShort": "Username must be at least 3 characters",
+      "tooLong": "Username must be at most 20 characters",
+      "noChange": "No changes made to username",
+      "save": "Save username",
+      "updateSuccess": "Username updated successfully"
+    },
+
+    "password": {
+      "title": "Change Password",
+      "description": "Choose a strong password that's at least 8 characters long",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "currentRequired": "Current password is required",
+      "newRequired": "New password is required",
+      "tooShort": "Password must be at least 8 characters",
+      "confirmRequired": "Please confirm your new password",
+      "mismatch": "Passwords don't match",
+      "save": "Change password",
+      "updateSuccess": "Password changed successfully"
+    }
   },
   "trip": {
     "deleteConfirmationTitle": "Delete trip?",
