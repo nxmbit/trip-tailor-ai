@@ -31,13 +31,6 @@ spring:
             scope:
               - email
               - profile
-          facebook:
-            clientId: ${SPRING_OAUTH2_FACEBOOK_CLIENT_ID}
-            clientSecret: ${SPRING_OAUTH2_FACEBOOK_CLIENT_SECRET}
-            redirect-uri: ${API_BASE_URL}/login/oauth2/code/facebook
-            scope:
-              - email
-              - public_profile
           github:
             clientId: ${SPRING_OAUTH2_GITHUB_CLIENT_ID}
             clientSecret: ${SPRING_OAUTH2_GITHUB_CLIENT_SECRET}
@@ -45,11 +38,6 @@ spring:
             scope:
               - user:email
               - read:user
-        provider:
-          facebook:
-            authorizationUri: https://www.facebook.com/v3.0/dialog/oauth
-            tokenUri: https://graph.facebook.com/v3.0/oauth/access_token
-            userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
 
   # AI Configuration
   ai:
@@ -82,9 +70,9 @@ security:
     refresh-token:
       token-expiration: 604800000
   cors:
-    webAllowedOrigins: ${WEB_FRONTEND_URL:http://localhost:3000}
+    webAllowedOrigins: ${WEB_FRONTEND_URL:}
   oauth2:
-    webRedirectUri: ${WEB_FRONTEND_URL:http://localhost:3000}/#/oauth2/redirect
+    webRedirectUri: ${WEB_FRONTEND_URL:}/#/oauth2/redirect
     mobileRedirectUri: ${MOBILE_REDIRECT_URI:}
 
 # AWS S3 Configuration

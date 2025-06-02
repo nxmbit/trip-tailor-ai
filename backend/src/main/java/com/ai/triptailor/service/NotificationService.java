@@ -129,7 +129,7 @@ public class NotificationService {
 
     private void handleFcmException(FirebaseMessagingException e, FcmToken token) {
         String errorCode = e.getErrorCode().toString();
-        logger.error("Firebase error: {} for token: {}", errorCode, token.getToken());
+        logger.info("Firebase error: {} for token: {}", errorCode, token.getToken());
 
         if (isInvalidTokenError(errorCode)) {
             logger.info("Removing invalid token: {}", token.getToken());
