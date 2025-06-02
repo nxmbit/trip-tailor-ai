@@ -9,3 +9,8 @@ void main() async {
   await dotenv.load(fileName: ".env");
   runApp(MultiProvider(providers: getProviders(), child: MyApp()));
 }
+
+//TODO: ROZDZIELIC MOBILOWE
+//COMMON WIDGETY< DODAC NEARBY PLACES DO HOME
+//NAPRAWIC ZE PRZY ZMIANIE JEZYKA REFRESHUJE SIE KONTENT
+//DODAĆ NA MOBILE I NA WEB EDYCJE PROFILU (USERNAME  I HASLO)

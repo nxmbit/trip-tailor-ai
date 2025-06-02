@@ -143,5 +143,14 @@
     "pickError": "Fehler beim Auswählen des Bildes",
     "uploadError": "Fehler beim Hochladen des Bildes",
     "resetError": "Fehler beim Zurücksetzen des Bildes"
+  },
+  "trip": {
+    "deleteConfirmationTitle": "Reise löschen?",
+    "deleteConfirmationMessage": "Möchtest du diese Reise wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteSuccess": "Reise wurde gelöscht",
+    "deleteFailed": "Reise konnte nicht gelöscht werden",
+    "deleting": "Reise wird gelöscht...",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
   }
 }

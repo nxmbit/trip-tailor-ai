@@ -11,7 +11,7 @@ class ProfileImageDialog extends StatefulWidget {
   final VoidCallback onBackPressed;
 
   const ProfileImageDialog({Key? key, required this.onBackPressed})
-      : super(key: key);
+    : super(key: key);
 
   @override
   State<ProfileImageDialog> createState() => _ProfileImageDialogState();
@@ -45,13 +45,6 @@ class _ProfileImageDialogState extends State<ProfileImageDialog> {
     }
   }
 
-  void _resetImage() {
-    setState(() {
-      _selectedImage = null;
-      _error = null;
-    });
-  }
-
   Future<void> _saveImage() async {
     if (_selectedImage == null) return;
 
@@ -63,13 +56,13 @@ class _ProfileImageDialogState extends State<ProfileImageDialog> {
     try {
       final userService = Provider.of<UserService>(context, listen: false);
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      
+
       // Upload the image
       await userService.updateProfileImage(_selectedImage!);
-      
+
       // Refresh user data to get the updated profile URL
       await userProvider.initializeUser();
-      
+
       // If we get here, the upload was successful
       if (mounted) {
         Navigator.of(context).pop(); // Close dialog after successful upload
@@ -91,13 +84,13 @@ class _ProfileImageDialogState extends State<ProfileImageDialog> {
     try {
       final userService = Provider.of<UserService>(context, listen: false);
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      
+
       // Reset the profile image
       await userService.resetProfileImage();
-      
+
       // Refresh user data to get the updated profile
       await userProvider.initializeUser();
-      
+
       // If we get here, the reset was successful
       if (mounted) {
         Navigator.of(context).pop(); // Close dialog after successful reset
@@ -172,35 +165,47 @@ class _ProfileImageDialogState extends State<ProfileImageDialog> {
                             width: 1,
                           ),
                         ),
-                        child: _selectedImage != null
-                            ? ClipOval(
-                                child: kIsWeb
-                                    ? Image.network(
-                                        _selectedImage!.path,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.file(
-                                        File(_selectedImage!.path),
-                                        fit: BoxFit.cover,
-                                      ),
-                              )
-                            : ClipOval(
-                                child: currentImageUrl != null && currentImageUrl.isNotEmpty
-                                    ? Image.network(
-                                        currentImageUrl,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) => Icon(
-                                          Icons.person,
-                                          size: 80,
-                                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                                        ),
-                                      )
-                                    : Icon(
-                                        Icons.person,
-                                        size: 80,
-                                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                                      ),
-                              ),
+                        child:
+                            _selectedImage != null
+                                ? ClipOval(
+                                  child:
+                                      kIsWeb
+                                          ? Image.network(
+                                            _selectedImage!.path,
+                                            fit: BoxFit.cover,
+                                          )
+                                          : Image.file(
+                                            File(_selectedImage!.path),
+                                            fit: BoxFit.cover,
+                                          ),
+                                )
+                                : ClipOval(
+                                  child:
+                                      currentImageUrl != null &&
+                                              currentImageUrl.isNotEmpty
+                                          ? Image.network(
+                                            currentImageUrl,
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    Icon(
+                                                      Icons.person,
+                                                      size: 80,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurface
+                                                          .withOpacity(0.5),
+                                                    ),
+                                          )
+                                          : Icon(
+                                            Icons.person,
+                                            size: 80,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.5),
+                                          ),
+                                ),
                       ),
                       const SizedBox(height: 24),
                       // Error message if any
@@ -209,7 +214,9 @@ class _ProfileImageDialogState extends State<ProfileImageDialog> {
                           padding: const EdgeInsets.only(bottom: 16.0),
                           child: Text(
                             _error!,
-                            style: TextStyle(color: Theme.of(context).colorScheme.error),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -235,14 +242,20 @@ class _ProfileImageDialogState extends State<ProfileImageDialog> {
                       SizedBox(
                         width: double.infinity,
                         child: FilledButton(
-                          onPressed: _isLoading || _selectedImage == null ? null : _saveImage,
-                          child: _isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : Text(tr(context, 'profileImage.save')),
+                          onPressed:
+                              _isLoading || _selectedImage == null
+                                  ? null
+                                  : _saveImage,
+                          child:
+                              _isLoading
+                                  ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                  : Text(tr(context, 'profileImage.save')),
                         ),
                       ),
                     ],

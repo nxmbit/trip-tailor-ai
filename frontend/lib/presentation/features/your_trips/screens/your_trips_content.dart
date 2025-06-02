@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../domain/models/trip_plan_info.dart';
-import '../../../state/providers/trip_plan_info_provider.dart';
 import '../../../state/providers/language_provider.dart';
+import '../../../state/providers/trip_plan_provider.dart';
 import '../widgets/trip_card.dart';
 import '../../../../core/utils/translation_helper.dart';
 
@@ -35,10 +35,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
     super.initState();
     // Load trips when the screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<TripPlanInfoProvider>(
-        context,
-        listen: false,
-      );
+      final provider = Provider.of<TripPlanProvider>(context, listen: false);
 
       // Sync local state with provider state
       setState(() {
@@ -55,8 +52,8 @@ class _YourTripsContentState extends State<YourTripsContent> {
       // Use dynamic page size based on screen width
       final pageSize = getPageSize(context);
 
-      // Load travel plans with the provider's current sort settings
-      provider.loadTravelPlans(language: language, pageSize: pageSize);
+      // Load trip plans with the provider's current sort settings
+      provider.loadTripPlans(language: language, pageSize: pageSize);
     });
   }
 
@@ -110,7 +107,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
   }) {
     final pageSize = getPageSize(context);
 
-    return Consumer<TripPlanInfoProvider>(
+    return Consumer<TripPlanProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading && provider.tripPlansPaging == null) {
           return const Center(child: CircularProgressIndicator());
@@ -124,7 +121,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
                 Text('Error: ${provider.error}'),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () => provider.loadTravelPlans(pageSize: pageSize),
+                  onPressed: () => provider.loadTripPlans(pageSize: pageSize),
                   child: Text(tr(context, 'yourTrips.retry')),
                 ),
               ],
@@ -169,7 +166,30 @@ class _YourTripsContentState extends State<YourTripsContent> {
                   ),
                   itemCount: paging.travelPlansInfos.length,
                   itemBuilder: (context, index) {
-                    return TripCard(trip: paging.travelPlansInfos[index]);
+                    return TripCard(
+                      trip: paging.travelPlansInfos[index],
+                      onDeleted: () {
+                        // Tutaj przeładuj dane
+                        final provider = Provider.of<TripPlanProvider>(
+                          context,
+                          listen: false,
+                        );
+                        final language =
+                            Provider.of<LanguageProvider>(
+                              context,
+                              listen: false,
+                            ).locale.languageCode;
+
+                        // Usuń istniejące dane i pokaż wskaźnik ładowania
+                        provider.resetTripsList();
+
+                        // Przeładuj dane
+                        provider.loadTripPlans(
+                          language: language,
+                          pageSize: pageSize,
+                        );
+                      },
+                    );
                   },
                 ),
               ),
@@ -185,7 +205,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Consumer<TripPlanInfoProvider>(
+    return Consumer<TripPlanProvider>(
       builder: (context, provider, _) {
         final paging = provider.tripPlansPaging;
         final isSmallScreen = MediaQuery.of(context).size.width < 600;
@@ -279,7 +299,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
     );
   }
 
-  Widget _buildSortButton(BuildContext context, TripPlanInfoProvider provider) {
+  Widget _buildSortButton(BuildContext context, TripPlanProvider provider) {
     final pageSize = getPageSize(context);
 
     return PopupMenuButton<Map<String, String>>(
@@ -368,7 +388,7 @@ class _YourTripsContentState extends State<YourTripsContent> {
   Widget _buildPaginationControls(
     BuildContext context,
     TripPlanInfoPaging paging,
-    TripPlanInfoProvider provider,
+    TripPlanProvider provider,
   ) {
     // Check if we need to use a compact layout
     final isSmallScreen = MediaQuery.of(context).size.width < 600;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 import '../../../../domain/models/trip_plan.dart';
 
 class TripHeaderImage extends StatelessWidget {
@@ -27,15 +28,16 @@ class TripHeaderImage extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Image with better handling
+          // Image with fade-in effect
           ClipRRect(
             borderRadius: BorderRadius.circular(isDesktopView ? 12 : 0),
             child:
                 hasImage
-                    ? Image.network(
-                      tripPlan.imageUrl,
+                    ? FadeInImage.memoryNetwork(
+                      placeholder: kTransparentImage,
+                      image: tripPlan.imageUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
+                      imageErrorBuilder: (context, error, stackTrace) {
                         return _buildPlaceholderImage(context);
                       },
                     )

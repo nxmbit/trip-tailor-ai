@@ -143,5 +143,14 @@
     "pickError": "Error selecting image",
     "uploadError": "Error uploading image",
     "resetError": "Error resetting image"
+  },
+  "trip": {
+    "deleteConfirmationTitle": "Delete trip?",
+    "deleteConfirmationMessage": "Are you sure you want to delete this trip? This action cannot be undone.",
+    "deleteSuccess": "Trip has been deleted",
+    "deleteFailed": "Failed to delete trip",
+    "deleting": "Deleting trip...",
+    "cancel": "Cancel",
+    "delete": "Delete"
   }
 }

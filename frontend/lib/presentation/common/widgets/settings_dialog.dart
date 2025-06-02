@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:frontend/presentation/state/providers/language_provider.dart';
-import 'package:frontend/presentation/state/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/utils/translation_helper.dart';
+import '../../state/providers/theme_provider.dart';
 
 class SettingsDialog extends StatefulWidget {
   final VoidCallback onBackPressed;
@@ -18,12 +18,14 @@ class SettingsDialog extends StatefulWidget {
 
 class _SettingsDialogState extends State<SettingsDialog> {
   String selectedLang = 'English';
-  final TextEditingController languageController = TextEditingController();
-  final List<DropdownMenuEntry<String>> languages = [
-    const DropdownMenuEntry(value: 'English', label: 'English'),
-    const DropdownMenuEntry(value: 'Polski', label: 'Polski'),
-    const DropdownMenuEntry(value: 'Deutsch', label: 'Deutsch'),
+
+  // Language data with flags
+  final List<Map<String, dynamic>> languageOptions = [
+    {'value': 'English', 'label': 'English', 'flag': '🇬🇧', 'code': 'en'},
+    {'value': 'Polski', 'label': 'Polski', 'flag': '🇵🇱', 'code': 'pl'},
+    {'value': 'Deutsch', 'label': 'Deutsch', 'flag': '🇩🇪', 'code': 'de'},
   ];
+
   @override
   void initState() {
     super.initState();
@@ -47,26 +49,44 @@ class _SettingsDialogState extends State<SettingsDialog> {
     final size = MediaQuery.of(context).size;
     final double maxWidth = size.width * 0.9;
     final double maxHeight = size.height * 0.8;
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final languageProvider = Provider.of<LanguageProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+      elevation: 8,
       insetPadding: EdgeInsets.symmetric(
         horizontal: size.width * 0.05,
         vertical: size.height * 0.05,
       ),
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
-        width: min(400, maxWidth), // Fixed width with max limit
+        width: min(450, maxWidth),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16.0)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: 16.0,
+                horizontal: 16.0,
+              ),
+              decoration: BoxDecoration(
+                color: Theme.of(
+                  context,
+                ).colorScheme.primaryContainer.withOpacity(0.3),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16.0),
+                  topRight: Radius.circular(16.0),
+                ),
+              ),
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back),
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     onPressed: widget.onBackPressed,
@@ -75,48 +95,173 @@ class _SettingsDialogState extends State<SettingsDialog> {
                     child: Center(
                       child: Text(
                         tr(context, 'settings.title'),
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 40), // Balance the row
+                  const SizedBox(width: 40),
                 ],
               ),
             ),
             Flexible(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(24.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          return DropdownMenu<String>(
-                            initialSelection: selectedLang,
-                            controller: languageController,
-                            requestFocusOnTap: false,
-                            label: Text(tr(context, 'settings.language')),
-                            onSelected: (String? language) {
-                              setState(() {
-                                selectedLang = language ?? 'English';
-                                // Update language when selection changes
-                                if (language == 'Polski') {
-                                  languageProvider.setLanguage('pl');
-                                } else if (language == 'Deutsch') {
-                                  languageProvider.setLanguage('de');
-                                } else {
-                                  languageProvider.setLanguage('en');
-                                }
-                              });
-                            },
-                            dropdownMenuEntries: languages,
-                            width: constraints.maxWidth,
-                          );
-                        },
+                      // LANGUAGE SECTION HEADER
+                      Text(
+                        tr(context, 'settings.language'),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
                       ),
-                      // Rest of the content remains the same
+                      const SizedBox(height: 12),
+
+                      // LANGUAGE SELECTION CARDS
+                      Card(
+                        elevation: 2,
+                        margin: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.outline.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: Column(
+                          children:
+                              languageOptions.map((language) {
+                                bool isSelected =
+                                    selectedLang == language['value'];
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedLang = language['value'];
+                                      languageProvider.setLanguage(
+                                        language['code'],
+                                      );
+                                    });
+                                  },
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 2.0,
+                                    ),
+                                    child: ListTile(
+                                      leading: Text(
+                                        language['flag'],
+                                        style: const TextStyle(fontSize: 24),
+                                      ),
+                                      title: Text(
+                                        language['label'],
+                                        style: TextStyle(
+                                          fontWeight:
+                                              isSelected
+                                                  ? FontWeight.bold
+                                                  : FontWeight.normal,
+                                        ),
+                                      ),
+                                      trailing:
+                                          isSelected
+                                              ? Icon(
+                                                Icons.check_circle,
+                                                color:
+                                                    Theme.of(
+                                                      context,
+                                                    ).colorScheme.primary,
+                                              )
+                                              : null,
+                                      selected: isSelected,
+                                      selectedColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      selectedTileColor: Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer
+                                          .withOpacity(0.2),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // THEME SECTION
+                      Text(
+                        tr(context, 'settings.theme'),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      Card(
+                        elevation: 2,
+                        margin: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.outline.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                leading: Icon(
+                                  themeProvider.isDarkMode
+                                      ? Icons.dark_mode
+                                      : Icons.light_mode,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 28,
+                                ),
+                                title: Text(
+                                  tr(context, 'settings.theme'),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  themeProvider.isDarkMode
+                                      ? tr(context, 'settings.darkTheme')
+                                      : tr(context, 'settings.lightTheme'),
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary.withOpacity(0.8),
+                                  ),
+                                ),
+                                trailing: Switch(
+                                  value: themeProvider.isDarkMode,
+                                  onChanged: (bool value) {
+                                    Provider.of<ThemeProvider>(
+                                      context,
+                                      listen: false,
+                                    ).toggleTheme(value);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

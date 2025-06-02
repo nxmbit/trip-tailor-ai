@@ -16,6 +16,9 @@ class Endpoints {
   // User endpoints
   static const String currentUserEndpoint = '/api/users/profile';
   static const String userEndpoint = '/api/users';
+  static const String usernameChangeEndpoint = '/api/users/username';
+  static const String passwordChangeEndpoint = '/api/users/password';
+
   // Travel plan endpoints
   static const String generateTravelPlanEndpoint = "/api/travel-plans/generate";
 }
