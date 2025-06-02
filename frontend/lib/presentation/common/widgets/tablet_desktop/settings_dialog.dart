@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/presentation/state/providers/language_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/utils/translation_helper.dart';
-import '../../state/providers/theme_provider.dart';
+import '../../../../core/utils/translation_helper.dart';
+import '../../../state/providers/theme_provider.dart';
 
 class SettingsDialog extends StatefulWidget {
   final VoidCallback onBackPressed;

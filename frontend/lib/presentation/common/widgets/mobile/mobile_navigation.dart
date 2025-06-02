@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/utils/translation_helper.dart';
+import '../../../../core/utils/translation_helper.dart';
 
 class MobileNavigation extends StatelessWidget {
   final int currentIndex;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/presentation/common/widgets/desktop_navigation.dart';
+import 'package:frontend/presentation/common/widgets/tablet_desktop/desktop_navigation.dart';
 import 'package:frontend/presentation/common/widgets/user_section.dart';
-import 'package:frontend/presentation/state/layout_state.dart';
+
+import '../../state/layout_state.dart';
 
 class DesktopScaffold extends StatefulWidget {
   final Widget child;

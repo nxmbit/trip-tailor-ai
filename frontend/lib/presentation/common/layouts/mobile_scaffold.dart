@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/presentation/common/widgets/mobile_navigation.dart';
+import 'package:frontend/presentation/common/widgets/mobile/mobile_navigation.dart';
 import 'package:frontend/presentation/common/widgets/user_section.dart';
 
 import '../../../core/utils/translation_helper.dart';

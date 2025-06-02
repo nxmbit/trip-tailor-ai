@@ -175,7 +175,8 @@
       "confirmRequired": "Proszę potwierdzić nowe hasło",
       "mismatch": "Hasła nie są zgodne",
       "save": "Zmień hasło",
-      "updateSuccess": "Hasło zostało zmienione"
+      "updateSuccess": "Hasło zostało zmienione",
+      "wrongCurrent": "Nieprawidłowe obecne hasło. Proszę spróbować ponownie."
     }
   },
   "trip": {

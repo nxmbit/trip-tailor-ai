@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend/presentation/common/widgets/action_item.dart';
+import 'package:frontend/presentation/common/widgets/tablet_desktop/action_item.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
 

@@ -175,7 +175,8 @@
       "confirmRequired": "Please confirm your new password",
       "mismatch": "Passwords don't match",
       "save": "Change password",
-      "updateSuccess": "Password changed successfully"
+      "updateSuccess": "Password changed successfully",
+      "wrongCurrent": "Wrong current password. Please try again."
     }
   },
   "trip": {
