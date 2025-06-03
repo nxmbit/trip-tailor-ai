@@ -66,6 +66,7 @@
   },
   "home": {
     "days": "Tage",
+    "day": "Tag",
     "exampleTripsTitle": "Beispielreisen – Probiere uns aus!",
     "recentTripsTitle": "Aktuelle Reisen",
     "welcomeTitle": "Willkommen bei TripTailor",

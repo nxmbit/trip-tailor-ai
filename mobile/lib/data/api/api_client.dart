@@ -45,11 +45,11 @@ class ApiClient {
     dio.interceptors.add(AuthTokenInterceptor(tokenService));
 
     // Add logging in debug mode
-    if (kDebugMode) {
-      dio.interceptors.add(
-        LogInterceptor(requestBody: true, responseBody: true),
-      );
-    }
+    // if (kDebugMode) {
+    //   dio.interceptors.add(
+    //     LogInterceptor(requestBody: true, responseBody: true),
+    //   );
+    // }
   }
 
   // Setup interceptors that depend on auth service

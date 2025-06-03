@@ -66,6 +66,7 @@
   },
   "home": {
     "days": "days",
+    "day": "day",
     "exampleTripsTitle": "Example Trips - Try us out!",
     "recentTripsTitle": "Recent trips",
     "welcomeTitle": "Welcome to TripTailor",

@@ -21,6 +21,7 @@ class MainActivity : FlutterActivity(){
     private var lastAcceleration = 0f
     private val CHANNEL = "com.nxmbit_xq100sh.frontend/shake_detector"
     private var lastShakeTime = 0L
+    private var shakeDetectionEnabled = false
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -43,6 +44,10 @@ class MainActivity : FlutterActivity(){
         acceleration = 10f
         currentAcceleration = SensorManager.GRAVITY_EARTH
         lastAcceleration = SensorManager.GRAVITY_EARTH
+        shakeDetectionEnabled = false
+        android.os.Handler().postDelayed({
+            shakeDetectionEnabled = true
+        }, 2000)
     }
 
     private val sensorListener: SensorEventListener = object : SensorEventListener {
@@ -61,14 +66,10 @@ class MainActivity : FlutterActivity(){
 
             // Display a Toast message if
             // acceleration value is over 12
-            if (acceleration > 8) {
+            if (acceleration > 8 && shakeDetectionEnabled) {
                 val currentTime = System.currentTimeMillis()
-                // Prevent multiple triggers in short succession (2 seconds cooldown)
                 if (currentTime - lastShakeTime > 2000) {
                     lastShakeTime = currentTime
-//                    Toast.makeText(applicationContext, "Shake detected - showing nearby places", Toast.LENGTH_SHORT).show()
-
-                    // Send message to Flutter
                     flutterEngine?.dartExecutor?.binaryMessenger?.let { messenger ->
                         MethodChannel(messenger, CHANNEL).invokeMethod("onShakeDetected", null)
                     }

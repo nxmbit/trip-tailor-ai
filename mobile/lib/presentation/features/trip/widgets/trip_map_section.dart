@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 import '../../../../domain/models/trip_plan.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../state/providers/language_provider.dart';
 
 class TripMapSection extends StatefulWidget {
   final TripPlan tripPlan;
@@ -27,12 +30,28 @@ class _TripMapSectionState extends State<TripMapSection> {
   String _errorMessage = "";
   bool _isDisposed = false;
 
+  String? _lastLanguageCode;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final language = Provider.of<LanguageProvider>(context).locale.languageCode;
+    if (_lastLanguageCode != language) {
+      _lastLanguageCode = language;
+      _isMapReady = false;
+      _isError = false;
+      _errorMessage = "";
+      _setupMap();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    // Delay map initialization to ensure context is available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_isDisposed) {
+        final language = Provider.of<LanguageProvider>(context, listen: false).locale.languageCode;
+        _lastLanguageCode = language;
         _setupMap();
       }
     });
@@ -61,13 +80,6 @@ class _TripMapSectionState extends State<TripMapSection> {
       Colors.teal,
     ];
     return colors[(dayNumber - 1) % colors.length];
-  }
-
-  // Create a default marker using BitmapDescriptor.defaultMarker
-  BitmapDescriptor _getDefaultMarker(Color color) {
-    // Convert color to a hue value (0-360)
-    final hue = HSVColor.fromColor(color).hue;
-    return BitmapDescriptor.defaultMarkerWithHue(hue);
   }
 
   // Funkcja do generowania niestandardowego markera z numerem i kolorem
@@ -103,20 +115,6 @@ class _TripMapSectionState extends State<TripMapSection> {
     final img = await recorder.endRecording().toImage(size, size);
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
-  }
-
-  void _openInGoogleMaps(String placeId) async {
-    final url = 'https://www.google.com/maps/place/?q=place_id:$placeId';
-
-    try {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(tr(context, 'common.cannotOpenUrl'))),
-        );
-      }
-    }
   }
 
   void _setupMap() async {

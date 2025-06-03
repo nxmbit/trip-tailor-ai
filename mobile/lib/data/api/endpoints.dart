@@ -21,6 +21,9 @@ class Endpoints {
   static const String passwordChangeEndpoint = '/api/users/profile/password';
 
   // Travel plan endpoints
+
+  static const String tripPlanEndpoint = "/api/travel-plans/";
+  static const String tripPlansEndpoint = "/api/travel-plans/plans";
   static const String generateTravelPlanEndpoint = "/api/travel-plans/generate";
   static const String nearbySummaryEndpoint = "/api/travel-plans/nearby-summary";
 }

@@ -202,6 +202,9 @@ class AppRouter {
 
   // Save last authenticated route to preferences
   static Future<void> _saveLastRoute(String route) async {
+    if (route == '/nearby-places') {
+      return;
+    }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_lastRouteKey, route);
     debugPrint('Saved last route: $route');
@@ -213,6 +216,7 @@ class AppRouter {
   }
 
   static Future<String?> _getLastRoute() async {
+
     final prefs = await SharedPreferences.getInstance();
     final lastRoute = prefs.getString(_lastRouteKey);
     debugPrint('Retrieved last route: $lastRoute');

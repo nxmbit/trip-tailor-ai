@@ -32,13 +32,12 @@ class LanguageProvider extends ChangeNotifier {
         final languageCode = systemLocale.languageCode;
 
         // Check if we support this language
-        if (['en', 'pl'].contains(languageCode)) {
+        if (['en', 'pl','de'].contains(languageCode)) {
           await setLanguage(languageCode);
         } else {
           await setLanguage('en'); // Default to English
         }
       }
-      // Initialize Google Maps for Flutter Web
     } catch (e) {
       print('Error initializing language: $e');
       // Fallback to English on error

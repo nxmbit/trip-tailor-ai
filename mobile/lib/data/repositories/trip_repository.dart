@@ -13,7 +13,7 @@ class TripRepository {
   Future<TripPlan> getTripPlan(String id, {required String language}) async {
     try {
       final response = await apiClient.dio.get(
-        '/api/travel-plans/$id',
+        '${Endpoints.tripPlanEndpoint}$id',
         queryParameters: {'language': language},
       );
       if (response.statusCode == 200) {
@@ -34,7 +34,7 @@ class TripRepository {
   }) async {
     try {
       final response = await apiClient.dio.get(
-        '/api/travel-plans/plans',
+        Endpoints.tripPlansEndpoint,
         queryParameters: {
           'language': language,
           'page': page,
@@ -82,7 +82,7 @@ class TripRepository {
   Future<bool> deleteTripPlan(String id) async {
     try {
       final response = await apiClient.dio.delete(
-        '/api/travel-plans/$id',
+        '${Endpoints.tripPlanEndpoint}$id',
       );
       if (response.statusCode == 204) {
         return true; // Successfully deleted

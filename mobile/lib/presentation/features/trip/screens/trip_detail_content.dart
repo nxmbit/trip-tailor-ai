@@ -19,6 +19,22 @@ class TripPlanDetailContent extends StatefulWidget {
 }
 
 class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
+  String? _lastLanguageCode;
+
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  final language = Provider.of<LanguageProvider>(context).locale.languageCode;
+  if (_lastLanguageCode != language) {
+    _lastLanguageCode = language;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<TripPlanProvider>(
+        context,
+        listen: false,
+      ).loadTripPlan(widget.tripId, language: language);
+    });
+  }
+}
   @override
   void initState() {
     super.initState();

@@ -55,6 +55,7 @@ class _NearbyPlacesContentState extends State<NearbyPlacesContent> {
       );
 
       // Set initial map position
+      if (!mounted) return;
       setState(() {
         _initialPosition = CameraPosition(
           target: LatLng(position.latitude, position.longitude),

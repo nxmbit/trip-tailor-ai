@@ -53,20 +53,12 @@ class TokenService {
   }
 
   Future<String?> getRefreshTokenExpiration() async {
-    if (kIsWeb) {
-
-    } else {
       return await _secureStorage!.read(key: 'refreshTokenExpiration');
-    }
   }
 
   // Clear tokens
   Future<void> clearTokens() async {
-    if (kIsWeb) {
-
-    } else {
       await _secureStorage!.deleteAll();
-    }
   }
 
   // Token validation

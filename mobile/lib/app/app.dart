@@ -65,7 +65,6 @@ class _MyAppState extends State<MyApp> {
 
 
         return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
           title: 'Trip Tailor',
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
