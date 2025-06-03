@@ -96,7 +96,7 @@ class WelcomeHeroSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(16), // Match container radius
             child: Image.asset(
               // Choose image based on language
-              language == 'pl' ? 'images/pl.png' : 'images/en.png',
+              _getImageAssetForLanguage(language),
               fit: BoxFit.cover,
               alignment: Alignment.bottomLeft,
               errorBuilder:
@@ -112,5 +112,17 @@ class WelcomeHeroSection extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _getImageAssetForLanguage(String language) {
+    switch (language) {
+      case 'pl':
+        return 'assets/images/pl.png';
+      case 'de':
+        return 'assets/images/de.png';
+      case 'en':
+      default:
+        return 'assets/images/en.png';
+    }
   }
 }
