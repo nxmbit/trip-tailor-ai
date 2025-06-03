@@ -135,14 +135,58 @@
       "of": "von"
     }
   },
-  "profileImage": {
-    "title": "Profil",
-    "selectNew": "Neues Bild auswählen",
-    "reset": "Bild zurücksetzen",
-    "save": "Speichern",
-    "pickError": "Fehler beim Auswählen des Bildes",
-    "uploadError": "Fehler beim Hochladen des Bildes",
-    "resetError": "Fehler beim Zurücksetzen des Bildes"
+  "profileSettings": {
+    "profile": "Profil",
+    "title": "Profil verwalten",
+    "photoTab": "Foto",
+    "usernameTab": "Benutzername",
+    "passwordTab": "Passwort",
+
+    "image": {
+      "selectNew": "Neues Bild auswählen",
+      "reset": "Auf Standard zurücksetzen",
+      "save": "Bild speichern",
+      "pickError": "Bild konnte nicht ausgewählt werden",
+      "updateSuccess": "Profilbild erfolgreich aktualisiert",
+      "resetSuccess": "Profilbild auf Standard zurückgesetzt"
+    },
+
+    "username": {
+      "title": "Benutzernamen ändern",
+      "description": "Wähle einen eindeutigen Benutzernamen für dein Konto",
+      "label": "Benutzername",
+      "required": "Benutzername ist erforderlich",
+      "tooShort": "Benutzername muss mindestens 3 Zeichen lang sein",
+      "save": "Benutzernamen speichern",
+      "updateSuccess": "Benutzername erfolgreich aktualisiert"
+    },
+
+    "password": {
+      "title": "Passwort ändern",
+      "description": "Wähle ein sicheres Passwort mit mindestens 8 Zeichen",
+      "current": "Aktuelles Passwort",
+      "new": "Neues Passwort",
+      "confirm": "Neues Passwort bestätigen",
+      "currentRequired": "Aktuelles Passwort ist erforderlich",
+      "newRequired": "Neues Passwort ist erforderlich",
+      "tooShort": "Passwort muss mindestens 8 Zeichen lang sein",
+      "tooLong": "Passwort darf maximal 20 Zeichen lang sein",
+      "noChange": "Es wurden keine Änderungen am Passwort vorgenommen",
+      "confirmRequired": "Bitte bestätige dein neues Passwort",
+      "mismatch": "Passwörter stimmen nicht überein",
+      "save": "Passwort ändern",
+      "updateSuccess": "Passwort erfolgreich geändert",
+      "wrongCurrent": "Falsches aktuelles Passwort. Bitte versuche es erneut."
+    }
+  },
+  "trip": {
+    "deleteConfirmationTitle": "Reise löschen?",
+    "deleteConfirmationMessage": "Möchtest du diese Reise wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteSuccess": "Reise wurde gelöscht",
+    "deleteFailed": "Reise konnte nicht gelöscht werden",
+    "deleting": "Reise wird gelöscht...",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
   },
   "nearbyPlaces": {
     "title": "Orte in der Nähe von",
@@ -156,14 +200,5 @@
     "permissionDenied": "Zugriff auf den Standort verweigert",
     "permissionPermanentlyDenied": "Zugriff auf den Standort dauerhaft verweigert. Bitte in den Einstellungen aktivieren.",
     "backButton": "Zurück"
-  },
-"trip": {
-  "deleteConfirmationTitle": "Reise löschen?",
-  "deleteConfirmationMessage": "Bist du sicher, dass du diese Reise löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
-  "deleteSuccess": "Reise wurde gelöscht",
-  "deleteFailed": "Reise konnte nicht gelöscht werden",
-  "deleting": "Reise wird gelöscht...",
-  "cancel": "Abbrechen",
-  "delete": "Löschen"
-}
+  }
 }

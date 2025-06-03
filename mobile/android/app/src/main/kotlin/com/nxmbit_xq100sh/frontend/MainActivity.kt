@@ -61,7 +61,7 @@ class MainActivity : FlutterActivity(){
 
             // Display a Toast message if
             // acceleration value is over 12
-            if (acceleration > 12) {
+            if (acceleration > 8) {
                 val currentTime = System.currentTimeMillis()
                 // Prevent multiple triggers in short succession (2 seconds cooldown)
                 if (currentTime - lastShakeTime > 2000) {

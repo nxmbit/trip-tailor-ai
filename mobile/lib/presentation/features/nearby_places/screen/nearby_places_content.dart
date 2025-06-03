@@ -70,8 +70,6 @@ class _NearbyPlacesContentState extends State<NearbyPlacesContent> {
       await provider.fetchNearbyPlaces(
         latitude: position.latitude,
         longitude: position.longitude,
-        radiusMeters: 3000, // 3km radius
-        maxAttractions: 10,
         language: language,
       );
 

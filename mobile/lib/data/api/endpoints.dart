@@ -15,7 +15,11 @@ class Endpoints {
   static const String firebaseTokenEndpoint = '/auth/fcm-token';
   // User endpoints
   static const String currentUserEndpoint = '/api/users/profile';
-  static const String userEndpoint = '/api/users';
+  static const String imageChangeEndpoint = '/api/users/profile/image';
+  static const String imageResetEndpoint = '/api/users/profile/image-reset';
+  static const String usernameChangeEndpoint = '/api/users/profile/username';
+  static const String passwordChangeEndpoint = '/api/users/profile/password';
+
   // Travel plan endpoints
   static const String generateTravelPlanEndpoint = "/api/travel-plans/generate";
   static const String nearbySummaryEndpoint = "/api/travel-plans/nearby-summary";

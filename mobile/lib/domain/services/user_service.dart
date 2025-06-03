@@ -51,4 +51,19 @@ class UserService {
     }
     return _currentUser;
   }
+  Future<User?> updateUsername(String newUsername) async {
+    final updatedUser = await _userRepository.updateUsername(newUsername);
+    if (updatedUser != null) {
+      _currentUser = updatedUser;
+    }
+    return _currentUser;
+  }
+
+  // Update password
+  Future<bool> updatePassword(
+      String currentPassword,
+      String newPassword,
+      ) async {
+    return await _userRepository.updatePassword(currentPassword, newPassword);
+  }
 }

@@ -19,8 +19,8 @@ class NearbyPlacesProvider extends ChangeNotifier {
   Future<void> fetchNearbyPlaces({
     required double longitude,
     required double latitude,
-    int radiusMeters = 3000, // Default radius of 3 km
-    int maxAttractions = 5 ,
+    int radiusMeters = 5000,
+    int maxAttractions = 10 ,
     required String language,
 
 }) async {
@@ -30,7 +30,8 @@ class NearbyPlacesProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final request = NearbyPlacesRequest(latitude: latitude, longitude: longitude, language: language);
+      final request = NearbyPlacesRequest(latitude: latitude, longitude: longitude, language: language,
+          radiusMeters: radiusMeters, maxAttractions: maxAttractions);
       final response = await service.getNearbyPlaces(request);
       _nearbyPlaces = response;
     } catch (e) {

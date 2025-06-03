@@ -10,8 +10,8 @@ class NearbyPlacesRequest {
   const NearbyPlacesRequest({
     required this.latitude,
     required this.longitude,
-    this.radiusMeters = 3000, // Default radius of 3 km
-    this.maxAttractions = 5, // Default to 5 attractions
+    required this.radiusMeters, // Default radius of 3 km
+    required this.maxAttractions, // Default to 5 attractions
     this.language = 'en', // Default language is English
   });
 
