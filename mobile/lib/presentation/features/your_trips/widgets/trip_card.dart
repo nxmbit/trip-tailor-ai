@@ -108,7 +108,7 @@ class TripCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.go('/your-trips/${trip.id}'),
+      onTap: () => context.push('/your-trips/${trip.id}'),
       child: Card(
         elevation: 3,
         clipBehavior: Clip.antiAlias,

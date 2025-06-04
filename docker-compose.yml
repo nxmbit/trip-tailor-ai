@@ -36,7 +36,7 @@ services:
       - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
       - LOGGING_LEVEL=${LOGGING_LEVEL}
       - WEB_FRONTEND_URL=${WEB_FRONTEND_URL:-}
-      - API_BASE_URL=${API_BASE_URL}
+      - API_BASE_URL=${WEB_API_BASE_URL}
       - CLIENT_TYPE=WEB
       - FIREBASE_ENABLED=false
     ports:
@@ -63,7 +63,7 @@ services:
       - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
       - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
       - LOGGING_LEVEL=${LOGGING_LEVEL}
-      - API_BASE_URL=${API_BASE_URL}
+      - API_BASE_URL=${MOBILE_API_BASE_URL}
       - CLIENT_TYPE=MOBILE
       - FIREBASE_ENABLED=true
       - MOBILE_REDIRECT_URI=triptailor://oauth2redirect
@@ -76,7 +76,7 @@ services:
   frontend:
     image: ghcr.io/nxmbit/trip-tailor-ai/frontend:latest
     environment:
-      - API_BASE_URL=${API_BASE_URL}
+      - API_BASE_URL=${WEB_API_BASE_URL}
       - GOOGLE_MAPS_FRONTEND_API_KEY=${GOOGLE_MAPS_FRONTEND_API_KEY}
     ports:
       - "3000:80"
