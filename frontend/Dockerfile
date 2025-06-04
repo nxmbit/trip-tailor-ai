@@ -33,8 +33,8 @@ FROM nginx:stable
 
 # copy the info of the builded web app to nginx
 COPY --from=build-env /app/build/web /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy environment config script
 COPY env-config.sh /docker-entrypoint.d/30-env-config.sh
 RUN chmod +x /docker-entrypoint.d/30-env-config.sh
 
