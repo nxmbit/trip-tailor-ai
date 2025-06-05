@@ -66,12 +66,13 @@
   },
   "home": {
     "days": "dni",
+    "day": "dzień",
     "exampleTripsTitle": "Przykładowe podróże - Wypróbuj nas!",
-    "recentTripsTitle": "Ostatnio utworzone podróże",
+    "recentTripsTitle": "Ostatnie podróże",
     "welcomeTitle": "Witaj w TripTailor",
     "welcomeSubtitle": "Spersonalizowane doświadczenia podróżnicze stworzone specjalnie dla Ciebie",
     "welcomeButton": "Zaplanuj nową podróż",
-    "viewAllTrips": "Zobacz wszystkie podróże",
+    "viewAllTrips": "Wszystkie podróże",
     "noTripsYet": "Nie masz jeszcze żadnych podróży",
     "discoverDestinations": "Odkryj nowe miejsca",
     "planYourItinerary": "Zaplanuj swoją podróż",
@@ -135,13 +136,70 @@
       "of": "z"
     }
   },
-  "profileImage": {
-    "title": "Profil",
-    "selectNew": "Wybierz nowe zdjęcie",
-    "reset": "Resetuj zdjęcie",
-    "save": "Zapisz",
-    "pickError": "Błąd podczas wybierania zdjęcia",
-    "uploadError": "Błąd podczas przesyłania zdjęcia",
-    "resetError": "Błąd podczas resetowania zdjęcia"
+  "profileSettings": {
+    "profile": "Profil",
+    "title": "Zarządzaj profilem",
+    "photoTab": "Zdjęcie",
+    "usernameTab": "Nazwa",
+    "passwordTab": "Hasło",
+
+    "image": {
+      "selectNew": "Wybierz nowe zdjęcie",
+      "reset": "Przywróć domyślne",
+      "save": "Zapisz zdjęcie",
+      "pickError": "Nie udało się wybrać zdjęcia",
+      "updateSuccess": "Zdjęcie profilowe zaktualizowane pomyślnie",
+      "resetSuccess": "Zdjęcie profilowe przywrócone do domyślnego"
+    },
+
+    "username": {
+      "title": "Zmień nazwę użytkownika",
+      "description": "Wybierz unikalną nazwę użytkownika, aby zidentyfikować swoje konto",
+      "label": "Nazwa użytkownika",
+      "required": "Nazwa użytkownika jest wymagana",
+      "tooShort": "Nazwa użytkownika musi mieć co najmniej 3 znaki",
+      "tooLong": "Nazwa użytkownika musi mieć maksymalnie 20 znaków",
+      "noChange": "Nie wprowadzono zmian w nazwie użytkownika",
+      "save": "Zapisz nazwę użytkownika",
+      "updateSuccess": "Nazwa użytkownika została zaktualizowana"
+    },
+
+    "password": {
+      "title": "Zmień hasło",
+      "description": "Wybierz silne hasło o długości co najmniej 8 znaków",
+      "current": "Obecne hasło",
+      "new": "Nowe hasło",
+      "confirm": "Potwierdź nowe hasło",
+      "currentRequired": "Obecne hasło jest wymagane",
+      "newRequired": "Nowe hasło jest wymagane",
+      "tooShort": "Hasło musi mieć co najmniej 8 znaków",
+      "confirmRequired": "Proszę potwierdzić nowe hasło",
+      "mismatch": "Hasła nie są zgodne",
+      "save": "Zmień hasło",
+      "updateSuccess": "Hasło zostało zmienione",
+      "wrongCurrent": "Nieprawidłowe obecne hasło. Proszę spróbować ponownie."
+    }
+  },
+  "trip": {
+    "deleteConfirmationTitle": "Usunąć podróż?",
+    "deleteConfirmationMessage": "Czy na pewno chcesz usunąć tę podróż? Tej operacji nie można cofnąć.",
+    "deleteSuccess": "Podróż została usunięta",
+    "deleteFailed": "Nie udało się usunąć podróży",
+    "deleting": "Usuwanie podróży...",
+    "cancel": "Anuluj",
+    "delete": "Usuń"
+  },
+  "nearbyPlaces": {
+    "title": "Miejsca w pobliżu w",
+    "loading": "Ładowanie miejsc w pobliżu...",
+    "error": "Błąd podczas ładowania miejsc w pobliżu",
+    "retry": "Spróbuj ponownie",
+    "noPlacesFound": "Nie znaleziono miejsc w pobliżu",
+    "rating": "Ocena",
+    "currentLocation": "Aktualna lokalizacja",
+    "noDescription": "Brak opisu",
+    "permissionDenied": "Odmowa dostępu do lokalizacji",
+    "permissionPermanentlyDenied": "Trwała odmowa dostępu do lokalizacji. Proszę włączyć ją w ustawieniach.",
+    "backButton": "Wstecz"
   }
 }

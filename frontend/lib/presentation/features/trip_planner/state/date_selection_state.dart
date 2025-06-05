@@ -41,12 +41,12 @@ class DateSelectionState extends ChangeNotifier {
     }
   }
 
-  // Methods to update dates
   Future<void> selectStartDate(BuildContext context) async {
     final now = DateTime.now();
     final initialDate = _startDate ?? now;
-    final firstDate = now;
-    final lastDate = now.add(Duration(days: maxTripDays));
+    // Pozwól na wybór dowolnej daty wstecz i w przyszłości
+    final firstDate = now; // np. 5 lat wstecz
+    final lastDate = DateTime(now.year + 5); // np. 5 lat w przód
 
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -64,26 +64,13 @@ class DateSelectionState extends ChangeNotifier {
 
   Future<void> selectEndDate(BuildContext context) async {
     if (_startDate == null) {
-      // If no start date, select start date first
       await selectStartDate(context);
-      if (_startDate == null) return; // User canceled start date selection
+      if (_startDate == null) return;
     }
 
-    // Calculate date constraints
-    final now = DateTime.now();
-    final firstDate = _startDate!; // End date must be on or after start date
+    final firstDate = _startDate!;
+    final lastDate = _startDate!.add(const Duration(days: 9)); // max 10 dni
 
-    // End date can't be more than 10 days from TODAY or more than maxTripDays from start date
-    final lastDateFromToday = now.add(Duration(days: maxTripDays));
-    final lastDateFromStart = _startDate!.add(Duration(days: maxTripDays - 1));
-
-    // The last date is the earlier of the two constraints
-    final lastDate =
-        lastDateFromToday.isBefore(lastDateFromStart)
-            ? lastDateFromToday
-            : lastDateFromStart;
-
-    // Calculate initial date, ensuring it's not after lastDate
     DateTime initialDate = _getEndDateInitialValue();
     if (initialDate.isAfter(lastDate)) {
       initialDate = lastDate;

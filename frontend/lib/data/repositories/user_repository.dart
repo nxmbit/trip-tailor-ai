@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:frontend/data/api/api_client.dart';
 import 'package:frontend/data/api/endpoints.dart';
@@ -97,6 +96,50 @@ class UserRepository {
       return null;
     } catch (e) {
       print('Error resetting profile image: $e');
+      rethrow; // Rethrow to handle in the UI
+    }
+  }
+
+  Future<User?> updateUsername(String newUsername) async {
+    try {
+      final response = await _apiClient.dio.post(
+        '${Endpoints.userEndpoint}/profile/username',
+        data: {'username': newUsername},
+      );
+
+      if (response.statusCode == 200 && response.data is Map<String, dynamic>) {
+        // Parse user from response if possible
+        final user = User.fromJson(response.data);
+        // Refresh user credentials
+        await getCurrentUser();
+        return user;
+      } else if (response.statusCode == 200) {
+        // If backend returns just a string, refresh and return updated user
+        return await getCurrentUser();
+      }
+      return null;
+    } catch (e) {
+      print('Error updating username: $e');
+      throw Exception(
+        'There was a problem updating your username. Please try again.',
+      );
+    }
+  }
+
+  /// Updates the user's password
+  Future<bool> updatePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      final response = await _apiClient.dio.post(
+        '${Endpoints.userEndpoint}/profile/password',
+        data: {'currentPassword': currentPassword, 'newPassword': newPassword},
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error updating password: $e');
       rethrow; // Rethrow to handle in the UI
     }
   }

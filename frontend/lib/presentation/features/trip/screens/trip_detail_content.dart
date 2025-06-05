@@ -8,7 +8,7 @@ import '../widgets/trip_header_image.dart';
 import '../widgets/trip_header_section.dart';
 import '../widgets/trip_cuisine_section.dart';
 import '../widgets/trip_itirenary_section.dart';
-import '../widgets/trip_map_section.dart'; // You'll need to create this file
+import '../widgets/trip_map_section.dart';
 
 class TripPlanDetailContent extends StatefulWidget {
   final String tripId;
@@ -21,50 +21,81 @@ class TripPlanDetailContent extends StatefulWidget {
 }
 
 class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
+  String? _lastLanguageCode;
+  bool _isLoadingLanguageChange = false;
+
   @override
   void initState() {
     super.initState();
-    // Load trip data when the screen initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final language =
           Provider.of<LanguageProvider>(
             context,
             listen: false,
           ).locale.languageCode;
-      Provider.of<TripPlanProvider>(
+      _lastLanguageCode = language;
+      setState(() => _isLoadingLanguageChange = true);
+      await Provider.of<TripPlanProvider>(
         context,
         listen: false,
       ).loadTripPlan(widget.tripId, language: language);
+      if (mounted) setState(() => _isLoadingLanguageChange = false);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final language = Provider.of<LanguageProvider>(context).locale.languageCode;
+    if (_lastLanguageCode != language && !_isLoadingLanguageChange) {
+      _lastLanguageCode = language;
+      setState(() => _isLoadingLanguageChange = true);
+      Provider.of<TripPlanProvider>(
+        context,
+        listen: false,
+      ).loadTripPlan(widget.tripId, language: language).then((_) {
+        if (mounted) setState(() => _isLoadingLanguageChange = false);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<TripPlanProvider>(
       builder: (context, provider, _) {
-        if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (provider.error != null) {
-          return Center(child: Text('Error: ${provider.error}'));
-        }
-
+        final isLoading = provider.isLoading;
+        final error = provider.error;
         final tripPlan = provider.tripPlan;
-        if (tripPlan == null) {
-          return const Center(child: Text('No trip plan found'));
+
+        Widget content;
+        if (isLoading || tripPlan == null) {
+          content = const Center(child: CircularProgressIndicator());
+        } else if (error != null) {
+          content = Center(child: Text('Error: $error'));
+        } else {
+          content = LayoutBuilder(
+            builder: (context, constraints) {
+              if (MediaQuery.of(context).size.width < 600) {
+                return _buildMobileLayout(context, tripPlan);
+              } else if (MediaQuery.of(context).size.width < 1200) {
+                return _buildTabletLayout(context, tripPlan);
+              } else {
+                return _buildDesktopLayout(context, tripPlan);
+              }
+            },
+          );
         }
 
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            if (MediaQuery.of(context).size.width < 600) {
-              return _buildMobileLayout(context, tripPlan);
-            } else if (MediaQuery.of(context).size.width < 1200) {
-              return _buildTabletLayout(context, tripPlan);
-            } else {
-              return _buildDesktopLayout(context, tripPlan);
-            }
-          },
+        // Overlay a loading indicator if language is changing
+        return Stack(
+          children: [
+            content,
+            if (_isLoadingLanguageChange)
+              Container(
+                color: Colors.black.withOpacity(0.2),
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+          ],
         );
       },
     );
@@ -77,7 +108,6 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Add padding at the top to make space for the back button
               const SizedBox(height: 48),
               TripHeaderSection(
                 tripPlan: tripPlan,
@@ -85,7 +115,6 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
                 isTabletView: false,
               ),
               const SizedBox(height: 16),
-              // Cuisine section moved right after header
               TripCuisineSection(
                 recommendations: tripPlan.localCuisineRecommendations,
               ),
@@ -99,7 +128,6 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
             ],
           ),
         ),
-        // Back button positioned at the top left
         Positioned(top: 16, left: 16, child: _buildBackButton(context)),
       ],
     );
@@ -115,7 +143,6 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Add padding at the top to make space for the back button
                 const SizedBox(height: 48),
                 TripHeaderSection(
                   tripPlan: tripPlan,
@@ -123,36 +150,23 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
                   isTabletView: true,
                 ),
                 const SizedBox(height: 16),
-                // Cuisine section moved right after header
                 TripCuisineSection(
                   recommendations: tripPlan.localCuisineRecommendations,
                 ),
                 const SizedBox(height: 24),
-                Flexible(
-                  flex: 3,
-                  fit: FlexFit.loose,
-                  child: TripItinerarySection(
-                    tripPlan: tripPlan,
-                    isDesktopView: true,
-                  ),
-                ),
+                TripItinerarySection(tripPlan: tripPlan, isDesktopView: true),
                 const SizedBox(height: 16),
-                Flexible(
-                  flex: 2,
-                  fit: FlexFit.loose,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0,
-                      vertical: 4.0,
-                    ),
-                    child: TripMapSection(tripPlan: tripPlan),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                    vertical: 4.0,
                   ),
+                  child: TripMapSection(tripPlan: tripPlan),
                 ),
               ],
             ),
           ),
         ),
-        // Back button positioned at the top left
         Positioned(top: 16, left: 16, child: _buildBackButton(context)),
       ],
     );
@@ -167,23 +181,16 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Add padding at the top to make space for the back button
                 const SizedBox(height: 48),
-
-                // Top image spanning full width
                 TripHeaderImage(
                   tripPlan: tripPlan,
                   isDesktopView: true,
                   isTabletView: false,
                 ),
-
                 const SizedBox(height: 24),
-
-                // Two column layout below the image
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Column 1: Header content + Itinerary
                     Expanded(
                       flex: 3,
                       child: Column(
@@ -205,8 +212,6 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
                         ],
                       ),
                     ),
-
-                    // Column 2: Cuisine + Map
                     Expanded(
                       flex: 2,
                       child: Column(
@@ -233,7 +238,6 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
             ),
           ),
         ),
-        // Back button positioned at the top left
         Positioned(top: 16, left: 24, child: _buildBackButton(context)),
       ],
     );
@@ -246,7 +250,6 @@ class _TripPlanDetailContentState extends State<TripPlanDetailContent> {
       borderRadius: BorderRadius.circular(24),
       child: InkWell(
         onTap: () {
-          // Navigate to your-trips page instead of trying to pop
           context.go('/your-trips');
         },
         borderRadius: BorderRadius.circular(24),

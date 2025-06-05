@@ -9,3 +9,8 @@ void main() async {
   await dotenv.load(fileName: ".env");
   runApp(MultiProvider(providers: getProviders(), child: MyApp()));
 }
+
+//TODO:
+// DODAC NEARBY PLACES DO HOME
+// NA TABLECIE ROZwala SIE WELCOME SECTION Z HOME
+//welcome screen fade in photos using transparent package (NA master branch)

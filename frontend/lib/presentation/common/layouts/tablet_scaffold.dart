@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/presentation/common/widgets/tablet_navigation.dart';
-import 'package:frontend/presentation/common/widgets/user_section.dart';
-
+import 'package:frontend/presentation/common/widgets/tablet_desktop/tablet_navigation.dart';
 import '../../../core/utils/translation_helper.dart';
 import '../../state/layout_state.dart';
+import '../widgets/user_section.dart';
 
 class TabletScaffold extends StatefulWidget {
   final Widget child;

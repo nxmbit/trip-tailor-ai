@@ -262,7 +262,7 @@ class _TripMapSectionState extends State<TripMapSection> {
         ),
         const SizedBox(height: 16),
         Container(
-          height: 300,
+          height: MediaQuery.of(context).size.height * 0.5,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(

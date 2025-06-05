@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend/presentation/common/widgets/action_item.dart';
+import 'package:frontend/presentation/common/widgets/tablet_desktop/action_item.dart';
 import 'package:frontend/presentation/state/providers/user_provider.dart';
 import 'package:frontend/core/utils/translation_helper.dart';
 
@@ -10,7 +10,7 @@ class UserActionsDialog extends StatelessWidget {
   final VoidCallback onProfileImagePressed;
 
   const UserActionsDialog({
-    Key? key, 
+    Key? key,
     required this.onSettingsPressed,
     required this.onProfileImagePressed,
   }) : super(key: key);
@@ -98,7 +98,7 @@ class UserActionsDialog extends StatelessWidget {
                         children: [
                           ActionItem(
                             icon: Icons.account_circle,
-                            text: tr(context, 'profileImage.title'),
+                            text: tr(context, 'profileSettings.profile'),
                             onTap: () {
                               Navigator.pop(context);
                               onProfileImagePressed();

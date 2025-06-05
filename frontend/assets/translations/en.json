@@ -66,12 +66,13 @@
   },
   "home": {
     "days": "days",
+    "day": "day",
     "exampleTripsTitle": "Example Trips - Try us out!",
-    "recentTripsTitle": "Recently created trips",
+    "recentTripsTitle": "Recent trips",
     "welcomeTitle": "Welcome to TripTailor",
     "welcomeSubtitle": "Personalized travel experiences designed just for you",
     "welcomeButton": "Plan a New Trip",
-    "viewAllTrips": "View All Trips",
+    "viewAllTrips": "All Trips",
     "noTripsYet": "You don't have any trips yet",
     "discoverDestinations": "Discover new places",
     "planYourItinerary": "Plan your itinerary",
@@ -135,13 +136,70 @@
       "of": "of"
     }
   },
-  "profileImage": {
-    "title": "Profile",
-    "selectNew": "Select new image",
-    "reset": "Reset image",
-    "save": "Save",
-    "pickError": "Error selecting image",
-    "uploadError": "Error uploading image",
-    "resetError": "Error resetting image"
+  "profileSettings": {
+    "profile": "Profile",
+    "title": "Manage Profile",
+    "photoTab": "Photo",
+    "usernameTab": "Username",
+    "passwordTab": "Password",
+
+    "image": {
+      "selectNew": "Select new image",
+      "reset": "Reset to default",
+      "save": "Save image",
+      "pickError": "Failed to pick image",
+      "updateSuccess": "Profile image updated successfully",
+      "resetSuccess": "Profile image reset to default"
+    },
+
+    "username": {
+      "title": "Change Username",
+      "description": "Choose a unique username to identify your account",
+      "label": "Username",
+      "required": "Username is required",
+      "tooShort": "Username must be at least 3 characters",
+      "tooLong": "Username must be at most 20 characters",
+      "noChange": "No changes made to username",
+      "save": "Save username",
+      "updateSuccess": "Username updated successfully"
+    },
+
+    "password": {
+      "title": "Change Password",
+      "description": "Choose a strong password that's at least 8 characters long",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "currentRequired": "Current password is required",
+      "newRequired": "New password is required",
+      "tooShort": "Password must be at least 8 characters",
+      "confirmRequired": "Please confirm your new password",
+      "mismatch": "Passwords don't match",
+      "save": "Change password",
+      "updateSuccess": "Password changed successfully",
+      "wrongCurrent": "Wrong current password. Please try again."
+    }
+  },
+  "trip": {
+    "deleteConfirmationTitle": "Delete trip?",
+    "deleteConfirmationMessage": "Are you sure you want to delete this trip? This action cannot be undone.",
+    "deleteSuccess": "Trip has been deleted",
+    "deleteFailed": "Failed to delete trip",
+    "deleting": "Deleting trip...",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "nearbyPlaces": {
+    "title": "Nearby Places in",
+    "loading": "Loading nearby places...",
+    "error": "Error loading nearby places",
+    "retry": "Retry",
+    "noPlacesFound": "No nearby places found",
+    "rating": "Rating",
+    "currentLocation": "Current Location",
+    "noDescription": "No description available",
+    "permissionDenied": "Permission to access location denied",
+    "permissionPermanentlyDenied": "Permission to access location permanently denied. Please enable it in settings.",
+    "backButton": "Back"
   }
 }

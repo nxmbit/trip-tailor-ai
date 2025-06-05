@@ -4,7 +4,7 @@ import 'package:frontend/presentation/features/trip_planner/widgets/submit_butto
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utils/translation_helper.dart';
-import '../../../state/providers/generate_travel_provider.dart';
+import '../../../state/providers/trip_plan_provider.dart';
 import 'date_selection.dart';
 import 'desired_places_field.dart';
 
@@ -97,7 +97,7 @@ class _TripPlannerFormState extends State<TripPlannerForm> {
     debugPrint('End Date: $endDate');
 
     // Get the provider
-    final generateTravelProvider = Provider.of<GenerateTravelProvider>(
+    final generateTravelProvider = Provider.of<TripPlanProvider>(
       context,
       listen: false,
     );

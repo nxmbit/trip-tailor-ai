@@ -29,7 +29,7 @@ class ApiClient {
     return Dio(
       BaseOptions(
         baseUrl: Endpoints.baseUrl,
-        validateStatus: (status) => status! < 201,
+        validateStatus: (status) => status! < 204,
         contentType: 'application/json',
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
