@@ -143,23 +143,35 @@ class _DateSelectionRowState extends State<DateSelectionRow> {
     required String labelText,
     required DateTime? date,
   }) {
+    final isEnabled = isStartDate || state.hasStartDate;
     return InkWell(
-      onTap: () {
-        // Use post-frame callback to avoid rebuild issues
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (isStartDate) {
-            state.selectStartDate(context);
-          } else {
-            state.selectEndDate(context);
-          }
-        });
-      },
+      onTap:
+          isEnabled
+              ? () {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (isStartDate) {
+                    state.selectStartDate(context);
+                  } else {
+                    state.selectEndDate(context);
+                  }
+                });
+              }
+              : null,
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: labelText,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+          enabled: isEnabled,
         ),
-        child: Text(state.formatDate(date, context)),
+        child: Text(
+          state.formatDate(date, context),
+          style: TextStyle(
+            color:
+                isEnabled
+                    ? Theme.of(context).textTheme.bodyLarge?.color
+                    : Theme.of(context).disabledColor,
+          ),
+        ),
       ),
     );
   }

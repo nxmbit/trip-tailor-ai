@@ -28,7 +28,6 @@ List<SingleChildWidget> getProviders() {
   // Create repositories
   final userRepository = UserRepository(apiClient);
   final tripRepository = TripRepository(apiClient);
-
   // Create service layer
   final userService = UserService(userRepository, authService);
   final tripService = TripService(tripRepository);

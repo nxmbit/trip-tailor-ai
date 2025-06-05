@@ -289,7 +289,7 @@ class TripCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${trip.tripLength} ${tr(context, 'home.days')}',
+                      '${trip.tripLength} ${tr(context, trip.tripLength == 1 ? 'home.day' : 'home.days')}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

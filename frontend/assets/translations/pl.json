@@ -66,12 +66,13 @@
   },
   "home": {
     "days": "dni",
+    "day": "dzień",
     "exampleTripsTitle": "Przykładowe podróże - Wypróbuj nas!",
-    "recentTripsTitle": "Ostatnio utworzone podróże",
+    "recentTripsTitle": "Ostatnie podróże",
     "welcomeTitle": "Witaj w TripTailor",
     "welcomeSubtitle": "Spersonalizowane doświadczenia podróżnicze stworzone specjalnie dla Ciebie",
     "welcomeButton": "Zaplanuj nową podróż",
-    "viewAllTrips": "Zobacz wszystkie podróże",
+    "viewAllTrips": "Wszystkie podróże",
     "noTripsYet": "Nie masz jeszcze żadnych podróży",
     "discoverDestinations": "Odkryj nowe miejsca",
     "planYourItinerary": "Zaplanuj swoją podróż",
@@ -187,5 +188,18 @@
     "deleting": "Usuwanie podróży...",
     "cancel": "Anuluj",
     "delete": "Usuń"
+  },
+  "nearbyPlaces": {
+    "title": "Miejsca w pobliżu w",
+    "loading": "Ładowanie miejsc w pobliżu...",
+    "error": "Błąd podczas ładowania miejsc w pobliżu",
+    "retry": "Spróbuj ponownie",
+    "noPlacesFound": "Nie znaleziono miejsc w pobliżu",
+    "rating": "Ocena",
+    "currentLocation": "Aktualna lokalizacja",
+    "noDescription": "Brak opisu",
+    "permissionDenied": "Odmowa dostępu do lokalizacji",
+    "permissionPermanentlyDenied": "Trwała odmowa dostępu do lokalizacji. Proszę włączyć ją w ustawieniach.",
+    "backButton": "Wstecz"
   }
 }

@@ -47,7 +47,9 @@ class TripPlanProvider extends ChangeNotifier {
 
       final trip = await service.getTripPlan(tripId, language: language);
       _tripPlan = trip;
-    } catch (e) {
+    } catch (e, stack) {
+      _error = e.toString();
+      debugPrint(stack.toString());
       debugPrint('Error loading trip plan: $e');
       _error = 'Failed to load trip plan. Please try again later.';
     } finally {

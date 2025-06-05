@@ -66,12 +66,13 @@
   },
   "home": {
     "days": "Tage",
+    "day": "Tag",
     "exampleTripsTitle": "Beispielreisen – Probiere uns aus!",
-    "recentTripsTitle": "Kürzlich erstellte Reisen",
+    "recentTripsTitle": "Aktuelle Reisen",
     "welcomeTitle": "Willkommen bei TripTailor",
     "welcomeSubtitle": "Personalisierte Reiseerlebnisse, nur für dich gestaltet",
     "welcomeButton": "Neue Reise planen",
-    "viewAllTrips": "Alle Reisen anzeigen",
+    "viewAllTrips": "Alle Reisen",
     "noTripsYet": "Du hast noch keine Reisen",
     "discoverDestinations": "Neue Orte entdecken",
     "planYourItinerary": "Deine Reiseroute planen",
@@ -187,5 +188,18 @@
     "deleting": "Reise wird gelöscht...",
     "cancel": "Abbrechen",
     "delete": "Löschen"
+  },
+  "nearbyPlaces": {
+    "title": "Orte in der Nähe von",
+    "loading": "Lade Orte in der Nähe...",
+    "error": "Fehler beim Laden der Orte in der Nähe",
+    "retry": "Erneut versuchen",
+    "noPlacesFound": "Keine Orte in der Nähe gefunden",
+    "rating": "Bewertung",
+    "currentLocation": "Aktueller Standort",
+    "noDescription": "Keine Beschreibung verfügbar",
+    "permissionDenied": "Zugriff auf den Standort verweigert",
+    "permissionPermanentlyDenied": "Zugriff auf den Standort dauerhaft verweigert. Bitte in den Einstellungen aktivieren.",
+    "backButton": "Zurück"
   }
 }
